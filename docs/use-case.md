@@ -1,5 +1,4 @@
 ```plantuml
-<<<<<<< HEAD
 
 :Felhasználó: as User
 (Betöltés) as Load
@@ -35,8 +34,4 @@ OpenEditor .> Start : <<precedes>>
 Start <. Load : <<precedes>>
 Start .> SetSpeed : <<precedes>>
 
-=======
-Bob -> Alice : hello
-Alice -> Bob : hi
->>>>>>> 52ae1323c87f1279a48277b77ed02e634e04fec0
 ```
