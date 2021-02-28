@@ -4,6 +4,7 @@
 (Betöltés) as Load
 (Mentés) as Save
 (Indítás) as Start
+(Szüneteltés) as Pause
 (Sebesség állítása) as SetSpeed
 (Szerkesztő megnyitása) as OpenEditor
 (Robotok elhelyezése) as NewRobot
@@ -12,10 +13,11 @@
 (Töltőállomások elhelyezése) as NewCharger
 (Termékek elhelyezése) as NewProduct
 (Visszavonás) as Undo
-(Újracsinálás) as Redo
+(Visszavonás ismét) as Redo
 
 (Kilépés) <- User
 User --> OpenEditor
+User -> Load
 
 OpenEditor ..> NewRobot : <<include>>
 OpenEditor ..> NewPod : <<include>>
@@ -32,6 +34,7 @@ Undo ..> Redo : <<precedes>>
 Load ..> Save : <<precedes>>
 OpenEditor .> Start : <<precedes>>
 Start <. Load : <<precedes>>
-Start .> SetSpeed : <<precedes>>
+Start ..> SetSpeed : <<precedes>>
+Start .> Pause : <<precedes>>
 
 ```
