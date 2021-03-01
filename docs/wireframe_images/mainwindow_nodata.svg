@@ -1,1 +1,155 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="820" height="662" viewBox="0 0 820 662"><defs><clipPath id="b"><rect width="820" height="662"/></clipPath></defs><g id="a" clip-path="url(#b)"><rect width="820" height="662" fill="#fff"/><g transform="translate(0 32)" fill="#fff" stroke="#707070" stroke-width="1"><rect width="820" height="630" stroke="none"/><rect x="0.5" y="0.5" width="819" height="629" fill="none"/></g><g fill="#fff" stroke="#707070" stroke-width="1"><rect width="820" height="33" stroke="none"/><rect x="0.5" y="0.5" width="819" height="32" fill="none"/></g><g transform="translate(205 47)" fill="#fff" stroke="#707070" stroke-width="1"><rect width="600" height="600" stroke="none"/><rect x="0.5" y="0.5" width="599" height="599" fill="none"/></g><g transform="translate(790 4)"><g fill="rgba(112,112,112,0)" stroke="#707070" stroke-width="1"><circle cx="12.5" cy="12.5" r="12.5" stroke="none"/><circle cx="12.5" cy="12.5" r="12" fill="none"/></g><line y1="12" x2="12" transform="translate(6.5 6.5)" fill="none" stroke="#707070" stroke-width="1"/><line x2="12" y2="12" transform="translate(6.5 6.5)" fill="none" stroke="#707070" stroke-width="1"/></g><g transform="translate(760 4)"><g fill="#707070" stroke="#707070" stroke-width="1"><circle cx="12.5" cy="12.5" r="12.5" stroke="none"/><circle cx="12.5" cy="12.5" r="12" fill="none"/></g><g transform="translate(9 5)" fill="#fff" stroke="#707070" stroke-width="1"><rect width="11" height="11" stroke="none"/><rect x="0.5" y="0.5" width="10" height="10" fill="none"/></g><g transform="translate(5 9)" fill="#fff" stroke="#707070" stroke-width="1"><rect width="11" height="11" stroke="none"/><rect x="0.5" y="0.5" width="10" height="10" fill="none"/></g></g><g transform="translate(730 4)"><g fill="#707070" stroke="#707070" stroke-width="1"><circle cx="12.5" cy="12.5" r="12.5" stroke="none"/><circle cx="12.5" cy="12.5" r="12" fill="none"/></g><line x2="16" transform="translate(4.5 17.5)" fill="none" stroke="#fff" stroke-width="1"/></g><g transform="translate(15 622)"><g fill="#fff" stroke="#707070" stroke-width="1"><rect width="175" height="25" stroke="none"/><rect x="0.5" y="0.5" width="174" height="24" fill="none"/></g><text transform="translate(72 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">Start</tspan></text></g><text transform="translate(14 81)" fill="#707070" font-size="45" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">Waresim</tspan></text><g transform="translate(15 585)"><g fill="#fff" stroke="#707070" stroke-width="1"><rect width="80" height="25" stroke="none"/><rect x="0.5" y="0.5" width="79" height="24" fill="none"/></g><text transform="translate(40 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="-16.49" y="0">Load</tspan></text></g><g transform="translate(110 585)"><g fill="#fff" stroke="#707070" stroke-width="1"><rect width="80" height="25" stroke="none"/><rect x="0.5" y="0.5" width="79" height="24" fill="none"/></g><text transform="translate(40 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="-15.729" y="0">Save</tspan></text></g><text transform="translate(420 362)" fill="#707070" font-size="14" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">No data loaded. Please use</tspan><tspan x="0" y="19">the Load button.</tspan><tspan x="0" y="38"></tspan></text><g transform="translate(0 32)" fill="#fff" stroke="#707070" stroke-width="1"><rect width="820" height="630" stroke="none"/><rect x="0.5" y="0.5" width="819" height="629" fill="none"/></g><g fill="#fff" stroke="#707070" stroke-width="1"><rect width="820" height="33" stroke="none"/><rect x="0.5" y="0.5" width="819" height="32" fill="none"/></g><g transform="translate(205 47)" fill="#fff" stroke="#707070" stroke-width="1"><rect width="600" height="600" stroke="none"/><rect x="0.5" y="0.5" width="599" height="599" fill="none"/></g><g transform="translate(790 4)"><g fill="rgba(112,112,112,0)" stroke="#707070" stroke-width="1"><circle cx="12.5" cy="12.5" r="12.5" stroke="none"/><circle cx="12.5" cy="12.5" r="12" fill="none"/></g><line y1="12" x2="12" transform="translate(6.5 6.5)" fill="none" stroke="#707070" stroke-width="1"/><line x2="12" y2="12" transform="translate(6.5 6.5)" fill="none" stroke="#707070" stroke-width="1"/></g><g transform="translate(760 4)"><g fill="#707070" stroke="#707070" stroke-width="1"><circle cx="12.5" cy="12.5" r="12.5" stroke="none"/><circle cx="12.5" cy="12.5" r="12" fill="none"/></g><g transform="translate(9 5)" fill="#fff" stroke="#707070" stroke-width="1"><rect width="11" height="11" stroke="none"/><rect x="0.5" y="0.5" width="10" height="10" fill="none"/></g><g transform="translate(5 9)" fill="#fff" stroke="#707070" stroke-width="1"><rect width="11" height="11" stroke="none"/><rect x="0.5" y="0.5" width="10" height="10" fill="none"/></g></g><g transform="translate(730 4)"><g fill="#707070" stroke="#707070" stroke-width="1"><circle cx="12.5" cy="12.5" r="12.5" stroke="none"/><circle cx="12.5" cy="12.5" r="12" fill="none"/></g><line x2="16" transform="translate(4.5 17.5)" fill="none" stroke="#fff" stroke-width="1"/></g><g transform="translate(15 622)"><g fill="#fff" stroke="#707070" stroke-width="1"><rect width="175" height="25" stroke="none"/><rect x="0.5" y="0.5" width="174" height="24" fill="none"/></g><text transform="translate(72 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">Start</tspan></text></g><text transform="translate(14 81)" fill="#707070" font-size="45" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">Waresim</tspan></text><g transform="translate(15 542)"><g fill="#fff" stroke="#707070" stroke-width="1"><rect width="80" height="25" stroke="none"/><rect x="0.5" y="0.5" width="79" height="24" fill="none"/></g><text transform="translate(40 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="-16.49" y="0">Load</tspan></text></g><g transform="translate(110 542)"><g fill="#fff" stroke="#707070" stroke-width="1"><rect width="80" height="25" stroke="none"/><rect x="0.5" y="0.5" width="79" height="24" fill="none"/></g><text transform="translate(40 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="-15.729" y="0">Save</tspan></text></g><text transform="translate(407 334)" fill="#707070" font-size="14" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">No data loaded. Please use the</tspan><tspan x="0" y="19">Load, or Open editor buttons</tspan><tspan x="0" y="38">to set up the simulation.</tspan></text><g transform="translate(15 582)"><g fill="#fff" stroke="#707070" stroke-width="1"><rect width="175" height="25" stroke="none"/><rect x="0.5" y="0.5" width="174" height="24" fill="none"/></g><text transform="translate(88 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="-40.994" y="0">Open editor</tspan></text></g><text transform="translate(14 23)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">Waresim</tspan></text><text transform="translate(14 119)" fill="#707070" font-size="20" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">Welcome!</tspan></text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="820" height="662" viewBox="0 0 820 662">
+  <defs>
+    <clipPath id="clip-mainwindow_nodata">
+      <rect width="820" height="662"/>
+    </clipPath>
+  </defs>
+  <g id="mainwindow_nodata" clip-path="url(#clip-mainwindow_nodata)">
+    <rect width="820" height="662" fill="#fff"/>
+    <g id="Component_1_1" data-name="Component 1 – 1">
+      <g id="Rectangle_1" data-name="Rectangle 1" transform="translate(0 32)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="820" height="630" stroke="none"/>
+        <rect x="0.5" y="0.5" width="819" height="629" fill="none"/>
+      </g>
+      <g id="Rectangle_3" data-name="Rectangle 3" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="820" height="33" stroke="none"/>
+        <rect x="0.5" y="0.5" width="819" height="32" fill="none"/>
+      </g>
+    </g>
+    <g id="Rectangle_2" data-name="Rectangle 2" transform="translate(205 47)" fill="#fff" stroke="#707070" stroke-width="1">
+      <rect width="600" height="600" stroke="none"/>
+      <rect x="0.5" y="0.5" width="599" height="599" fill="none"/>
+    </g>
+    <g id="Component_3_1" data-name="Component 3 – 1" transform="translate(790 4)">
+      <g id="Ellipse_1" data-name="Ellipse 1" fill="rgba(112,112,112,0)" stroke="#707070" stroke-width="1">
+        <circle cx="12.5" cy="12.5" r="12.5" stroke="none"/>
+        <circle cx="12.5" cy="12.5" r="12" fill="none"/>
+      </g>
+      <line id="Line_1" data-name="Line 1" y1="12" x2="12" transform="translate(6.5 6.5)" fill="none" stroke="#707070" stroke-width="1"/>
+      <line id="Line_2" data-name="Line 2" x2="12" y2="12" transform="translate(6.5 6.5)" fill="none" stroke="#707070" stroke-width="1"/>
+    </g>
+    <g id="Component_2_1" data-name="Component 2 – 1" transform="translate(760 4)">
+      <g id="Ellipse_2" data-name="Ellipse 2" fill="#707070" stroke="#707070" stroke-width="1">
+        <circle cx="12.5" cy="12.5" r="12.5" stroke="none"/>
+        <circle cx="12.5" cy="12.5" r="12" fill="none"/>
+      </g>
+      <g id="Rectangle_5" data-name="Rectangle 5" transform="translate(9 5)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="11" height="11" stroke="none"/>
+        <rect x="0.5" y="0.5" width="10" height="10" fill="none"/>
+      </g>
+      <g id="Rectangle_9" data-name="Rectangle 9" transform="translate(5 9)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="11" height="11" stroke="none"/>
+        <rect x="0.5" y="0.5" width="10" height="10" fill="none"/>
+      </g>
+    </g>
+    <g id="Component_4_1" data-name="Component 4 – 1" transform="translate(730 4)">
+      <g id="Ellipse_3" data-name="Ellipse 3" fill="#707070" stroke="#707070" stroke-width="1">
+        <circle cx="12.5" cy="12.5" r="12.5" stroke="none"/>
+        <circle cx="12.5" cy="12.5" r="12" fill="none"/>
+      </g>
+      <line id="Line_3" data-name="Line 3" x2="16" transform="translate(4.5 17.5)" fill="none" stroke="#fff" stroke-width="1"/>
+    </g>
+    <g id="Component_7_1" data-name="Component 7 – 1" transform="translate(15 622)">
+      <g id="Rectangle_6" data-name="Rectangle 6" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="175" height="25" stroke="none"/>
+        <rect x="0.5" y="0.5" width="174" height="24" fill="none"/>
+      </g>
+      <text id="Start" transform="translate(72 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">Start</tspan></text>
+    </g>
+    <text id="Waresim" transform="translate(14 81)" fill="#707070" font-size="45" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">Waresim</tspan></text>
+    <g id="Component_5_1" data-name="Component 5 – 1" transform="translate(15 585)">
+      <g id="Rectangle_7" data-name="Rectangle 7" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="80" height="25" stroke="none"/>
+        <rect x="0.5" y="0.5" width="79" height="24" fill="none"/>
+      </g>
+      <text id="Load" transform="translate(40 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="-16.49" y="0">Load</tspan></text>
+    </g>
+    <g id="Component_6_1" data-name="Component 6 – 1" transform="translate(110 585)">
+      <g id="Rectangle_8" data-name="Rectangle 8" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="80" height="25" stroke="none"/>
+        <rect x="0.5" y="0.5" width="79" height="24" fill="none"/>
+      </g>
+      <text id="Save" transform="translate(40 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="-15.729" y="0">Save</tspan></text>
+    </g>
+    <text id="No_data_loaded._Please_use_the_Load_button._" data-name="No data loaded. Please use
+the Load button.
+" transform="translate(420 362)" fill="#707070" font-size="14" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">No data loaded. Please use</tspan><tspan x="0" y="19">the Load button.</tspan><tspan x="0" y="38"></tspan></text>
+    <g id="Component_1_2" data-name="Component 1 – 2">
+      <g id="Rectangle_1-2" data-name="Rectangle 1" transform="translate(0 32)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="820" height="630" stroke="none"/>
+        <rect x="0.5" y="0.5" width="819" height="629" fill="none"/>
+      </g>
+      <g id="Rectangle_3-2" data-name="Rectangle 3" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="820" height="33" stroke="none"/>
+        <rect x="0.5" y="0.5" width="819" height="32" fill="none"/>
+      </g>
+    </g>
+    <g id="Rectangle_10" data-name="Rectangle 10" transform="translate(205 47)" fill="#fff" stroke="#707070" stroke-width="1">
+      <rect width="600" height="600" stroke="none"/>
+      <rect x="0.5" y="0.5" width="599" height="599" fill="none"/>
+    </g>
+    <g id="Component_3_2" data-name="Component 3 – 2" transform="translate(790 4)">
+      <g id="Ellipse_1-2" data-name="Ellipse 1" fill="rgba(112,112,112,0)" stroke="#707070" stroke-width="1">
+        <circle cx="12.5" cy="12.5" r="12.5" stroke="none"/>
+        <circle cx="12.5" cy="12.5" r="12" fill="none"/>
+      </g>
+      <line id="Line_1-2" data-name="Line 1" y1="12" x2="12" transform="translate(6.5 6.5)" fill="none" stroke="#707070" stroke-width="1"/>
+      <line id="Line_2-2" data-name="Line 2" x2="12" y2="12" transform="translate(6.5 6.5)" fill="none" stroke="#707070" stroke-width="1"/>
+    </g>
+    <g id="Component_2_2" data-name="Component 2 – 2" transform="translate(760 4)">
+      <g id="Ellipse_2-2" data-name="Ellipse 2" fill="#707070" stroke="#707070" stroke-width="1">
+        <circle cx="12.5" cy="12.5" r="12.5" stroke="none"/>
+        <circle cx="12.5" cy="12.5" r="12" fill="none"/>
+      </g>
+      <g id="Rectangle_5-2" data-name="Rectangle 5" transform="translate(9 5)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="11" height="11" stroke="none"/>
+        <rect x="0.5" y="0.5" width="10" height="10" fill="none"/>
+      </g>
+      <g id="Rectangle_9-2" data-name="Rectangle 9" transform="translate(5 9)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="11" height="11" stroke="none"/>
+        <rect x="0.5" y="0.5" width="10" height="10" fill="none"/>
+      </g>
+    </g>
+    <g id="Component_4_2" data-name="Component 4 – 2" transform="translate(730 4)">
+      <g id="Ellipse_3-2" data-name="Ellipse 3" fill="#707070" stroke="#707070" stroke-width="1">
+        <circle cx="12.5" cy="12.5" r="12.5" stroke="none"/>
+        <circle cx="12.5" cy="12.5" r="12" fill="none"/>
+      </g>
+      <line id="Line_3-2" data-name="Line 3" x2="16" transform="translate(4.5 17.5)" fill="none" stroke="#fff" stroke-width="1"/>
+    </g>
+    <g id="Component_7_2" data-name="Component 7 – 2" transform="translate(15 622)">
+      <g id="Rectangle_6-2" data-name="Rectangle 6" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="175" height="25" stroke="none"/>
+        <rect x="0.5" y="0.5" width="174" height="24" fill="none"/>
+      </g>
+      <text id="Start-2" data-name="Start" transform="translate(72 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">Start</tspan></text>
+    </g>
+    <text id="Waresim-2" data-name="Waresim" transform="translate(14 81)" fill="#707070" font-size="45" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">Waresim</tspan></text>
+    <g id="Component_5_2" data-name="Component 5 – 2" transform="translate(15 542)">
+      <g id="Rectangle_7-2" data-name="Rectangle 7" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="80" height="25" stroke="none"/>
+        <rect x="0.5" y="0.5" width="79" height="24" fill="none"/>
+      </g>
+      <text id="Load-2" data-name="Load" transform="translate(40 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="-16.49" y="0">Load</tspan></text>
+    </g>
+    <g id="Component_6_2" data-name="Component 6 – 2" transform="translate(110 542)">
+      <g id="Rectangle_8-2" data-name="Rectangle 8" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="80" height="25" stroke="none"/>
+        <rect x="0.5" y="0.5" width="79" height="24" fill="none"/>
+      </g>
+      <text id="Save-2" data-name="Save" transform="translate(40 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="-15.729" y="0">Save</tspan></text>
+    </g>
+    <text id="No_data_loaded._Please_use_the_Load_or_Open_editor_buttons_to_set_up_the_simulation." data-name="No data loaded. Please use the
+Load, or Open editor buttons
+to set up the simulation." transform="translate(407 334)" fill="#707070" font-size="14" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">No data loaded. Please use the</tspan><tspan x="0" y="19">Load, or Open editor buttons</tspan><tspan x="0" y="38">to set up the simulation.</tspan></text>
+    <g id="Component_7_5" data-name="Component 7 – 5" transform="translate(15 582)">
+      <g id="Rectangle_6-3" data-name="Rectangle 6" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="175" height="25" stroke="none"/>
+        <rect x="0.5" y="0.5" width="174" height="24" fill="none"/>
+      </g>
+      <text id="Open_editor" data-name="Open editor" transform="translate(88 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="-40.994" y="0">Open editor</tspan></text>
+    </g>
+    <text id="Waresim-3" data-name="Waresim" transform="translate(14 23)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">Waresim</tspan></text>
+    <text id="Welcome_" data-name="Welcome!" transform="translate(14 119)" fill="#707070" font-size="20" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="0" y="0">Welcome!</tspan></text>
+  </g>
+</svg>
