@@ -513,5 +513,12 @@
       <rect width="4" height="19" stroke="none"/>
       <rect x="0.5" y="0.5" width="3" height="18" fill="none"/>
     </g>
+    <g id="Component_5_6" data-name="Component 5 – 6" transform="translate(21 863)">
+      <g id="Rectangle_7-2" data-name="Rectangle 7" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="80" height="25" stroke="none"/>
+        <rect x="0.5" y="0.5" width="79" height="24" fill="none"/>
+      </g>
+      <text id="Reset" transform="translate(40 18)" fill="#707070" font-size="15" font-family="SegoeUI-Semibold, Segoe UI" font-weight="600"><tspan x="-18.384" y="0">Reset</tspan></text>
+    </g>
   </g>
 </svg>
