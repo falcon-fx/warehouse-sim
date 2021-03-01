@@ -1,11 +1,11 @@
 <table>
     <tr>
         <th>AS A</th>
-        <td>felhasználó</td>
+        <td colspan="2">felhasználó</td>
     </tr>
     <tr>
         <th>I WANT TO</th>
-        <td>elindítani a szimulációt</td>
+        <td colspan="2">elindítani a szimulációt</td>
     </tr>
     <tr>
         <th rowspan="3">1</th>
@@ -38,11 +38,11 @@
 <table>
     <tr>
         <th>AS A</th>
-        <td>felhasználó</td>
+        <td colspan="2">felhasználó</td>
     </tr>
     <tr>
         <th>I WANT TO</th>
-        <td>betölteni egy kezdőállapotot</td>
+        <td colspan="2">betölteni egy kezdőállapotot</td>
     </tr>
     <tr>
         <th rowspan="3">1</th>
@@ -75,11 +75,11 @@
 <table>
     <tr>
         <th>AS A</th>
-        <td>felhasználó</td>
+        <td colspan="2">felhasználó</td>
     </tr>
     <tr>
         <th>I WANT TO</th>
-        <td>elmenteni egy állapotot</td>
+        <td colspan="2">elmenteni egy állapotot</td>
     </tr>
     <tr>
         <th rowspan="3">1</th>
@@ -99,11 +99,11 @@
 <table>
     <tr>
         <th>AS A</th>
-        <td>felhasználó</td>
+        <td colspan="2">felhasználó</td>
     </tr>
     <tr>
         <th>I WANT TO</th>
-        <td>létrehozni egy új állapotot</td>
+        <td colspan="2">létrehozni egy új állapotot</td>
     </tr>
     <tr>
         <th rowspan="3">1</th>
