@@ -51,7 +51,6 @@ Class Controller {
     + void Tick()
     + bool Save(string)
     + bool Load(string)
-    - void SendCommand(Robot*, Instruction)
     - bool CalcPath(Robot*, WTile*)
     - void CreatePath(Robot*, WTile*)
 }
@@ -65,22 +64,37 @@ Enum Direction {
 Direction *- Robot : use
 
 Class MainWindow {
-    - QPushButton loadButton
     - QPushButton saveButton
+    - QPushButton loadButton
     - QPushButton openEditorButton
     - QPushButton startButton
     - Vector<Vector<QPushButton*>> buttonGrid
     - EditorWindow editorWindow
     - QTimer timer
+    - Controller controller
+    - void Save(string)
+    - void Load(string)
+    - void OpenEditor()
+    - void Start()
+    - void OnGridClick()
 }
 
 EditorWindow "1" *-- "1" MainWindow : contains
+Controller "1" *- "1" MainWindow : contains
 
 Class EditorWindow {
+    - int mode
+    - Vector<Vector<QPushButton*>> buttonGrid
     - QPushButton newRobotButton
     - QPushButton newPodButton
     - QPushButton newTargetButton
     - QPushButton newDockButton
     - QPushButton newProductButton
+    - void NewRobot()
+    - void NewPod()
+    - void NewTarget()
+    - void NewDock()
+    - void NewProduct()
+    - void OnGridClick()
 }
 ```
