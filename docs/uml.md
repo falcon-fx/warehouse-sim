@@ -72,8 +72,8 @@ Class MainWindow {
     - EditorWindow editorWindow
     - QTimer timer
     - Controller controller
-    - void Save(string)
-    - void Load(string)
+    - void Save()
+    - void Load()
     - void OpenEditor()
     - void Start()
     - void OnGridClick()
