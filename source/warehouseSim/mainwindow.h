@@ -37,6 +37,10 @@ private:
     int _width;
 private slots:
     void editorButtonClicked();
+    void startButtonClicked();
+    void saveButtonClicked();
+    void loadButtonClicked();
+
 
 };
 #endif // MAINWINDOW_H

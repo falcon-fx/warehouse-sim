@@ -20,11 +20,11 @@ private:
      //sizeWindow
      QPushButton* okButton;
      QPushButton* closeButton;
-     QLineEdit* _height;
-     QLineEdit* _width;
+     QLineEdit* _h;
+     QLineEdit* _w;
 
      //layouts:
-     QHBoxLayout* _mainLayout;
+     QVBoxLayout* _mainLayout;
      QGridLayout* _gridLayout;
      QVBoxLayout* _bottomLayout;
      QHBoxLayout* _editButtonsLayout;
@@ -43,17 +43,26 @@ private:
      QPushButton* _undoButton;
      QPushButton* _redoButton;
 
-     QPushButton* _resetButton;
+     QPushButton* _newButton;
      QPushButton* _loadButton;
      QPushButton* _saveButton;
      QPushButton* _applyButton;
 
+     int _height;
+     int _width;
+     int status;//1-select 2-robot 3-pod 4-target 5-dock 6-delete
 
      void setupEditor();
+     void setupTable();
 
 private slots:
      void okButtonClicked();
      void closeButtonClicked();
+
+     void editButtonsClicked();
+     void controlButtonsClicked();
+
+     void gridButtonClicked();
 
 };
 

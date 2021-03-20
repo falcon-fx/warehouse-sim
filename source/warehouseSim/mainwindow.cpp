@@ -9,8 +9,8 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
 
-    _height=10;
-    _width=10;
+    _height=0;
+    _width=0;
 
     _model= new Model();
     _model->setSize(_height,_width);
@@ -71,6 +71,9 @@ void MainWindow::setupWindow()
     _mainLayout->addLayout(_rightsideLayout);
 
      connect(editorButton,SIGNAL(clicked()),this,SLOT(editorButtonClicked()));
+     connect(loadButton,SIGNAL(clicked()),this,SLOT(loadButtonClicked()));
+     connect(saveButton,SIGNAL(clicked()),this,SLOT(saveButtonClicked()));
+     connect(startButton,SIGNAL(clicked()),this,SLOT(startButtonClicked()));
 }
 
 void MainWindow::drawTable()
@@ -112,7 +115,7 @@ void MainWindow::drawTable()
             }
         }
     }
-
+    //ennek nem itt kene lennie, de meg nem talaltam neki jobb helyet
     on_refreshTable();
 }
 
@@ -153,5 +156,28 @@ void MainWindow::on_refreshTable()
 void MainWindow::editorButtonClicked()
 {
     _editor = new Editor();
-    //qDebug() << "hello";
+
+    //itt valamit a modellel
+
+    drawTable();
+    on_refreshTable();
+
+}
+
+void MainWindow::loadButtonClicked()
+{
+
+
+}
+
+void MainWindow::saveButtonClicked()
+{
+
+
+}
+
+void MainWindow::startButtonClicked()
+{
+
+
 }
