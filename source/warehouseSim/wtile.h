@@ -5,6 +5,14 @@
 #include <QPoint>
 #include <tuple>
 
+enum State {
+    GO_CHARGE,
+    GO_POD,
+    GO_DELIVER,
+    RETURN_POD,
+    WAIT
+};
+
 class WTile : public QObject {
     Q_OBJECT
 public:
