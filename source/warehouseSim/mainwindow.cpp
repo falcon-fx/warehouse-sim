@@ -9,18 +9,21 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
 
-    _height=5;
-    _width=15;
+    _height=10;
+    _width=10;
+
+    _model= new Model();
+    _model->setSize(_height,_width);
 
     window= new QWidget;
     window->setWindowTitle("Waresim");
     window->setMinimumSize(500,500);
     _mainLayout = new QHBoxLayout(window);
-    _sideLayout = new QVBoxLayout();
+    _leftsideLayout = new QVBoxLayout();
     _titleLayout = new QVBoxLayout();
     _infoLayout = new QVBoxLayout();
     _buttonLayout = new QGridLayout();
-    test = new QVBoxLayout();
+    _rightsideLayout = new QVBoxLayout();
     _gridLayout = new QGridLayout();
     buttonContainer = new QHBoxLayout();
 
@@ -58,19 +61,29 @@ void MainWindow::setupWindow()
     _buttonLayout->addWidget(editorButton,2,0,1,2);
     _buttonLayout->addWidget(startButton,3,0,3,2);
 
-    _sideLayout->addLayout(_titleLayout);
-    _sideLayout->addLayout(_infoLayout);
-    _sideLayout->addLayout(_buttonLayout);
-    _mainLayout->addLayout(_sideLayout);
+    _leftsideLayout->addLayout(_titleLayout);
+    _leftsideLayout->addLayout(_infoLayout);
+    _leftsideLayout->addLayout(_buttonLayout);
+    _mainLayout->addLayout(_leftsideLayout);
     drawTable();
 
-    test->addLayout(_gridLayout);
-    _mainLayout->addLayout(test);
+    _rightsideLayout->addLayout(_gridLayout);
+    _mainLayout->addLayout(_rightsideLayout);
+
+     connect(editorButton,SIGNAL(clicked()),this,SLOT(editorButtonClicked()));
 }
 
 void MainWindow::drawTable()
 {
-    //TODO: gombok torlese, ha uj szimulaciot toltunk be
+    if (_gridLayout->rowCount() != 0 || _gridLayout->columnCount() != 0) {
+            while ( QLayoutItem* item = _gridLayout->takeAt( 0 ) )
+                {
+                    Q_ASSERT( ! item->layout() );
+                    delete item->widget();
+                    delete item;
+                }
+     }
+    _gridButtons.clear();
 
     _gridLayout->setAlignment(Qt::AlignCenter);
     if(_height==0 || _width == 0)
@@ -99,6 +112,46 @@ void MainWindow::drawTable()
             }
         }
     }
+
+    on_refreshTable();
 }
 
+void MainWindow::on_refreshTable()
+{
 
+    for(int i = 0; i < _height; i++)
+    {
+        for(int j = 0; j < _width; j++)
+        {
+
+            if(_model->getBoard()[i][j] == 0)
+            {
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }"); //ures
+            }
+            if(_model->getBoard()[i][j] == 1)
+            {
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: gray; }"); //polc
+            }
+            if(_model->getBoard()[i][j] == 2)
+            {
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: green; }"); //leado cucc
+            }
+            if(_model->getBoard()[i][j] == 3)
+            {
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: yellow; }"); //robot
+            }
+            if(_model->getBoard()[i][j] == 4)
+            {
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: blue; }"); //tolto
+            }
+
+        }
+
+    }
+}
+
+void MainWindow::editorButtonClicked()
+{
+    _editor = new Editor();
+    //qDebug() << "hello";
+}

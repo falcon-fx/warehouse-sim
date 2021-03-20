@@ -1,6 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "editor.h"
+#include "model.h"
+
 #include <QMainWindow>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -15,19 +18,25 @@ public:
 protected:
     QWidget *window;
     QHBoxLayout* _mainLayout;
-    QVBoxLayout* _sideLayout;
+    QVBoxLayout* _leftsideLayout;
     QVBoxLayout* _titleLayout;
     QVBoxLayout* _infoLayout;
     QGridLayout* _buttonLayout;
-    QVBoxLayout *test;
+    QVBoxLayout *_rightsideLayout;
     QGridLayout* _gridLayout;
     QVector<QVector<QPushButton*>> _gridButtons;
     QHBoxLayout* buttonContainer;
 private:
+    Model* _model;
+    Editor* _editor;
     void setupWindow();
     void drawTable();
+    void on_refreshTable();
     int Size;
     int _height;
     int _width;
+private slots:
+    void editorButtonClicked();
+
 };
 #endif // MAINWINDOW_H

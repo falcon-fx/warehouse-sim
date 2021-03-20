@@ -9,15 +9,19 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    editor.cpp \
     main.cpp \
     mainwindow.cpp \
+    model.cpp \
     pod.cpp \
     robot.cpp \
     target.cpp \
     wtile.cpp
 
 HEADERS += \
+    editor.h \
     mainwindow.h \
+    model.h \
     pod.h \
     robot.h \
     target.h \
