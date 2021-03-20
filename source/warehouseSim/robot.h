@@ -15,6 +15,7 @@ private:
     int maxPower;
     bool hasPod;
     int podNum;
+    QQueue<QPoint> pathToFollow;
     State state;
 };
 
