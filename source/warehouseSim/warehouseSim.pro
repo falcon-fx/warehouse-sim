@@ -10,10 +10,18 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    pod.cpp \
+    robot.cpp \
+    target.cpp \
+    wtile.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    pod.h \
+    robot.h \
+    target.h \
+    wtile.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
