@@ -15,7 +15,6 @@ SOURCES += \
     model.cpp \
     pod.cpp \
     robot.cpp \
-    target.cpp \
     wtile.cpp
 
 HEADERS += \
@@ -24,7 +23,6 @@ HEADERS += \
     model.h \
     pod.h \
     robot.h \
-    target.h \
     wtile.h
 
 # Default rules for deployment.

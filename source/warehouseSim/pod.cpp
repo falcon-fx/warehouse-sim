@@ -1,36 +1,58 @@
 #include "pod.h"
 
-Pod::Pod(int id, QList<int> prods, int origin_x, int origin_y)
+Pod::Pod(QSet<int> prods, int origin_x, int origin_y)
 {
-    this->setID(id);
     this->products = prods;
+    this->pos.setX(origin_x);
+    this->pos.setY(origin_y);
+    this->originalPos.setX(origin_x);
+    this->originalPos.setY(origin_y);
     this->pickedUp = false;
-    this->originalPos = new QPoint(origin_x, origin_y);
+    this->reserved = false;
 }
 
-bool Pod::isInProducts(int prodNum) {
-    for(int i = 0; i < products.size(); i++) {
-        if(products[i] == prodNum) {
-            return true;
-        }
-    }
-    return false;
+bool Pod::hasProduct(int prodNum)
+{
+    return this->products.contains(prodNum);
 }
 
-void Pod::removeProduct(int prodNum) {
-    if(this->isInProducts(prodNum)) {
-        products.removeOne(prodNum);
-    }
+void Pod::addProduct(int prodNum)
+{
+    this->products.insert(prodNum);
 }
 
-bool Pod::isPickedUp() {
+void Pod::removeProduct(int prodNum)
+{
+    this->products.remove(prodNum);
+}
+
+QPoint Pod::getPosition()
+{
+    return this->pos;
+}
+
+void Pod::setPosition(QPoint pos)
+{
+    this->pos.setX(pos.x());
+    this->pos.setY(pos.y());
+}
+
+QPoint Pod::getOriginalPosition()
+{
+    return this->originalPos;
+}
+
+void Pod::setPickedUp(bool picked)
+{
+    this->pickedUp = picked;
+}
+
+bool Pod::isPickedUp()
+{
     return this->pickedUp;
 }
 
-void Pod::pickUp() {
-    this->pickedUp = true;
-}
-
-void Pod::putDown() {
-    this->pickedUp = false;
+bool Pod::isReserved()
+{
+    return this->reserved;
 }

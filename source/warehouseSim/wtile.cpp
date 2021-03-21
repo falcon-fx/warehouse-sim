@@ -1,31 +1,45 @@
 #include "wtile.h"
 
-void WTile::setLocation(int x, int y) {
-    this->location = new QPoint(x,y);
+WTile::WTile()
+{
+    this->dock = false;
+    this->target = -1;
 }
 
-void WTile::setLocation(QPoint* p) {
-    int x = p->x();
-    int y = p->y();
-    this->location = new QPoint(x,y);
+void WTile::setTarget(int prodNum)
+{
+    this->target = prodNum;
 }
 
-QPoint* WTile::getLocation() {
-    return this->location;
+void WTile::clearTarget()
+{
+    this->target = -1;
 }
 
-void WTile::setID(int i) {
-    this->id = i;
+bool WTile::isTarget()
+{
+    return this->target != -1;
 }
 
-int WTile::getID() {
-    return this->id;
+int WTile::getTarget()
+{
+    return this->target;
+}
+
+bool WTile::isDock()
+{
+    return this->dock;
+}
+
+void WTile::setDock(bool dock)
+{
+    this->dock = dock;
 }
 
 bool WTile::isEmptyTile() {
     return this->isEmpty;
 }
 
-void WTile::setEmpty(bool isE) {
-    this->isEmpty = isE;
+void WTile::setEmpty(bool empty) {
+    this->isEmpty = empty;
 }

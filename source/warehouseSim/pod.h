@@ -1,23 +1,28 @@
 #ifndef POD_H
 #define POD_H
 
-#include "wtile.h"
-#include <QList>
+#include <QPoint>
+#include <QSet>
 
-class Pod : public WTile
+class Pod
 {
-    Q_OBJECT
 public:
-    Pod(int id, QList<int> prods, int origin_x, int origin_y);
-    bool isInProducts(int prodNum);
+    Pod(QSet<int> prods, int origin_x, int origin_y);
+    bool hasProduct(int prodNum);
+    void addProduct(int prodNum);
     void removeProduct(int prodNum);
+    QPoint getPosition();
+    void setPosition(QPoint pos);
+    QPoint getOriginalPosition();
+    void setPickedUp(bool picked);
     bool isPickedUp();
-    void pickUp();
-    void putDown();
+    bool isReserved();
 private:
-    QList<int> products;
+    QSet<int> products;
+    QPoint pos;
+    QPoint originalPos;
     bool pickedUp;
-    QPoint* originalPos;
+    bool reserved;
 };
 
 #endif // POD_H

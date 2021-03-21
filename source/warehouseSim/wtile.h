@@ -3,30 +3,25 @@
 
 #include <QObject>
 #include <QPoint>
-#include <tuple>
-
-enum State {
-    GO_CHARGE,
-    GO_POD,
-    GO_DELIVER,
-    RETURN_POD,
-    WAIT
-};
 
 class WTile : public QObject {
     Q_OBJECT
 public:
-    void setLocation(int x, int y);
-    void setLocation(QPoint* p);
-    QPoint* getLocation();
-    void setID(int i);
-    int getID();
+    WTile();
+    void setTarget(int prodNum);
+    void clearTarget();
+    bool isTarget();
+    int getTarget();
+    bool isDock();
+    void setDock(bool dock);
+
     bool isEmptyTile();
-    void setEmpty(bool isE);
+    void setEmpty(bool empty);
 protected:
     QPoint* location;
+    int target;
+    bool dock;
     bool isEmpty;
-    int id;
 };
 
 #endif // WTILE_H

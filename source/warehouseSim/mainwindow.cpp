@@ -8,12 +8,24 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    _width=12;
+    _height=12;
 
-    _height=0;
-    _width=0;
-
-    _model= new Model();
-    _model->setSize(_height,_width);
+    _model= new Model(_width, _height, 20);
+    // ez csak a minta szerinti állapot
+    _model->createDock(0, 1);
+    _model->createDock(0, 3);
+    _model->createDock(0, 5);
+    _model->createDock(0, 7);
+    _model->createRobot(11, 8);
+    _model->createRobot(11, 9);
+    _model->createRobot(11, 10);
+    _model->createTarget(2, 11, 1);
+    _model->createTarget(4, 11, 2);
+    _model->createTarget(6, 11, 3);
+    _model->createTarget(8, 11, 4);
+    _model->tick();
+    //_model->setSize(_height,_width);
 
     window= new QWidget;
     window->setWindowTitle("Waresim");
@@ -39,11 +51,11 @@ MainWindow::~MainWindow()
 void MainWindow::setupWindow()
 {
     QFont f( "Arial", 45, QFont::Bold);
-    QLabel *asd = new QLabel("Waresim");
-    asd->setStyleSheet("QLabel { color : gray; }");
-    asd->setFont(f);
+    QLabel *title = new QLabel("Waresim");
+    title->setStyleSheet("QLabel { color : gray; }");
+    title->setFont(f);
     _titleLayout->setAlignment(Qt::AlignTop);
-    _titleLayout->addWidget(asd);
+    _titleLayout->addWidget(title);
     _titleLayout->addWidget(new QLabel("Press Start or Open editor \nto start or edit the simulation"));
 
     _infoLayout->setAlignment(Qt::AlignLeft);
@@ -121,35 +133,32 @@ void MainWindow::drawTable()
 
 void MainWindow::on_refreshTable()
 {
-
-    for(int i = 0; i < _height; i++)
+    QVector<QVector<WTile*>> warehouse = _model->getWarehouse();
+    for(int i = 0; i < _width; i++)
     {
-        for(int j = 0; j < _width; j++)
+        for(int j = 0; j < _height; j++)
         {
-
-            if(_model->getBoard()[i][j] == 0)
-            {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }"); //ures
-            }
-            if(_model->getBoard()[i][j] == 1)
+            if(_model->getRobot(i, j) != nullptr)
             {
                 _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: gray; }"); //polc
             }
-            if(_model->getBoard()[i][j] == 2)
-            {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: green; }"); //leado cucc
-            }
-            if(_model->getBoard()[i][j] == 3)
+            /*if(_model->getBoard()[i][j] == 3)
             {
                 _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: yellow; }"); //robot
-            }
-            if(_model->getBoard()[i][j] == 4)
+            }*/
+            if (warehouse[i][j]->isEmptyTile())
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: blue; }"); //tolto
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }");
             }
-
+            else if (warehouse[i][j]->isDock())
+            {
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: blue; }");
+            }
+            else if (warehouse[i][j]->isTarget())
+            {
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: green; }");
+            }
         }
-
     }
 }
 
