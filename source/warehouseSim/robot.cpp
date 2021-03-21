@@ -7,6 +7,7 @@ Robot::Robot(int id, int maxP, int x, int y)
     this->maxPower = maxP;
     this->position.setX(x);
     this->position.setY(y);
+    this->direction = NORTH;
     this->pod = nullptr;
 }
 

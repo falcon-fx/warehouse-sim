@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     _height=12;
 
     _model= new Model(_width, _height, 20);
+    connect(_model, SIGNAL(onTick()), this, SLOT(onTick()));
     // ez csak a minta szerinti állapot
     _model->createDock(0, 1);
     _model->createDock(0, 3);
@@ -20,12 +21,13 @@ MainWindow::MainWindow(QWidget *parent)
     _model->createRobot(11, 8);
     _model->createRobot(11, 9);
     _model->createRobot(11, 10);
+    _model->createPod(3, 3, {1, 2});
     _model->createTarget(2, 11, 1);
     _model->createTarget(4, 11, 2);
     _model->createTarget(6, 11, 3);
     _model->createTarget(8, 11, 4);
-    _model->tick();
-    //_model->setSize(_height,_width);
+    timer = new QTimer();
+    connect(timer, SIGNAL(timeout()), _model, SLOT(tick()));
 
     window= new QWidget;
     window->setWindowTitle("Waresim");
@@ -128,24 +130,25 @@ void MainWindow::drawTable()
         }
     }
     //ennek nem itt kene lennie, de meg nem talaltam neki jobb helyet
-    on_refreshTable();
+    refreshTable();
 }
 
-void MainWindow::on_refreshTable()
+void MainWindow::refreshTable()
 {
     QVector<QVector<WTile*>> warehouse = _model->getWarehouse();
     for(int i = 0; i < _width; i++)
     {
         for(int j = 0; j < _height; j++)
         {
+            _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }");
             if(_model->getRobot(i, j) != nullptr)
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: gray; }"); //polc
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: yellow; }");
             }
-            /*if(_model->getBoard()[i][j] == 3)
+            if(_model->getPod(i, j) != nullptr)
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: yellow; }"); //robot
-            }*/
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: gray; }");
+            }
             if (warehouse[i][j]->isEmptyTile())
             {
                 _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }");
@@ -164,29 +167,56 @@ void MainWindow::on_refreshTable()
 
 void MainWindow::editorButtonClicked()
 {
+    timer->stop();
     _editor = new Editor();
-
-    //itt valamit a modellel
-
-    drawTable();
-    on_refreshTable();
-
+    connect(_editor, SIGNAL(applyAndClose()), this, SLOT(editorApplyAndClose()));
 }
 
 void MainWindow::loadButtonClicked()
 {
-
 
 }
 
 void MainWindow::saveButtonClicked()
 {
 
-
 }
 
 void MainWindow::startButtonClicked()
 {
+    timer->start(1000);
+}
 
+void MainWindow::editorApplyAndClose()
+{
+    _model->setSize(_editor->getWidth(), _editor->getHeight());
+    _width = _editor->getWidth();
+    _height = _editor->getHeight();
+    QVector<QPoint> robots = _editor->getRobots();
+    for (int i = 0; i < robots.count(); i++)
+    {
+        _model->createRobot(robots[i].x(), robots[i].y());
+    }
+    QVector<QPair<QPoint, QSet<int>>> pods = _editor->getPods();
+    for (int i = 0; i < pods.count(); i++)
+    {
+        _model->createPod(pods[i].first.x(), pods[i].first.y(), pods[i].second);
+    }
+    QVector<QPair<QPoint, int>> targets = _editor->getTargets();
+    for (int i = 0; i < targets.count(); i++)
+    {
+        _model->createTarget(targets[i].first.x(), targets[i].first.y(), targets[i].second);
+    }
+    QVector<QPoint> docks = _editor->getDocks();
+    for (int i = 0; i < docks.count(); i++)
+    {
+        _model->createDock(docks[i].x(), docks[i].y());
+    }
+    drawTable();
+    refreshTable();
+}
 
+void MainWindow::onTick()
+{
+    refreshTable();
 }

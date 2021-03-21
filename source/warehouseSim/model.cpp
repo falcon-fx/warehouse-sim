@@ -11,6 +11,13 @@ Model::Model(int w, int h, int maxP)
     makeWarehouse();
 }
 
+void Model::setSize(int w, int h)
+{
+    this->width = w;
+    this->height = h;
+    makeWarehouse();
+}
+
 QVector<QVector<WTile*>> Model::getWarehouse()
 {
     return this->warehouse;
@@ -18,6 +25,8 @@ QVector<QVector<WTile*>> Model::getWarehouse()
 
 void Model::makeWarehouse()
 {
+    robots.clear();
+    pods.clear();
     warehouse.clear();
     for (int i = 0; i < width; i++)
     {
@@ -41,7 +50,7 @@ void Model::createRobot(int x, int y)
 
 void Model::createPod(int x, int y, QSet<int> prods)
 {
-    pods.append(new Pod(prods, x, y));
+    pods.append(new Pod(prods, y, x));
 }
 
 QList<Robot*> Model::getRobots()
@@ -62,6 +71,16 @@ Robot* Model::getRobot(int x, int y)
 QList<Pod*> Model::getPods()
 {
     return this->pods;
+}
+
+Pod* Model::getPod(int x, int y)
+{
+    for (int i = 0; i < pods.count(); i++)
+    {
+        if (pods[i]->getPosition().x() == x && pods[i]->getPosition().y() == y)
+            return pods[i];
+    }
+    return nullptr;
 }
 
 void Model::createTarget(int x, int y, int prodNum)
@@ -99,6 +118,7 @@ void Model::tick()
             }
         }
     }
+    emit onTick();
 }
 
 void Model::executeTask(int id)

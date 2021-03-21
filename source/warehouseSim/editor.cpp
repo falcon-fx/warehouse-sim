@@ -1,28 +1,10 @@
 #include "editor.h"
 
-#include <qDebug>
+#include <QDebug>
 
 Editor::Editor()
 {
-    sizeWindow = new QWidget;
-
-    QGridLayout* sizeLayout = new  QGridLayout(sizeWindow);
-    _h = new QLineEdit("10");
-    _w = new QLineEdit("10");
-    okButton = new QPushButton("OK");
-    closeButton = new QPushButton("Close");
-
-    sizeLayout->addWidget(new QLabel("Set size:"),0,1);
-    sizeLayout->addWidget(_h,0,2);
-    sizeLayout->addWidget(_w,0,3);
-    sizeLayout->addWidget(okButton,1,2);
-    sizeLayout->addWidget(closeButton,1,3);
-
-    connect(okButton,SIGNAL(clicked()),this,SLOT(okButtonClicked()));
-    connect(closeButton,SIGNAL(clicked()),this,SLOT(closeButtonClicked()));
-
-    sizeWindow->show();
-
+    setupSizeWindow();
 }
 
 void Editor::okButtonClicked()
@@ -31,11 +13,8 @@ void Editor::okButtonClicked()
     _width=_w->text().toInt();
 
     sizeWindow->close();
-    editor= new QWidget;
-    editor->setWindowTitle("Editor");
 
     setupEditor();
-    editor->show();
 }
 
 void Editor::closeButtonClicked()
@@ -87,6 +66,7 @@ void Editor::setupTable()
 void Editor::setupEditor()
 {
     editor= new QWidget();
+    editor->setWindowTitle("Editor");
     _mainLayout= new QVBoxLayout(editor);
     _gridLayout = new QGridLayout();
     _bottomLayout = new QVBoxLayout();
@@ -147,6 +127,35 @@ void Editor::setupEditor()
     connect(_saveButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
     connect(_applyButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
 
+    robots.clear();
+    pods.clear();
+    targets.clear();
+    docks.clear();
+
+    editor->show();
+}
+
+void Editor::setupSizeWindow()
+{
+    sizeWindow = new QWidget;
+    sizeWindow->setWindowTitle("New");
+
+    QGridLayout* sizeLayout = new QGridLayout(sizeWindow);
+    _h = new QLineEdit("10");
+    _w = new QLineEdit("10");
+    okButton = new QPushButton("OK");
+    closeButton = new QPushButton("Close");
+
+    sizeLayout->addWidget(new QLabel("Set size:"),0,1);
+    sizeLayout->addWidget(_h,0,2);
+    sizeLayout->addWidget(_w,0,3);
+    sizeLayout->addWidget(okButton,1,2);
+    sizeLayout->addWidget(closeButton,1,3);
+
+    connect(okButton,SIGNAL(clicked()),this,SLOT(okButtonClicked()));
+    connect(closeButton,SIGNAL(clicked()),this,SLOT(closeButtonClicked()));
+
+    sizeWindow->show();
 }
 
 void Editor::editButtonsClicked()
@@ -202,25 +211,7 @@ void Editor::controlButtonsClicked()
     if(btn->text() == "New")
     {
         editor->close();
-        sizeWindow = new QWidget;
-
-        QGridLayout* sizeLayout = new  QGridLayout(sizeWindow);
-        _h = new QLineEdit("10");
-        _w = new QLineEdit("10");
-        okButton = new QPushButton("OK");
-        closeButton = new QPushButton("Close");
-
-        sizeLayout->addWidget(new QLabel("Set size:"),0,1);
-        sizeLayout->addWidget(_h,0,2);
-        sizeLayout->addWidget(_w,0,3);
-        sizeLayout->addWidget(okButton,1,2);
-        sizeLayout->addWidget(closeButton,1,3);
-
-        connect(okButton,SIGNAL(clicked()),this,SLOT(okButtonClicked()));
-        connect(closeButton,SIGNAL(clicked()),this,SLOT(closeButtonClicked()));
-
-        sizeWindow->show();
-
+        setupSizeWindow();
     }
     else if(btn->text() == "Load")
     {
@@ -232,7 +223,30 @@ void Editor::controlButtonsClicked()
     }
     else if(btn->text() == "Apply and close")
     {
+        qDebug() << "Apply and close";
+        for (int i = 0; i < robots.count(); i++)
+        {
+            robots[i].setX(robots[i].x() / _gridButtons[0][0]->size().width());
+            robots[i].setY(robots[i].y() / _gridButtons[0][0]->size().width());
+        }
+        for (int i = 0; i < pods.count(); i++)
+        {
+            pods[i].first.setX(pods[i].first.x() / _gridButtons[0][0]->size().width());
+            pods[i].first.setY(pods[i].first.y() / _gridButtons[0][0]->size().width());
+        }
+        for (int i = 0; i < targets.count(); i++)
+        {
+            targets[i].first.setX(targets[i].first.x() / _gridButtons[0][0]->size().width());
+            targets[i].first.setY(targets[i].first.y() / _gridButtons[0][0]->size().width());
+        }
+        for (int i = 0; i < docks.count(); i++)
+        {
+            docks[i].setX(docks[i].x() / _gridButtons[0][0]->size().width());
+            docks[i].setY(docks[i].y() / _gridButtons[0][0]->size().width());
+        }
+        emit applyAndClose();
         editor->close();
+        qDebug() << "Apply and close -> close()";
     }
 }
 
@@ -245,6 +259,12 @@ void Editor::controlButtonsClicked()
             _gridButtons[i][j]->setEnabled(false);
     }
 
+    QPoint p = btn->pos() - _gridButtons[0][0]->pos();
+    //QSet<int> prods = {1}; // TODO: ezeket az editor ablakból szedjük majd össze
+    //int prodNum = 1;
+    QPair<QPoint, QSet<int>> pod_pair(p, {1});
+    QPair<QPoint, int> target_pair(p, 1);
+
     switch(status)
     {
     case 1://select
@@ -252,19 +272,94 @@ void Editor::controlButtonsClicked()
         break;
     case 2://robot
         btn->setStyleSheet("QPushButton { background-color: yellow; }");
+        robots.append(p);
+        for (int i = 0; i < pods.count(); i++)
+        {
+            if (pods[i].first == p)
+            {
+                pods.remove(i);
+                break;
+            }
+        }
+        for (int i = 0; i < targets.count(); i++)
+        {
+            if (targets[i].first == p)
+            {
+                targets.remove(i);
+                break;
+            }
+        }
+        docks.removeOne(p);
         break;
     case 3://pod
         btn->setStyleSheet("QPushButton { background-color: gray; }");
+        robots.removeOne(p);
+        pods.append(pod_pair);
+        for (int i = 0; i < targets.count(); i++)
+        {
+            if (targets[i].first == p)
+            {
+                targets.remove(i);
+                break;
+            }
+        }
+        docks.removeOne(p);
         break;
     case 4://target
         btn->setStyleSheet("QPushButton { background-color: green; }");
+        robots.removeOne(p);
+        for (int i = 0; i < pods.count(); i++)
+        {
+            if (pods[i].first == p)
+            {
+                pods.remove(i);
+                break;
+            }
+        }
+        targets.append(target_pair);
+        docks.removeOne(p);
         break;
     case 5://dock
         btn->setStyleSheet("QPushButton { background-color: blue; }");
+        robots.removeOne(p);
+        for (int i = 0; i < pods.count(); i++)
+        {
+            if (pods[i].first == p)
+            {
+                pods.remove(i);
+                break;
+            }
+        }
+        for (int i = 0; i < targets.count(); i++)
+        {
+            if (targets[i].first == p)
+            {
+                targets.remove(i);
+                break;
+            }
+        }
+        docks.append(p);
         break;
     case 6://delete
         btn->setStyleSheet("QPushButton { background-color: white; }");
+        robots.removeOne(p);
+        for (int i = 0; i < pods.count(); i++)
+        {
+            if (pods[i].first == p)
+            {
+                pods.remove(i);
+                break;
+            }
+        }
+        for (int i = 0; i < targets.count(); i++)
+        {
+            if (targets[i].first == p)
+            {
+                targets.remove(i);
+                break;
+            }
+        }
+        docks.removeOne(p);
         break;
     }
-
 }

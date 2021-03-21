@@ -7,11 +7,11 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QTimer>
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -26,12 +26,13 @@ protected:
     QGridLayout* _gridLayout;
     QVector<QVector<QPushButton*>> _gridButtons;
     QHBoxLayout* buttonContainer;
+    QTimer* timer;
 private:
     Model* _model;
     Editor* _editor;
     void setupWindow();
     void drawTable();
-    void on_refreshTable();
+    void refreshTable();
     int Size;
     int _height;
     int _width;
@@ -40,7 +41,8 @@ private slots:
     void startButtonClicked();
     void saveButtonClicked();
     void loadButtonClicked();
-
-
+    void editorApplyAndClose();
+    void onTick();
 };
+
 #endif // MAINWINDOW_H

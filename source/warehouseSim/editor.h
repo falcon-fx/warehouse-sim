@@ -7,12 +7,22 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QObject>
+#include <QVector>
+#include <QPoint>
+#include <QSet>
+#include <QPair>
 
 class Editor : public QObject
 {
     Q_OBJECT
 public:
     Editor();
+    int getHeight() { return this->_height; }
+    int getWidth() { return this->_width; }
+    QVector<QPoint> getRobots() { return this->robots; }
+    QVector<QPair<QPoint, QSet<int>>> getPods() { return this->pods; }
+    QVector<QPair<QPoint, int>> getTargets() { return this->targets; }
+    QVector<QPoint> getDocks() { return this->docks; }
 private:
      QWidget *editor;
      QWidget *sizeWindow;
@@ -52,7 +62,13 @@ private:
      int _width;
      int status;//1-select 2-robot 3-pod 4-target 5-dock 6-delete
 
+     QVector<QPoint> robots;
+     QVector<QPair<QPoint, QSet<int>>> pods;
+     QVector<QPair<QPoint, int>> targets;
+     QVector<QPoint> docks;
+
      void setupEditor();
+     void setupSizeWindow();
      void setupTable();
 
 private slots:
@@ -64,6 +80,8 @@ private slots:
 
      void gridButtonClicked();
 
+signals:
+     void applyAndClose();
 };
 
 #endif // EDITOR_H

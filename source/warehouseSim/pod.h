@@ -16,6 +16,7 @@ public:
     QPoint getOriginalPosition();
     void setPickedUp(bool picked);
     bool isPickedUp();
+    void setReserved(bool reserved);
     bool isReserved();
 private:
     QSet<int> products;

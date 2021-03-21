@@ -1,6 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include <QObject>
 #include <QVector>
 #include <QList>
 #include <QQueue>
@@ -35,21 +36,27 @@ struct Task
     Weight weight;
 };
 
-class Model
+class Model : public QObject
 {
+    Q_OBJECT
 public:
     Model(int w, int h, int maxP);
+    void setSize(int w, int h);
     QVector<QVector<WTile*>> getWarehouse();
     void createRobot(int x, int y);
     QList<Robot*> getRobots();
     Robot* getRobot(int x, int y);
     void createPod(int x, int y, QSet<int> prods);
     QList<Pod*> getPods();
+    Pod* getPod(int x, int y);
     void createTarget(int x, int y, int prodNum);
     void createDock(int x, int y);
     void createOrder(int prodNum);
     QQueue<int> getOrders();
+public slots:
     void tick();
+signals:
+    void onTick();
 private:
     int width;
     int height;

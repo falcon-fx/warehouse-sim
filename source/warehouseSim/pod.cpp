@@ -52,6 +52,11 @@ bool Pod::isPickedUp()
     return this->pickedUp;
 }
 
+void Pod::setReserved(bool reserved)
+{
+    this->reserved = reserved;
+}
+
 bool Pod::isReserved()
 {
     return this->reserved;
