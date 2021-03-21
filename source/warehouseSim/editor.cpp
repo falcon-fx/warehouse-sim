@@ -83,6 +83,9 @@ void Editor::setupEditor()
     //_undoButton= new QPushButton("Undo");
     //_redoButton= new QPushButton("Redo");
 
+    _prodNumsLEdit = new QLineEdit();
+    _prodNumCBox = new QComboBox();
+
     _newButton= new QPushButton("New");
     _loadButton= new QPushButton("Load");
     _saveButton= new QPushButton("Save");
@@ -92,14 +95,15 @@ void Editor::setupEditor()
 
     _editButtonsLayout->addWidget(_selectButton);
     _editButtonsLayout->addWidget(_robotButton);
-    _editButtonsLayout->addWidget(_podButton);
-    _editButtonsLayout->addWidget(_targetButton);
     _editButtonsLayout->addWidget(_dockButton);
     _editButtonsLayout->addWidget(_deleteButton);
     //_editButtonsLayout->addWidget(_undoButton);
     //_editButtonsLayout->addWidget(_redoButton);
 
-    //info cuccokat valahogy kitalalni
+    _infoLayout->addWidget(_prodNumsLEdit, 0, 0);
+    _infoLayout->addWidget(_podButton, 0, 1);
+    _infoLayout->addWidget(_prodNumCBox, 0, 2);
+    _infoLayout->addWidget(_targetButton, 0, 3);
 
     _infoButtonsLayout->addWidget(_newButton);
     _infoButtonsLayout->addWidget(_loadButton);
@@ -131,6 +135,9 @@ void Editor::setupEditor()
     pods.clear();
     targets.clear();
     docks.clear();
+
+    prodNums.clear();
+    _prodNumCBox->clear();
 
     editor->show();
 }
@@ -223,7 +230,6 @@ void Editor::controlButtonsClicked()
     }
     else if(btn->text() == "Apply and close")
     {
-        qDebug() << "Apply and close";
         for (int i = 0; i < robots.count(); i++)
         {
             robots[i].setX(robots[i].x() / _gridButtons[0][0]->size().width());
@@ -246,24 +252,34 @@ void Editor::controlButtonsClicked()
         }
         emit applyAndClose();
         editor->close();
-        qDebug() << "Apply and close -> close()";
     }
 }
 
  void Editor::gridButtonClicked()
 {
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
-    for (int i = 0; i < _height; i++)
+    /*for (int i = 0; i < _height; i++)
     {
         for (int j = 0; j < _width; j++)
-            _gridButtons[i][j]->setEnabled(false);
-    }
+            _gridButtons[i][j]->setEnabled(true);
+    }*/
 
     QPoint p = btn->pos() - _gridButtons[0][0]->pos();
-    //QSet<int> prods = {1}; // TODO: ezeket az editor ablakból szedjük majd össze
-    //int prodNum = 1;
-    QPair<QPoint, QSet<int>> pod_pair(p, {1});
-    QPair<QPoint, int> target_pair(p, 1);
+    QSet<int> prods;
+    QStringList numbers = _prodNumsLEdit->text().split(",");
+    for (int i = 0; i < numbers.count(); i++)
+    {
+        prods.insert(numbers[i].toInt());
+        prodNums.insert(numbers[i].toInt());
+    }
+    QString podText ="P\n";
+    foreach (const int &value, prods)
+    {
+        podText += QString::number(value) + " ";
+    }
+    int prodNum = _prodNumCBox->currentText().toInt();
+    QPair<QPoint, QSet<int>> pod_pair(p, prods);
+    QPair<QPoint, int> target_pair(p, prodNum);
 
     switch(status)
     {
@@ -272,6 +288,7 @@ void Editor::controlButtonsClicked()
         break;
     case 2://robot
         btn->setStyleSheet("QPushButton { background-color: yellow; }");
+        btn->setText("");
         robots.append(p);
         for (int i = 0; i < pods.count(); i++)
         {
@@ -293,6 +310,10 @@ void Editor::controlButtonsClicked()
         break;
     case 3://pod
         btn->setStyleSheet("QPushButton { background-color: gray; }");
+        btn->setText(podText);
+        foreach (const int &value, prodNums)
+            if (_prodNumCBox->findText(QString::number(value)) == -1)
+                _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
         robots.removeOne(p);
         pods.append(pod_pair);
         for (int i = 0; i < targets.count(); i++)
@@ -306,7 +327,10 @@ void Editor::controlButtonsClicked()
         docks.removeOne(p);
         break;
     case 4://target
+        if (_prodNumCBox->count() == 0)
+            break;
         btn->setStyleSheet("QPushButton { background-color: green; }");
+        btn->setText(QString::number(prodNum));
         robots.removeOne(p);
         for (int i = 0; i < pods.count(); i++)
         {
@@ -321,6 +345,7 @@ void Editor::controlButtonsClicked()
         break;
     case 5://dock
         btn->setStyleSheet("QPushButton { background-color: blue; }");
+        btn->setText("");
         robots.removeOne(p);
         for (int i = 0; i < pods.count(); i++)
         {

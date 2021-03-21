@@ -5,6 +5,7 @@ Robot::Robot(int id, int maxP, int x, int y)
     this->id = id;
     this->power = maxP;
     this->maxPower = maxP;
+    this->usedPower = 0;
     this->position.setX(x);
     this->position.setY(y);
     this->direction = NORTH;
@@ -24,6 +25,17 @@ int Robot::getPower()
 void Robot::setPower(int p)
 {
     this->power = p;
+}
+
+void Robot::lowerPower()
+{
+    this->power--;
+    this->usedPower++;
+}
+
+int Robot::getUsedPower()
+{
+    return this->usedPower;
 }
 
 Robot::Direction Robot::getDirection()

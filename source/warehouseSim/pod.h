@@ -11,6 +11,7 @@ public:
     bool hasProduct(int prodNum);
     void addProduct(int prodNum);
     void removeProduct(int prodNum);
+    QSet<int> getProducts();
     QPoint getPosition();
     void setPosition(QPoint pos);
     QPoint getOriginalPosition();

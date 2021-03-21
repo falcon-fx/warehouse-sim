@@ -11,6 +11,7 @@
 #include <QPoint>
 #include <QSet>
 #include <QPair>
+#include <QComboBox>
 
 class Editor : public QObject
 {
@@ -53,6 +54,10 @@ private:
      QPushButton* _undoButton;
      QPushButton* _redoButton;
 
+     //inputs:
+     QLineEdit* _prodNumsLEdit;
+     QComboBox* _prodNumCBox;
+
      QPushButton* _newButton;
      QPushButton* _loadButton;
      QPushButton* _saveButton;
@@ -66,6 +71,8 @@ private:
      QVector<QPair<QPoint, QSet<int>>> pods;
      QVector<QPair<QPoint, int>> targets;
      QVector<QPoint> docks;
+
+     QSet<int> prodNums;
 
      void setupEditor();
      void setupSizeWindow();

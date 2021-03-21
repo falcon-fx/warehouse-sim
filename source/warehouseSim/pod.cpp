@@ -26,6 +26,11 @@ void Pod::removeProduct(int prodNum)
     this->products.remove(prodNum);
 }
 
+QSet<int> Pod::getProducts()
+{
+    return this->products;
+}
+
 QPoint Pod::getPosition()
 {
     return this->pos;

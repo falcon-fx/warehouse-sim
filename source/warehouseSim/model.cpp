@@ -45,7 +45,7 @@ void Model::createRobot(int x, int y)
     robots.append(new Robot(robotCount++, this->maxPower, y, x));
     QQueue<Task> task_list;
     tasks.append(task_list);
-    warehouse[y][x]->setEmpty(false);
+    //warehouse[y][x]->setEmpty(false);
 }
 
 void Model::createPod(int x, int y, QSet<int> prods)

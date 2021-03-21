@@ -19,6 +19,8 @@ public:
     int getID();
     int getPower();
     void setPower(int p);
+    void lowerPower();
+    int getUsedPower();
     Direction getDirection();
     QPoint getPosition();
     QPoint getNextPosition();
@@ -36,6 +38,7 @@ private:
     int id;
     int power;
     int maxPower;
+    int usedPower;
     Direction direction;
     QPoint position;
     Pod* pod;

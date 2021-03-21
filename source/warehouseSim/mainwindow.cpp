@@ -61,7 +61,7 @@ void MainWindow::setupWindow()
     _titleLayout->addWidget(new QLabel("Press Start or Open editor \nto start or edit the simulation"));
 
     _infoLayout->setAlignment(Qt::AlignLeft);
-    _infoLayout->addWidget(new QLabel("itt lesznek a robot infok"));
+    //_infoLayout->addWidget(new QLabel("itt lesznek a robot infok"));
 
     QPushButton *loadButton = new QPushButton("Load");
     QPushButton *saveButton = new QPushButton("Save");
@@ -147,7 +147,13 @@ void MainWindow::refreshTable()
             }
             if(_model->getPod(i, j) != nullptr)
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: gray; }");
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: gray; color: black; }");
+                QString podText ="P\n";
+                foreach (const int &value, _model->getPod(i, j)->getProducts())
+                {
+                    podText += QString::number(value) + " ";
+                }
+                _gridButtons[i][j]->setText(podText);
             }
             if (warehouse[i][j]->isEmptyTile())
             {
@@ -159,7 +165,8 @@ void MainWindow::refreshTable()
             }
             else if (warehouse[i][j]->isTarget())
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: green; }");
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: green; color: black; }");
+                _gridButtons[i][j]->setText(QString::number(warehouse[i][j]->getTarget()));
             }
         }
     }
@@ -184,7 +191,7 @@ void MainWindow::saveButtonClicked()
 
 void MainWindow::startButtonClicked()
 {
-    timer->start(1000);
+    //timer->start(1000);
 }
 
 void MainWindow::editorApplyAndClose()
@@ -198,6 +205,7 @@ void MainWindow::editorApplyAndClose()
         _model->createRobot(robots[i].x(), robots[i].y());
     }
     QVector<QPair<QPoint, QSet<int>>> pods = _editor->getPods();
+    qDebug() << pods;
     for (int i = 0; i < pods.count(); i++)
     {
         _model->createPod(pods[i].first.x(), pods[i].first.y(), pods[i].second);
