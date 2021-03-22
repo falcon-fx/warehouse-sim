@@ -267,11 +267,14 @@ void Editor::controlButtonsClicked()
 
     QPoint p = btn->pos() - _gridButtons[0][0]->pos();
     QSet<int> prods;
-    QStringList numbers = _prodNumsLEdit->text().split(",");
-    for (int i = 0; i < numbers.count(); i++)
+    if (!_prodNumsLEdit->text().isEmpty())
     {
-        prods.insert(numbers[i].toInt());
-        prodNums.insert(numbers[i].toInt());
+        QStringList numbers = _prodNumsLEdit->text().split(",");
+        for (int i = 0; i < numbers.count(); i++)
+        {
+            prods.insert(numbers[i].toInt());
+            prodNums.insert(numbers[i].toInt());
+        }
     }
     QString podText ="P\n";
     foreach (const int &value, prods)
