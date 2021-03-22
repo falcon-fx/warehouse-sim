@@ -49,10 +49,15 @@ public:
     void createPod(int x, int y, QSet<int> prods);
     QList<Pod*> getPods();
     Pod* getPod(int x, int y);
+    QList<QPair<QPoint, int>> getTargets();
+    QList<QPoint> getDocks();
     void createTarget(int x, int y, int prodNum);
     void createDock(int x, int y);
     void createOrder(int prodNum);
     QQueue<int> getOrders();
+
+    void save(QString filename);
+    void load(QString filename);
 public slots:
     void tick();
 signals:

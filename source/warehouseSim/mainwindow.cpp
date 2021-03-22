@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QLabel>
 #include <QFont>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -223,12 +224,14 @@ void MainWindow::editorButtonClicked()
 
 void MainWindow::loadButtonClicked()
 {
-
+    QString filename = QFileDialog::getOpenFileName(this, tr("Load State"), "", tr("Waresim State (*.wss)"));
+    _model->load(filename);
 }
 
 void MainWindow::saveButtonClicked()
 {
-
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save State"), "", tr("Waresim State (*.wss)"));
+    _model->save(filename);
 }
 
 void MainWindow::startButtonClicked()

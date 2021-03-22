@@ -38,6 +38,11 @@ int Robot::getUsedPower()
     return this->usedPower;
 }
 
+void Robot::setUsedPower(int up)
+{
+    this->usedPower = up;
+}
+
 Robot::Direction Robot::getDirection()
 {
     return this->direction;

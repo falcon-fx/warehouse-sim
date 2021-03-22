@@ -1,5 +1,6 @@
 #include "model.h"
 #include <QDebug>
+#include <QFile>
 
 //CSAK TEST
 Model::Model(int w, int h, int maxP)
@@ -81,6 +82,41 @@ Pod* Model::getPod(int x, int y)
             return pods[i];
     }
     return nullptr;
+}
+
+QList<QPair<QPoint, int>> Model::getTargets()
+{
+    QList<QPair<QPoint, int>> list;
+    for (int i = 0; i < width; i++)
+    {
+        for (int j = 0; j < height; j++)
+        {
+            if (warehouse[i][j]->isTarget())
+            {
+                QPoint point(j, i);
+                QPair<QPoint, int> pair(point, warehouse[i][j]->getTarget());
+                list.append(pair);
+            }
+        }
+    }
+    return list;
+}
+
+QList<QPoint> Model::getDocks()
+{
+    QList<QPoint> list;
+    for (int i = 0; i < width; i++)
+    {
+        for (int j = 0; j < height; j++)
+        {
+            if (warehouse[i][j]->isDock())
+            {
+                QPoint point(j, i);
+                list.append(point);
+            }
+        }
+    }
+    return list;
 }
 
 void Model::createTarget(int x, int y, int prodNum)
@@ -210,4 +246,113 @@ QPoint Model::findClosestPod(QPoint pos, int prodNum)
         }
     }
     return closest;
+}
+
+void Model::save(QString filename)
+{
+    QFile file(filename);
+
+    if (!file.open(QFile::WriteOnly))
+    {
+        qDebug() << "Failed to open file" << filename;
+        return;
+    }
+
+    file.write(QString::number(width).toUtf8() + " " + QString::number(height).toUtf8() + "\n");
+    file.write(QString::number(robots.count()).toUtf8() + "\n");
+    for (int i = 0; i < robots.count(); i++)
+    {
+        file.write(QString::number(robots[i]->getPosition().x()).toUtf8() + " ");
+        file.write(QString::number(robots[i]->getPosition().y()).toUtf8() + " ");
+        file.write(QString::number(robots[i]->getPower()).toUtf8() + " ");
+        file.write(QString::number(robots[i]->getUsedPower()).toUtf8() + "\n");
+    }
+    file.write(QString::number(pods.count()).toUtf8() + "\n");
+    for (int i = 0; i < pods.count(); i++)
+    {
+        file.write(QString::number(pods[i]->getPosition().x()).toUtf8() + " ");
+        file.write(QString::number(pods[i]->getPosition().y()).toUtf8() + " ");
+        file.write(QString::number(pods[i]->getProducts().count()).toUtf8() + " ");
+        foreach (const int &v, pods[i]->getProducts())
+        {
+            file.write(QString::number(v).toUtf8() + " ");
+        }
+        file.write("\n");
+    }
+    QList<QPair<QPoint, int>> targets = getTargets();
+    file.write(QString::number(targets.count()).toUtf8() + "\n");
+    for (int i = 0; i < targets.count(); i++)
+    {
+        file.write(QString::number(targets[i].first.x()).toUtf8() + " ");
+        file.write(QString::number(targets[i].first.y()).toUtf8() + " ");
+        file.write(QString::number(targets[i].second).toUtf8() + "\n");
+    }
+    QList<QPoint> docks = getDocks();
+    file.write(QString::number(docks.count()).toUtf8() + "\n");
+    for (int i = 0; i < targets.count(); i++)
+    {
+        file.write(QString::number(docks[i].x()).toUtf8() + " ");
+        file.write(QString::number(docks[i].y()).toUtf8() + "\n");
+    }
+    file.close();
+}
+
+void Model::load(QString filename)
+{
+    QFile file(filename);
+
+    if (!file.open(QFile::ReadOnly))
+    {
+        qDebug() << "Failed to open file" << filename;
+        return;
+    }
+
+    QTextStream in(&file);
+    int w, h;
+    in >> w >> h;
+    this->setSize(w, h);
+    int rc;
+    in >> rc;
+    for (int i = 0; i < rc; i++)
+    {
+        int x, y, pwr, upwr;
+        in >> x >> y >> pwr >> upwr;
+        createRobot(x, y);
+        QPoint p(x, y);
+        robots[i]->setPosition(p);
+        robots[i]->setPower(pwr);
+        robots[i]->setUsedPower(upwr);
+    }
+    int pc;
+    in >> pc;
+    for (int i = 0; i < pc; i++)
+    {
+        int x, y, prc;
+        in >> x >> y >> prc;
+        QSet<int> pr;
+        for (int j = 0; j < prc; j++)
+        {
+            int prn;
+            in >> prn;
+            pr.insert(prn);
+        }
+        createPod(y, x, pr);
+    }
+    int tc;
+    in >> tc;
+    for (int i = 0; i < tc; i++)
+    {
+        int x, y, tn;
+        in >> x >> y >> tn;
+        createTarget(x, y, tn);
+    }
+    int dc;
+    in >> dc;
+    for (int i = 0; i < dc; i++)
+    {
+        int x, y;
+        in >> x >> y;
+        createDock(x, y);
+    }
+    emit onTick();
 }

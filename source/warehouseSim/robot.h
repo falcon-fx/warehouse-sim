@@ -21,6 +21,7 @@ public:
     void setPower(int p);
     void lowerPower();
     int getUsedPower();
+    void setUsedPower(int up);
     Direction getDirection();
     QPoint getPosition();
     QPoint getNextPosition();
