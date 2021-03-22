@@ -12,10 +12,11 @@ MainWindow::MainWindow(QWidget *parent)
     _width=12;
     _height=12;
 
-    _model= new Model(_width, _height, 20);
+    _model= new Model(0, 0, 20);
     connect(_model, SIGNAL(onTick()), this, SLOT(onTick()));
     connect(_model, SIGNAL(onLoad()), this, SLOT(onLoad()));
     // ez csak a minta szerinti állapot
+    _model->setSize(12, 12);
     _model->createDock(0, 1);
     _model->createDock(0, 3);
     _model->createDock(0, 5);
@@ -201,11 +202,7 @@ void MainWindow::refreshTable()
                 }
                 _gridButtons[i][j]->setText(podText);
             }
-            if (warehouse[i][j]->isEmptyTile())
-            {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }");
-            }
-            else if (warehouse[i][j]->isDock())
+            if (warehouse[i][j]->isDock())
             {
                 _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213); }");
             }
