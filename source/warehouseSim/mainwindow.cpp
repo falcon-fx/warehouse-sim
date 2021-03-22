@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     _model= new Model(_width, _height, 20);
     connect(_model, SIGNAL(onTick()), this, SLOT(onTick()));
+    connect(_model, SIGNAL(onLoad()), this, SLOT(onLoad()));
     // ez csak a minta szerinti állapot
     _model->createDock(0, 1);
     _model->createDock(0, 3);
@@ -271,5 +272,11 @@ void MainWindow::editorApplyAndClose()
 
 void MainWindow::onTick()
 {
+    refreshTable();
+}
+
+void MainWindow::onLoad()
+{
+    drawTable();
     refreshTable();
 }

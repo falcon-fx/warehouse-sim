@@ -43,6 +43,7 @@ private slots:
     void loadButtonClicked();
     void editorApplyAndClose();
     void onTick();
+    void onLoad();
 };
 
 #endif // MAINWINDOW_H

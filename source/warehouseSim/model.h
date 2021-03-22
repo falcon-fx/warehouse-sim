@@ -62,6 +62,7 @@ public slots:
     void tick();
 signals:
     void onTick();
+    void onLoad();
 private:
     int width;
     int height;

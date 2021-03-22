@@ -354,5 +354,5 @@ void Model::load(QString filename)
         in >> x >> y;
         createDock(x, y);
     }
-    emit onTick();
+    emit onLoad();
 }
