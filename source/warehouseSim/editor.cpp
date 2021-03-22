@@ -258,6 +258,7 @@ void Editor::controlButtonsClicked()
  void Editor::gridButtonClicked()
 {
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
+    btn->setText("");
     /*for (int i = 0; i < _height; i++)
     {
         for (int j = 0; j < _width; j++)
@@ -287,8 +288,7 @@ void Editor::controlButtonsClicked()
         //btn->setStyleSheet("QPushButton { background-color: gray; }");
         break;
     case 2://robot
-        btn->setStyleSheet("QPushButton { background-color: yellow; }");
-        btn->setText("");
+        btn->setStyleSheet("QPushButton { background-color: rgb(255, 192, 0); }");
         robots.append(p);
         for (int i = 0; i < pods.count(); i++)
         {
@@ -309,7 +309,7 @@ void Editor::controlButtonsClicked()
         docks.removeOne(p);
         break;
     case 3://pod
-        btn->setStyleSheet("QPushButton { background-color: gray; }");
+        btn->setStyleSheet("QPushButton { background-color: rgb(230, 230, 230); }");
         btn->setText(podText);
         foreach (const int &value, prodNums)
             if (_prodNumCBox->findText(QString::number(value)) == -1)
@@ -329,7 +329,7 @@ void Editor::controlButtonsClicked()
     case 4://target
         if (_prodNumCBox->count() == 0)
             break;
-        btn->setStyleSheet("QPushButton { background-color: green; }");
+        btn->setStyleSheet("QPushButton { background-color: rgb(146, 208, 80); }");
         btn->setText(QString::number(prodNum));
         robots.removeOne(p);
         for (int i = 0; i < pods.count(); i++)
@@ -344,8 +344,7 @@ void Editor::controlButtonsClicked()
         docks.removeOne(p);
         break;
     case 5://dock
-        btn->setStyleSheet("QPushButton { background-color: blue; }");
-        btn->setText("");
+        btn->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213); }");
         robots.removeOne(p);
         for (int i = 0; i < pods.count(); i++)
         {

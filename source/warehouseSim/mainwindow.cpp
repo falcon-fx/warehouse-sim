@@ -21,7 +21,48 @@ MainWindow::MainWindow(QWidget *parent)
     _model->createRobot(11, 8);
     _model->createRobot(11, 9);
     _model->createRobot(11, 10);
-    _model->createPod(3, 3, {1, 2});
+    _model->createPod(2, 1, {});
+    _model->createPod(2, 2, {});
+    _model->createPod(2, 3, {1});
+    _model->createPod(2, 4, {});
+    _model->createPod(2, 5, {2});
+    _model->createPod(2, 6, {2});
+    _model->createPod(2, 7, {});
+    _model->createPod(3, 1, {});
+    _model->createPod(3, 2, {1, 3, 4});
+    _model->createPod(3, 3, {});
+    _model->createPod(3, 4, {1});
+    _model->createPod(3, 5, {});
+    _model->createPod(3, 6, {});
+    _model->createPod(3, 7, {});
+    _model->createPod(5, 1, {});
+    _model->createPod(5, 2, {2, 4});
+    _model->createPod(5, 3, {4});
+    _model->createPod(5, 4, {});
+    _model->createPod(5, 5, {});
+    _model->createPod(5, 6, {});
+    _model->createPod(5, 7, {});
+    _model->createPod(6, 1, {});
+    _model->createPod(6, 2, {});
+    _model->createPod(6, 3, {});
+    _model->createPod(6, 4, {});
+    _model->createPod(6, 5, {});
+    _model->createPod(6, 6, {});
+    _model->createPod(6, 7, {});
+    _model->createPod(8, 1, {1});
+    _model->createPod(8, 2, {});
+    _model->createPod(8, 3, {});
+    _model->createPod(8, 4, {4});
+    _model->createPod(8, 5, {4});
+    _model->createPod(8, 6, {});
+    _model->createPod(8, 7, {});
+    _model->createPod(9, 1, {3});
+    _model->createPod(9, 2, {3});
+    _model->createPod(9, 3, {1});
+    _model->createPod(9, 4, {3});
+    _model->createPod(9, 5, {});
+    _model->createPod(9, 6, {});
+    _model->createPod(9, 7, {});
     _model->createTarget(2, 11, 1);
     _model->createTarget(4, 11, 2);
     _model->createTarget(6, 11, 3);
@@ -141,13 +182,14 @@ void MainWindow::refreshTable()
         for(int j = 0; j < _height; j++)
         {
             _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }");
+            _gridButtons[i][j]->setText("");
             if(_model->getRobot(i, j) != nullptr)
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: yellow; }");
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(255, 192, 0); }");
             }
             if(_model->getPod(i, j) != nullptr)
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: gray; color: black; }");
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(230, 230, 230); color: black; }");
                 QString podText ="P\n";
                 foreach (const int &value, _model->getPod(i, j)->getProducts())
                 {
@@ -161,11 +203,11 @@ void MainWindow::refreshTable()
             }
             else if (warehouse[i][j]->isDock())
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: blue; }");
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213); }");
             }
             else if (warehouse[i][j]->isTarget())
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: green; color: black; }");
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(146, 208, 80); color: black; }");
                 _gridButtons[i][j]->setText(QString::number(warehouse[i][j]->getTarget()));
             }
         }
