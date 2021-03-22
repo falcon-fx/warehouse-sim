@@ -135,6 +135,8 @@ void MainWindow::setupWindow()
 
 void MainWindow::drawTable()
 {
+    _width = _model->getWidth();
+    _height = _model->getHeight();
     if (_gridLayout->rowCount() != 0 || _gridLayout->columnCount() != 0) {
             while ( QLayoutItem* item = _gridLayout->takeAt( 0 ) )
                 {

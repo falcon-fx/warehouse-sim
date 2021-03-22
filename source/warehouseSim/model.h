@@ -56,6 +56,9 @@ public:
     void createOrder(int prodNum);
     QQueue<int> getOrders();
 
+    int getWidth();
+    int getHeight();
+
     void save(QString filename);
     void load(QString filename);
 public slots:

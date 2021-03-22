@@ -28,6 +28,7 @@ void Model::makeWarehouse()
 {
     robots.clear();
     pods.clear();
+    tasks.clear();
     warehouse.clear();
     for (int i = 0; i < width; i++)
     {
@@ -134,6 +135,16 @@ void Model::createDock(int x, int y)
 QQueue<int> Model::getOrders()
 {
     return this->orders;
+}
+
+int Model::getWidth()
+{
+    return this->width;
+}
+
+int Model::getHeight()
+{
+    return this->height;
 }
 
 void Model::tick()
