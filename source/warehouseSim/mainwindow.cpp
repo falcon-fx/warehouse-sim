@@ -111,7 +111,7 @@ void MainWindow::setupWindow()
     QPushButton *startButton = new QPushButton("Start");
 
     _buttonLayout->setAlignment(Qt::AlignBottom);
-    _buttonLayout->addWidget(new QLabel("No data loaded"),0,0);
+    //_buttonLayout->addWidget(new QLabel("No data loaded"),0,0);
     _buttonLayout->addWidget(loadButton,1,0);
     _buttonLayout->addWidget(saveButton,1,1);
     _buttonLayout->addWidget(editorButton,2,0,1,2);

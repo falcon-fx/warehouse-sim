@@ -289,7 +289,7 @@ void Model::save(QString filename)
     }
     QList<QPoint> docks = getDocks();
     file.write(QString::number(docks.count()).toUtf8() + "\n");
-    for (int i = 0; i < targets.count(); i++)
+    for (int i = 0; i < docks.count(); i++)
     {
         file.write(QString::number(docks[i].x()).toUtf8() + " ");
         file.write(QString::number(docks[i].y()).toUtf8() + "\n");
