@@ -9,8 +9,9 @@ Editor::Editor()
 
 void Editor::okButtonClicked()
 {
-    _height=_h->text().toInt();
-    _width=_w->text().toInt();
+    //_height=_h->text().toInt();
+    //_width=_w->text().toInt();
+    _size = _s->text().toInt();
 
     sizeWindow->close();
 
@@ -35,18 +36,18 @@ void Editor::setupTable()
     _gridButtons.clear();
 
     _gridLayout->setAlignment(Qt::AlignCenter);
-    if(_height<=0 || _width <= 0)
+    if(_size<=0)
     {
         _gridLayout->addWidget(new QLabel("Size cannot be 0 or smaller"));
     }
     else
     {
         _gridButtons.clear();
-        _gridButtons.resize(_height);
-        for (int i = 0; i < _height; i++)
+        _gridButtons.resize(_size);
+        for (int i = 0; i < _size; i++)
         {
-            _gridButtons[i].resize(_width);
-            for (int j = 0; j < _width; j++)
+            _gridButtons[i].resize(_size);
+            for (int j = 0; j < _size; j++)
             {
                 _gridButtons[i][j]= new QPushButton();
                 _gridButtons[i][j]->setFixedSize(QSize(40,40));
@@ -148,14 +149,14 @@ void Editor::setupSizeWindow()
     sizeWindow->setWindowTitle("New");
 
     QGridLayout* sizeLayout = new QGridLayout(sizeWindow);
-    _h = new QLineEdit("10");
-    _w = new QLineEdit("10");
+    _s = new QLineEdit("10");
+    //_w = new QLineEdit("10");
     okButton = new QPushButton("OK");
     closeButton = new QPushButton("Close");
 
     sizeLayout->addWidget(new QLabel("Set size:"),0,1);
-    sizeLayout->addWidget(_h,0,2);
-    sizeLayout->addWidget(_w,0,3);
+    sizeLayout->addWidget(_s,0,2);
+    //sizeLayout->addWidget(_w,0,3);
     sizeLayout->addWidget(okButton,1,2);
     sizeLayout->addWidget(closeButton,1,3);
 
@@ -171,9 +172,9 @@ void Editor::editButtonsClicked()
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
     if(btn->text() !="Undo" && btn->text() !="Redo")
     {
-        for (int i = 0; i < _height; i++)
+        for (int i = 0; i < _size; i++)
         {
-            for (int j = 0; j < _width; j++)
+            for (int j = 0; j < _size; j++)
                 _gridButtons[i][j]->setEnabled(true);
         }
     }

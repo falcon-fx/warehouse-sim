@@ -33,9 +33,7 @@ private:
     void setupWindow();
     void drawTable();
     void refreshTable();
-    int Size;
-    int _height;
-    int _width;
+    int _size;
 private slots:
     void editorButtonClicked();
     void startButtonClicked();

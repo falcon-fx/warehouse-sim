@@ -18,8 +18,7 @@ class Editor : public QObject
     Q_OBJECT
 public:
     Editor();
-    int getHeight() { return this->_height; }
-    int getWidth() { return this->_width; }
+    int getSize() { return  this->_size; }
     QVector<QPoint> getRobots() { return this->robots; }
     QVector<QPair<QPoint, QSet<int>>> getPods() { return this->pods; }
     QVector<QPair<QPoint, int>> getTargets() { return this->targets; }
@@ -31,8 +30,7 @@ private:
      //sizeWindow
      QPushButton* okButton;
      QPushButton* closeButton;
-     QLineEdit* _h;
-     QLineEdit* _w;
+     QLineEdit* _s;
 
      //layouts:
      QVBoxLayout* _mainLayout;
@@ -63,8 +61,7 @@ private:
      QPushButton* _saveButton;
      QPushButton* _applyButton;
 
-     int _height;
-     int _width;
+     int _size;
      int status;//1-select 2-robot 3-pod 4-target 5-dock 6-delete
 
      QVector<QPoint> robots;

@@ -9,10 +9,9 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    _width=12;
-    _height=12;
+    _size=12;
 
-    _model= new Model(_width, _height, 20);
+    _model= new Model(_size, 20);
     connect(_model, SIGNAL(onTick()), this, SLOT(onTick()));
     connect(_model, SIGNAL(onLoad()), this, SLOT(onLoad()));
     // ez csak a minta szerinti állapot
@@ -135,8 +134,7 @@ void MainWindow::setupWindow()
 
 void MainWindow::drawTable()
 {
-    _width = _model->getWidth();
-    _height = _model->getHeight();
+    _size = _model->getSize();
     if (_gridLayout->rowCount() != 0 || _gridLayout->columnCount() != 0) {
             while ( QLayoutItem* item = _gridLayout->takeAt( 0 ) )
                 {
@@ -148,7 +146,7 @@ void MainWindow::drawTable()
     _gridButtons.clear();
 
     _gridLayout->setAlignment(Qt::AlignCenter);
-    if(_height==0 || _width == 0)
+    if(_size==0)
     {
         _gridLayout->addWidget(new QLabel("No data loaded. Please use\n the Load,"
                                           " or Open editor buttons\n to set up the simulation."));
@@ -156,34 +154,30 @@ void MainWindow::drawTable()
     else
     {
         _gridButtons.clear();
-        _gridButtons.resize(_height);
-        for (int i = 0; i < _height; i++)
+        _gridButtons.resize(_size);
+        for (int i = 0; i < _size; i++)
         {
-            _gridButtons[i].resize(_width);
-            for (int j = 0; j < _width; j++)
+            _gridButtons[i].resize(_size);
+            for (int j = 0; j < _size; j++)
             {
                 _gridButtons[i][j]= new QPushButton(this);
                 _gridButtons[i][j]->setFixedSize(QSize(40,40));
                 _gridButtons[i][j]->setEnabled(false);
-                //_gridButtons[i][j]->setStyleSheet("background-color: white");
                 _gridLayout->setSpacing(0);
                 _gridLayout->addWidget(_gridButtons[i][j], i, j);
-
-                //_gridButtons[i][j]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
             }
         }
     }
-    //ennek nem itt kene lennie, de meg nem talaltam neki jobb helyet
     refreshTable();
 }
 
 void MainWindow::refreshTable()
 {
     QVector<QVector<WTile*>> warehouse = _model->getWarehouse();
-    for(int i = 0; i < _width; i++)
+    for(int i = 0; i < _size; i++)
     {
-        for(int j = 0; j < _height; j++)
+        for(int j = 0; j < _size; j++)
         {
             _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }");
             _gridButtons[i][j]->setText("");
@@ -244,9 +238,8 @@ void MainWindow::startButtonClicked()
 
 void MainWindow::editorApplyAndClose()
 {
-    _model->setSize(_editor->getWidth(), _editor->getHeight());
-    _width = _editor->getWidth();
-    _height = _editor->getHeight();
+    _model->setSize(_editor->getSize());
+    _size = _editor->getSize();
     QVector<QPoint> robots = _editor->getRobots();
     for (int i = 0; i < robots.count(); i++)
     {
