@@ -61,8 +61,12 @@ private:
      QPushButton* _saveButton;
      QPushButton* _applyButton;
 
+     QPushButton* selectedButton;
+     bool firstClicked;
+
      int _size;
      int status;//1-select 2-robot 3-pod 4-target 5-dock 6-delete
+
 
      QVector<QPoint> robots;
      QVector<QPair<QPoint, QSet<int>>> pods;
