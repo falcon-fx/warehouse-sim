@@ -40,8 +40,8 @@ class Model : public QObject
 {
     Q_OBJECT
 public:
-    Model(int w, int h, int maxP);
-    void setSize(int w, int h);
+    Model(int s, int maxP);
+    void setSize(int s);
     QVector<QVector<WTile*>> getWarehouse();
     void createRobot(int x, int y);
     QList<Robot*> getRobots();
@@ -56,8 +56,7 @@ public:
     void createOrder(int prodNum);
     QQueue<int> getOrders();
 
-    int getWidth();
-    int getHeight();
+    int getSize();
 
     void save(QString filename);
     void load(QString filename);
@@ -67,8 +66,8 @@ signals:
     void onTick();
     void onLoad();
 private:
-    int width;
-    int height;
+
+    int size;
     QVector<QVector<WTile*>> warehouse;
     void makeWarehouse();
     int maxPower;

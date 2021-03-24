@@ -3,19 +3,17 @@
 #include <QFile>
 
 //CSAK TEST
-Model::Model(int w, int h, int maxP)
+Model::Model(int s, int maxP)
 {
-    this->width = w;
-    this->height = h;
+    this->size = s;
     this->maxPower = maxP;
     this->robotCount = 0;
     makeWarehouse();
 }
 
-void Model::setSize(int w, int h)
+void Model::setSize(int s)
 {
-    this->width = w;
-    this->height = h;
+    this->size = s;
     makeWarehouse();
 }
 
@@ -30,10 +28,10 @@ void Model::makeWarehouse()
     pods.clear();
     tasks.clear();
     warehouse.clear();
-    for (int i = 0; i < width; i++)
+    for (int i = 0; i < size; i++)
     {
         QVector<WTile*> tmp;
-        for (int j = 0; j < height; j++)
+        for (int j = 0; j < size; j++)
         {
             WTile* tile = new WTile();
             tmp.append(tile);
@@ -88,9 +86,9 @@ Pod* Model::getPod(int x, int y)
 QList<QPair<QPoint, int>> Model::getTargets()
 {
     QList<QPair<QPoint, int>> list;
-    for (int i = 0; i < width; i++)
+    for (int i = 0; i < size; i++)
     {
-        for (int j = 0; j < height; j++)
+        for (int j = 0; j < size; j++)
         {
             if (warehouse[i][j]->isTarget())
             {
@@ -106,9 +104,9 @@ QList<QPair<QPoint, int>> Model::getTargets()
 QList<QPoint> Model::getDocks()
 {
     QList<QPoint> list;
-    for (int i = 0; i < width; i++)
+    for (int i = 0; i < size; i++)
     {
-        for (int j = 0; j < height; j++)
+        for (int j = 0; j < size; j++)
         {
             if (warehouse[i][j]->isDock())
             {
@@ -137,14 +135,10 @@ QQueue<int> Model::getOrders()
     return this->orders;
 }
 
-int Model::getWidth()
-{
-    return this->width;
-}
 
-int Model::getHeight()
+int Model::getSize()
 {
-    return this->height;
+    return this->size;
 }
 
 void Model::tick()
@@ -211,9 +205,9 @@ QPoint Model::findClosestTarget(QPoint pos, int prodNum)
 {
     int distance = -1;
     QPoint closest;
-    for (int i = 0; i < width; i++)
+    for (int i = 0; i < size; i++)
     {
-        for (int j = 0; j < height; j++)
+        for (int j = 0; j < size; j++)
         {
             if (warehouse[i][j]->isTarget() && warehouse[i][j]->getTarget() == prodNum)
             {
@@ -269,7 +263,7 @@ void Model::save(QString filename)
         return;
     }
 
-    file.write(QString::number(width).toUtf8() + " " + QString::number(height).toUtf8() + "\n");
+    file.write(QString::number(size).toUtf8() + "\n");
     file.write(QString::number(robots.count()).toUtf8() + "\n");
     for (int i = 0; i < robots.count(); i++)
     {
@@ -319,9 +313,9 @@ void Model::load(QString filename)
     }
 
     QTextStream in(&file);
-    int w, h;
-    in >> w >> h;
-    this->setSize(w, h);
+    int s;
+    in >> s;
+    this->setSize(s);
     int rc;
     in >> rc;
     for (int i = 0; i < rc; i++)
