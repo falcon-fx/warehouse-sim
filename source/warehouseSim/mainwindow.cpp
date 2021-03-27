@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_model, SIGNAL(onTick()), this, SLOT(onTick()));
     connect(_model, SIGNAL(onLoad()), this, SLOT(onLoad()));
     // ez csak a minta szerinti állapot
-    _model->setSize(12, 12);
+    _model->setSize(12);
     _model->createDock(0, 1);
     _model->createDock(0, 3);
     _model->createDock(0, 5);
