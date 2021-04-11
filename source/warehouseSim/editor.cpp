@@ -12,6 +12,7 @@ void Editor::okButtonClicked()
     //_height=_h->text().toInt();
     //_width=_w->text().toInt();
     _size = _s->text().toInt();
+    isSelected=false;
 
     sizeWindow->close();
     firstClicked=true;
@@ -53,7 +54,7 @@ void Editor::setupTable()
                 _gridButtons[i][j]= new QPushButton();
                 _gridButtons[i][j]->setFixedSize(QSize(40,40));
                 _gridButtons[i][j]->setEnabled(false);
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }");
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; border:0.5px solid gray;}");
                 _gridLayout->setSpacing(0);
                 _gridLayout->addWidget(_gridButtons[i][j], i, j);
 
@@ -86,6 +87,7 @@ void Editor::setupEditor()
     //_redoButton= new QPushButton("Redo");
 
     _prodNumsLEdit = new QLineEdit();
+
     _prodNumCBox = new QComboBox();
 
     _newButton= new QPushButton("New");
@@ -219,6 +221,18 @@ void Editor::editButtonsClicked()
     {
 
     }
+
+    if(status!=1) isSelected = false;
+    else isSelected=true;
+
+    for (int i = 0; i < _size; i++)
+    {
+        for (int j = 0; j < _size; j++)
+        {
+            QColor color = _gridButtons[i][j]->palette().button().color();
+            _gridButtons[i][j]->setStyleSheet("border:0.5px solid gray; background-color: " + color.name() +";");
+        }
+    }
 }
 
 void Editor::controlButtonsClicked()
@@ -270,13 +284,9 @@ void Editor::controlButtonsClicked()
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
     btn->setText("");
 
-    /*for (int i = 0; i < _height; i++)
-    {
-        for (int j = 0; j < _width; j++)
-            _gridButtons[i][j]->setEnabled(true);
-    }*/
-
     QPoint p = btn->pos() - _gridButtons[0][0]->pos();
+    qDebug()<< p;
+
     QSet<int> prods;
     if (!_prodNumsLEdit->text().isEmpty())
     {
@@ -292,6 +302,7 @@ void Editor::controlButtonsClicked()
     {
         podText += QString::number(value) + " ";
     }
+
     int prodNum = _prodNumCBox->currentText().toInt();
     QPair<QPoint, QSet<int>> pod_pair(p, prods);
     QPair<QPoint, int> target_pair(p, prodNum);
@@ -300,6 +311,12 @@ void Editor::controlButtonsClicked()
     {
     case 1://select
         //btn->setStyleSheet("QPushButton { background-color: gray; }");
+        if(isSelected)
+        {
+            QColor color = btn->palette().button().color();
+            btn->setStyleSheet("border:3px solid red; background-color: " + color.name() +";");
+        }
+
         break;
     case 2://robot
         btn->setStyleSheet("QPushButton { background-color: rgb(255, 192, 0); }");
