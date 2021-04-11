@@ -69,6 +69,12 @@ void Editor::setupTable()
 void Editor::setupEditor()
 {
     editor= new QWidget();
+
+    /*qDebug() << editor->hasFocus();
+    editor->setFocusPolicy(Qt::StrongFocus);
+    //editor->setFocus(Qt::ActiveWindowFocusReason);
+    qDebug() << editor->hasFocus();*/
+
     editor->setWindowTitle("Editor");
     _mainLayout= new QVBoxLayout(editor);
     _gridLayout = new QGridLayout();
@@ -76,6 +82,7 @@ void Editor::setupEditor()
     _editButtonsLayout = new QHBoxLayout();
     _infoLayout = new QGridLayout();
     _infoButtonsLayout= new QHBoxLayout();
+    _selectArrowLayout = new QHBoxLayout();
 
     _selectButton = new QPushButton("Select");
     _robotButton= new QPushButton("Robot");
@@ -95,6 +102,15 @@ void Editor::setupEditor()
     _saveButton= new QPushButton("Save");
     _applyButton= new QPushButton("Apply and close");
 
+    _selectUp= new QPushButton("Move Up");
+    _selectUp->setVisible(false);
+    _selectDown=new QPushButton("Move Down");
+    _selectDown->setVisible(false);
+    _selectLeft=new QPushButton("Move Left");
+    _selectLeft->setVisible(false);
+    _selectRight=new QPushButton("Move Right");
+    _selectRight->setVisible(false);
+
     setupTable();
 
     _editButtonsLayout->addWidget(_selectButton);
@@ -109,12 +125,18 @@ void Editor::setupEditor()
     _infoLayout->addWidget(_prodNumCBox, 0, 2);
     _infoLayout->addWidget(_targetButton, 0, 3);
 
+    _selectArrowLayout->addWidget(_selectUp);
+    _selectArrowLayout->addWidget(_selectDown);
+    _selectArrowLayout->addWidget(_selectLeft);
+    _selectArrowLayout->addWidget(_selectRight);
+
     _infoButtonsLayout->addWidget(_newButton);
     _infoButtonsLayout->addWidget(_loadButton);
     _infoButtonsLayout->addWidget(_saveButton);
     _infoButtonsLayout->addWidget(_applyButton);
 
     _bottomLayout->addLayout(_editButtonsLayout);
+    _bottomLayout->addLayout(_selectArrowLayout);
     _bottomLayout->addLayout(_infoLayout);
     _bottomLayout->addLayout(_infoButtonsLayout);
 
@@ -129,11 +151,17 @@ void Editor::setupEditor()
     connect(_deleteButton,SIGNAL(clicked()),this,SLOT(editButtonsClicked()));
     //connect(_undoButton,SIGNAL(clicked()),this,SLOT(editButtonsClicked()));
    // connect(_redoButton,SIGNAL(clicked()),this,SLOT(editButtonsClicked()));
+    connect(_selectUp,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
+    connect(_selectDown,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
+    connect(_selectRight,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
+    connect(_selectLeft,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
 
     connect(_newButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
     connect(_loadButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
     connect(_saveButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
     connect(_applyButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
+
+    //connect(,SIGNAL(pressed()),this,SLOT(keyPressEvent(QKeyEvent* event)));
 
     robots.clear();
     pods.clear();
@@ -222,8 +250,23 @@ void Editor::editButtonsClicked()
 
     }
 
-    if(status!=1) isSelected = false;
-    else isSelected=true;
+    if(status!=1)
+    {
+        isSelected = false;
+        _selectUp->setVisible(false);
+        _selectDown->setVisible(false);
+        _selectLeft->setVisible(false);
+        _selectRight->setVisible(false);
+
+    }
+    else
+    {
+        isSelected=true;
+        _selectUp->setVisible(true);
+        _selectDown->setVisible(true);
+        _selectLeft->setVisible(true);
+        _selectRight->setVisible(true);
+    }
 
     for (int i = 0; i < _size; i++)
     {
@@ -279,13 +322,13 @@ void Editor::controlButtonsClicked()
     }
 }
 
- void Editor::gridButtonClicked()
+void Editor::gridButtonClicked()
 {
+    qDebug() << editor->hasFocus();
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
     btn->setText("");
 
     QPoint p = btn->pos() - _gridButtons[0][0]->pos();
-    qDebug()<< p;
 
     QSet<int> prods;
     if (!_prodNumsLEdit->text().isEmpty())
@@ -310,14 +353,15 @@ void Editor::controlButtonsClicked()
     switch(status)
     {
     case 1://select
-        //btn->setStyleSheet("QPushButton { background-color: gray; }");
-        if(isSelected)
+    {
+        QColor color = btn->palette().button().color();
+        if(isSelected && color.name() != "#ffffff")
         {
-            QColor color = btn->palette().button().color();
+            qDebug()<< p;
             btn->setStyleSheet("border:3px solid red; background-color: " + color.name() +";");
         }
-
         break;
+    }
     case 2://robot
         btn->setStyleSheet("QPushButton { background-color: rgb(255, 192, 0); }");
         robots.append(p);
@@ -416,5 +460,36 @@ void Editor::controlButtonsClicked()
         }
         docks.removeOne(p);
         break;
+    }
+ }
+
+void Editor::selectMoveButtonClicked()
+{
+    QPushButton* btn = qobject_cast<QPushButton*>(sender());
+
+    /*qDebug() << pods.count();
+    for(int i=0; i < pods.count();i++)
+    {
+        for(int j = 0; j < pods.count();j++)
+        {
+            qDebug() << "asd";
+        }
+    }*/
+
+    if(btn->text() =="Move Up")
+    {
+        qDebug() << "up";
+    }
+    else if(btn->text() =="Move Down")
+    {
+        qDebug() << "down";
+    }
+    else if(btn->text() =="Move Left")
+    {
+        qDebug() << "left";
+    }
+    else if(btn->text() =="Move Right")
+    {
+        qDebug() << "right";
     }
 }

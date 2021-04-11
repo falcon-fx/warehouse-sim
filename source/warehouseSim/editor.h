@@ -12,6 +12,8 @@
 #include <QSet>
 #include <QPair>
 #include <QComboBox>
+#include <QKeyEvent>
+
 
 class Editor : public QObject
 {
@@ -40,6 +42,8 @@ private:
      QGridLayout* _infoLayout;
      QHBoxLayout* _infoButtonsLayout;
      QHBoxLayout* buttonContainer;
+     QHBoxLayout* _selectArrowLayout;
+
 
      //buttons:
      QVector<QVector<QPushButton*>> _gridButtons;
@@ -51,6 +55,10 @@ private:
      QPushButton* _deleteButton;
      QPushButton* _undoButton;
      QPushButton* _redoButton;
+     QPushButton* _selectUp;
+     QPushButton* _selectDown;
+     QPushButton* _selectLeft;
+     QPushButton* _selectRight;
 
      //inputs:
      QLineEdit* _prodNumsLEdit;
@@ -80,6 +88,9 @@ private:
      void setupSizeWindow();
      void setupTable();
 
+protected:
+     //void keyPressEvent(QKeyEvent* event);
+
 private slots:
      void okButtonClicked();
      void closeButtonClicked();
@@ -88,6 +99,9 @@ private slots:
      void controlButtonsClicked();
 
      void gridButtonClicked();
+
+     void selectMoveButtonClicked();
+
 
 signals:
      void applyAndClose();
