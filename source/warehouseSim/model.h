@@ -36,6 +36,14 @@ struct Task
     Weight weight;
 };
 
+struct Node {
+    QPoint location;
+    int distance;
+    Node* parent;
+    Node() {parent = nullptr;}
+    Node(QPoint loc, int dist, Node* par) : location(loc), distance(dist), parent(par) {}
+};
+
 class Model : public QObject
 {
     Q_OBJECT
@@ -76,6 +84,8 @@ private:
     QList<Pod*> pods;
     QQueue<int> orders;
     QVector<QQueue<Task>> tasks;
+    QVector<int> rowNum;
+    QVector<int> colNum;
 
     void executeTask(int id);
 
@@ -83,6 +93,11 @@ private:
     bool isPodAvailable(int prodNum);
     QPoint findClosestPod(QPoint pos, int prodNum);
     QPoint findClosestDock(QPoint pos);
+    void createPath(QPoint start, QPoint end, int &shortestPath, int &energyNeeded, QQueue<Task> &tasks, Weight weight, Robot* robot);
+    int calculateEnergyNeeded(Node* n, int& energy);
+    void createPathVector(Node* n, QVector<QPoint> path);
+    QQueue<Task> generatePathQueue(QVector<QPoint> path, Weight w, Robot* r);
+    bool isValid(int row, int col);
 };
 
 #endif // MODEL_H

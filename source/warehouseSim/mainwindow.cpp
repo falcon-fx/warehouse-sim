@@ -69,6 +69,10 @@ MainWindow::MainWindow(QWidget *parent)
     _model->createTarget(4, 11, 2);
     _model->createTarget(6, 11, 3);
     _model->createTarget(8, 11, 4);
+    _model->createOrder(1);
+    _model->createOrder(2);
+    _model->createOrder(3);
+    _model->createOrder(4);
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), _model, SLOT(tick()));
 
@@ -230,7 +234,8 @@ void MainWindow::saveButtonClicked()
 
 void MainWindow::startButtonClicked()
 {
-    //timer->start(1000);
+    timer->start(1000);
+
 }
 
 void MainWindow::editorApplyAndClose()

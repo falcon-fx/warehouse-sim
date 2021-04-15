@@ -6,9 +6,43 @@ WTile::WTile()
     this->target = -1;
 }
 
+WTile::WTile(int field_type) {
+    this->dock = false;
+    this->target = -1;
+    this->setType(field_type);
+}
+
+void WTile::setType(int field_type) {
+    if(field_type == 0) {
+        this->type = EMPTY;
+    } else if(field_type == 1) {
+        this->type = DOCK;
+    } else if(field_type == 2) {
+        this->type = POD;
+    } else if(field_type == 3) {
+        this->type = ROBOT;
+    } else if(field_type == 4) {
+        this->type = TARGET;
+    }
+}
+
 void WTile::setTarget(int prodNum)
 {
     this->target = prodNum;
+}
+
+QString WTile::getType() {
+    if(this->type == EMPTY) {
+        return "empty";
+    } else if(this->type == DOCK) {
+        return "dock";
+    } else if(this->type == POD) {
+        return "pod";
+    } else if(this->type == ROBOT) {
+        return "robot";
+    } else if(this->type == TARGET) {
+        return "target";
+    }
 }
 
 void WTile::clearTarget()

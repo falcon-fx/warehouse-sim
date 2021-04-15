@@ -3,11 +3,19 @@
 
 #include <QObject>
 #include <QPoint>
+enum Type {
+    EMPTY = 0,
+    DOCK = 1,
+    POD = 2,
+    ROBOT = 3,
+    TARGET = 4
+};
 
 class WTile : public QObject {
     Q_OBJECT
 public:
     WTile();
+    WTile(int field_type);
     void setTarget(int prodNum);
     void clearTarget();
     bool isTarget();
@@ -17,7 +25,10 @@ public:
 
     bool isEmptyTile();
     void setEmpty(bool empty);
+    void setType(int field_type);
+    QString getType();
 protected:
+    Type type;
     QPoint* location;
     int target;
     bool dock;
