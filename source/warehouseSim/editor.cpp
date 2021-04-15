@@ -70,10 +70,7 @@ void Editor::setupEditor()
 {
     editor= new QWidget();
 
-    /*qDebug() << editor->hasFocus();
-    editor->setFocusPolicy(Qt::StrongFocus);
-    //editor->setFocus(Qt::ActiveWindowFocusReason);
-    qDebug() << editor->hasFocus();*/
+    //selectedNumber=0;
 
     editor->setWindowTitle("Editor");
     _mainLayout= new QVBoxLayout(editor);
@@ -241,16 +238,16 @@ void Editor::editButtonsClicked()
     {
         status=6;
     }
-    else if(selectedButton->text() == "Undo")
+    /*else if(selectedButton->text() == "Undo")
     {
 
     }
     else if(selectedButton->text() == "Redo")
     {
 
-    }
+    }*/
 
-    if(status!=1)
+    if(status!=1) //selectrol elkattintunk, eltuntetjuk a mozgato gombokat
     {
         isSelected = false;
         _selectUp->setVisible(false);
@@ -259,7 +256,7 @@ void Editor::editButtonsClicked()
         _selectRight->setVisible(false);
 
     }
-    else
+    else//select opcioban vagyunk, bekapcsoljuk a mozgato gombokat
     {
         isSelected=true;
         _selectUp->setVisible(true);
@@ -268,7 +265,9 @@ void Editor::editButtonsClicked()
         _selectRight->setVisible(true);
     }
 
-    for (int i = 0; i < _size; i++)
+    selectedGridButtons.clear();//a kivalasztast toroljuk
+
+    for (int i = 0; i < _size; i++)//visszaallitjuk a mezoket a selectrol(eltunik a piros keret)
     {
         for (int j = 0; j < _size; j++)
         {
@@ -324,9 +323,8 @@ void Editor::controlButtonsClicked()
 
 void Editor::gridButtonClicked()
 {
-    qDebug() << editor->hasFocus();
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
-    btn->setText("");
+    //btn->setText("");
 
     QPoint p = btn->pos() - _gridButtons[0][0]->pos();
 
@@ -355,10 +353,27 @@ void Editor::gridButtonClicked()
     case 1://select
     {
         QColor color = btn->palette().button().color();
-        if(isSelected && color.name() != "#ffffff")
+        if(isSelected && color.name() == "#e6e6e6")
         {
-            qDebug()<< p;
             btn->setStyleSheet("border:3px solid red; background-color: " + color.name() +";");
+
+            bool contains=false;
+            for(int i = 0; i<selectedGridButtons.count();i++) //ellenorizzuk, hogy nincs e mar a vectorban a kivalasztott mezo
+                if(selectedGridButtons[i] == p) contains = true;
+
+
+            if(!contains)
+            {
+                selectedGridButtons.append(QPoint((btn->pos().x()-11) ,(btn->pos().y()-11)));
+                place.append(QPoint(selectedGridButtons.last().x()/40,selectedGridButtons.last().y()/40));
+                /*foreach (const int &value, prods)
+                {
+                    selectedProds.append(prods);
+                    podText += QString::number(value) + " ";
+                }*/
+                selectedProds.append(prods);
+
+            }
         }
         break;
     }
@@ -441,6 +456,7 @@ void Editor::gridButtonClicked()
         break;
     case 6://delete
         btn->setStyleSheet("QPushButton { background-color: white; }");
+        btn->setText("");
         robots.removeOne(p);
         for (int i = 0; i < pods.count(); i++)
         {
@@ -467,29 +483,60 @@ void Editor::selectMoveButtonClicked()
 {
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
 
-    /*qDebug() << pods.count();
-    for(int i=0; i < pods.count();i++)
+    for(int i=0; i < selectedGridButtons.count();i++)
     {
-        for(int j = 0; j < pods.count();j++)
+        //qDebug() << selectedTiles[i].first << " "<< selectedTiles[i].second ;
+        if(btn->text() =="Move Up")
         {
-            qDebug() << "asd";
-        }
-    }*/
+            int number=0;
+            while(pods[number].first != selectedGridButtons[i] && number < pods.size()-1)
+                number++;
 
-    if(btn->text() =="Move Up")
-    {
-        qDebug() << "up";
+            if(selectedGridButtons[i].y()-40>=0)
+            {
+                    _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton { background-color: white; }"); // valamiert fel vannak cserelodve a koordinatak ahhh
+                    selectedGridButtons[i] = QPoint(selectedGridButtons[i].x(),selectedGridButtons[i].y()-40);
+                    _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton { background-color: #e6e6e6; }");
+
+
+                    QPoint newPlace = QPoint(selectedGridButtons[i].x(),selectedGridButtons[i].y() - 40);
+                    qDebug() << newPlace;
+
+                    QPair<QPoint, QSet<int>> pod_pair(newPlace, selectedProds[i]);
+
+                    //btn->setText(podText);
+                    foreach (const int &value, prodNums)
+                        if (_prodNumCBox->findText(QString::number(value)) == -1)
+                            _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
+                    robots.removeOne(newPlace);
+                    pods.replace(number,pod_pair);
+                    for (int j = 0; j < targets.count(); j++)
+                    {
+                        if (targets[j].first == newPlace)
+                        {
+                            targets.remove(j);
+                            break;
+                        }
+                    }
+                    docks.removeOne(newPlace);
+
+                }
+
+
+
+        }
+        else if(btn->text() =="Move Down")
+        {
+            //qDebug() << "down";
+        }
+        else if(btn->text() =="Move Left")
+        {
+            //qDebug() << "left";
+        }
+        else if(btn->text() =="Move Right")
+        {
+            //qDebug() << "right";
+        }
     }
-    else if(btn->text() =="Move Down")
-    {
-        qDebug() << "down";
-    }
-    else if(btn->text() =="Move Left")
-    {
-        qDebug() << "left";
-    }
-    else if(btn->text() =="Move Right")
-    {
-        qDebug() << "right";
-    }
+
 }
