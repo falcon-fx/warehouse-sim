@@ -80,6 +80,7 @@ void Editor::setupEditor()
     _infoLayout = new QGridLayout();
     _infoButtonsLayout= new QHBoxLayout();
     _selectArrowLayout = new QHBoxLayout();
+    _selectNewProdLayout = new QHBoxLayout();
 
     _selectButton = new QPushButton("Select");
     _robotButton= new QPushButton("Robot");
@@ -107,6 +108,10 @@ void Editor::setupEditor()
     _selectLeft->setVisible(false);
     _selectRight=new QPushButton("Move Right");
     _selectRight->setVisible(false);
+    _changeProdOkButton=new QPushButton("Put new products");
+    _changeProdOkButton->setVisible(false);
+    _changeProdNumsLEdit = new QLineEdit();
+    _changeProdNumsLEdit->setVisible(false);
 
     setupTable();
 
@@ -127,6 +132,9 @@ void Editor::setupEditor()
     _selectArrowLayout->addWidget(_selectLeft);
     _selectArrowLayout->addWidget(_selectRight);
 
+    _selectNewProdLayout->addWidget(_changeProdNumsLEdit);
+     _selectNewProdLayout->addWidget(_changeProdOkButton);
+
     _infoButtonsLayout->addWidget(_newButton);
     _infoButtonsLayout->addWidget(_loadButton);
     _infoButtonsLayout->addWidget(_saveButton);
@@ -134,6 +142,7 @@ void Editor::setupEditor()
 
     _bottomLayout->addLayout(_editButtonsLayout);
     _bottomLayout->addLayout(_selectArrowLayout);
+    _bottomLayout->addLayout(_selectNewProdLayout);
     _bottomLayout->addLayout(_infoLayout);
     _bottomLayout->addLayout(_infoButtonsLayout);
 
@@ -152,6 +161,7 @@ void Editor::setupEditor()
     connect(_selectDown,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
     connect(_selectRight,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
     connect(_selectLeft,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
+    connect(_changeProdOkButton,SIGNAL(clicked()),this,SLOT(changeProd()));
 
     connect(_newButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
     connect(_loadButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
@@ -254,6 +264,8 @@ void Editor::editButtonsClicked()
         _selectDown->setVisible(false);
         _selectLeft->setVisible(false);
         _selectRight->setVisible(false);
+        _changeProdOkButton->setVisible(false);
+        _changeProdNumsLEdit->setVisible(false);
 
     }
     else//select opcioban vagyunk, bekapcsoljuk a mozgato gombokat
@@ -263,6 +275,8 @@ void Editor::editButtonsClicked()
         _selectDown->setVisible(true);
         _selectLeft->setVisible(true);
         _selectRight->setVisible(true);
+        _changeProdOkButton->setVisible(true);
+        _changeProdNumsLEdit->setVisible(true);
     }
 
     selectedGridButtons.clear();//a kivalasztast toroljuk
@@ -543,6 +557,36 @@ void Editor::selectMoveButtonClicked()
             QPair<QPoint, QSet<int>> pod_pair(newPlace, prods);
             pods.replace(number,pod_pair);
         }
+    }
+}
+
+void Editor::changeProd()
+{
+    for(int i=0; i < selectedGridButtons.count();i++)
+    {
+        int number=0;
+        while(pods[number].first != selectedGridButtons[i] && number < pods.size()-1) // megkeressuk a podsban hanyadik a kivalasztott elem
+            number++;
+
+        QPoint newPlace = QPoint(selectedGridButtons[i].x(),selectedGridButtons[i].y());
+        QSet<int> prods;
+        if (!_changeProdNumsLEdit->text().isEmpty())
+        {
+            QStringList numbers = _changeProdNumsLEdit->text().split(",");
+            for (int i = 0; i < numbers.count(); i++)
+            {
+                prods.insert(numbers[i].toInt());
+                prodNums.insert(numbers[i].toInt());
+            }
+        }
+        QString podText ="P\n";
+        foreach (const int &value, prods)
+        {
+            podText += QString::number(value) + " ";
+        }
+        _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText(podText);
+        QPair<QPoint, QSet<int>> pod_pair(newPlace, prods);
+        pods.replace(number,pod_pair);
 
     }
 

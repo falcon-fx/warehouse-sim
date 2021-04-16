@@ -44,6 +44,7 @@ private:
      QHBoxLayout* _infoButtonsLayout;
      QHBoxLayout* buttonContainer;
      QHBoxLayout* _selectArrowLayout;
+     QHBoxLayout* _selectNewProdLayout;
 
 
      //buttons:
@@ -60,10 +61,12 @@ private:
      QPushButton* _selectDown;
      QPushButton* _selectLeft;
      QPushButton* _selectRight;
+     QPushButton* _changeProdOkButton;
 
      //inputs:
      QLineEdit* _prodNumsLEdit;
      QComboBox* _prodNumCBox;
+     QLineEdit* _changeProdNumsLEdit;
 
      QPushButton* _newButton;
      QPushButton* _loadButton;
@@ -107,6 +110,8 @@ private slots:
      void gridButtonClicked();
 
      void selectMoveButtonClicked();
+
+     void changeProd();
 
 
 signals:
