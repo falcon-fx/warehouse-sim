@@ -266,6 +266,7 @@ void Editor::editButtonsClicked()
     }
 
     selectedGridButtons.clear();//a kivalasztast toroljuk
+    selectedProds.clear();
 
     for (int i = 0; i < _size; i++)//visszaallitjuk a mezoket a selectrol(eltunik a piros keret)
     {
@@ -364,15 +365,10 @@ void Editor::gridButtonClicked()
 
             if(!contains)
             {
-                selectedGridButtons.append(QPoint((btn->pos().x()-11) ,(btn->pos().y()-11)));
-                place.append(QPoint(selectedGridButtons.last().x()/40,selectedGridButtons.last().y()/40));
-                /*foreach (const int &value, prods)
-                {
-                    selectedProds.append(prods);
-                    podText += QString::number(value) + " ";
-                }*/
-                selectedProds.append(prods);
 
+                selectedGridButtons.append(QPoint((btn->pos().x()-11) ,(btn->pos().y()-11)));
+                //place.append(QPoint(selectedGridButtons.last().x()/40,selectedGridButtons.last().y()/40));
+                selectedProds.append(btn->text());
             }
         }
         break;
@@ -482,61 +478,72 @@ void Editor::gridButtonClicked()
 void Editor::selectMoveButtonClicked()
 {
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
-
+    int dirX=0;
+    int dirY=0;
+    if(btn->text() =="Move Up")//irany beallitasa
+    {
+        dirX = 0;
+        dirY = -40;
+    }
+    else if(btn->text() =="Move Down")
+    {
+        dirX = 0;
+        dirY = 40;
+    }
+    else if(btn->text() =="Move Left")
+    {
+        dirX = -40;
+        dirY = 0;
+    }
+    else if(btn->text() =="Move Right")
+    {
+        dirX = 40;
+        dirY = 0;
+    }
     for(int i=0; i < selectedGridButtons.count();i++)
     {
-        //qDebug() << selectedTiles[i].first << " "<< selectedTiles[i].second ;
-        if(btn->text() =="Move Up")
-        {
-            int number=0;
-            while(pods[number].first != selectedGridButtons[i] && number < pods.size()-1)
-                number++;
+        int number=0;
+        while(pods[number].first != selectedGridButtons[i] && number < pods.size()-1) // megkeressuk a podsban hanyadik a kivalasztott elem
+            number++;
 
-            if(selectedGridButtons[i].y()-40>=0)
+        if(selectedGridButtons[i].y()+dirY>=0 && selectedGridButtons[i].y()+dirY<_size*40 && selectedGridButtons[i].x()+dirX>=0 && selectedGridButtons[i].x()+dirX<_size*40)
+        {
+            _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton { background-color: white; }"); // valamiert fel vannak cserelodve a koordinatak ahhh
+            _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText("");
+            selectedGridButtons[i] = QPoint(selectedGridButtons[i].x()+dirX,selectedGridButtons[i].y()+dirY);
+            _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton {border:3px solid red; background-color: #e6e6e6; }");
+            _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText(selectedProds[i]);
+
+            QPoint newPlace = QPoint(selectedGridButtons[i].x(),selectedGridButtons[i].y());
+            QSet<int> prods;
+
+            //utban levo dolgok torlese
+            robots.removeOne(newPlace);
+            for (int i = 0; i < targets.count(); i++)
             {
-                    _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton { background-color: white; }"); // valamiert fel vannak cserelodve a koordinatak ahhh
-                    selectedGridButtons[i] = QPoint(selectedGridButtons[i].x(),selectedGridButtons[i].y()-40);
-                    _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton { background-color: #e6e6e6; }");
-
-
-                    QPoint newPlace = QPoint(selectedGridButtons[i].x(),selectedGridButtons[i].y() - 40);
-                    qDebug() << newPlace;
-
-                    QPair<QPoint, QSet<int>> pod_pair(newPlace, selectedProds[i]);
-
-                    //btn->setText(podText);
-                    foreach (const int &value, prodNums)
-                        if (_prodNumCBox->findText(QString::number(value)) == -1)
-                            _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
-                    robots.removeOne(newPlace);
-                    pods.replace(number,pod_pair);
-                    for (int j = 0; j < targets.count(); j++)
-                    {
-                        if (targets[j].first == newPlace)
-                        {
-                            targets.remove(j);
-                            break;
-                        }
-                    }
-                    docks.removeOne(newPlace);
-
+                if (targets[i].first == newPlace)
+                {
+                    targets.remove(i);
+                    break;
                 }
+            }
+            docks.removeOne(newPlace);
+
+            //pod helyenek frissitese
+            QStringList prodnum = selectedProds[i].split(" ");
+            prodnum[0].remove(0,2);
+            if(prodnum.size()!=1)
+                prodnum.removeLast();
 
 
+            if(prodnum[0]!="")
+                for (int j = 0; j < prodnum.count(); j++)
+                    prods.insert(prodnum[j].toInt());
 
+            QPair<QPoint, QSet<int>> pod_pair(newPlace, prods);
+            pods.replace(number,pod_pair);
         }
-        else if(btn->text() =="Move Down")
-        {
-            //qDebug() << "down";
-        }
-        else if(btn->text() =="Move Left")
-        {
-            //qDebug() << "left";
-        }
-        else if(btn->text() =="Move Right")
-        {
-            //qDebug() << "right";
-        }
+
     }
 
 }

@@ -80,7 +80,7 @@ private:
 
      QVector<QPoint> place;
      QVector<QPoint> selectedGridButtons;
-     QVector<QSet<int>> selectedProds;
+     QVector<QString> selectedProds;
 
 
      QVector<QPoint> robots;
