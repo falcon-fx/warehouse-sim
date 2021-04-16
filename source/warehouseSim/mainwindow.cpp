@@ -216,7 +216,7 @@ void MainWindow::refreshTable()
 void MainWindow::editorButtonClicked()
 {
     timer->stop();
-    _editor = new Editor();
+    _editor = new Editor(_model);
     connect(_editor, SIGNAL(applyAndClose()), this, SLOT(editorApplyAndClose()));
 }
 
@@ -248,7 +248,6 @@ void MainWindow::editorApplyAndClose()
         _model->createRobot(robots[i].x(), robots[i].y());
     }
     QVector<QPair<QPoint, QSet<int>>> pods = _editor->getPods();
-    qDebug() << pods;
     for (int i = 0; i < pods.count(); i++)
     {
         _model->createPod(pods[i].first.x(), pods[i].first.y(), pods[i].second);
