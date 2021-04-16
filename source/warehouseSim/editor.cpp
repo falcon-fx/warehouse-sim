@@ -584,6 +584,8 @@ void Editor::changeProd()
         {
             podText += QString::number(value) + " ";
         }
+
+        selectedProds[i] = podText;
         _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText(podText);
         QPair<QPoint, QSet<int>> pod_pair(newPlace, prods);
         pods.replace(number,pod_pair);
