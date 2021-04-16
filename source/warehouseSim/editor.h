@@ -1,6 +1,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include <model.h>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QWidget>
@@ -14,19 +15,20 @@
 #include <QComboBox>
 #include <QKeyEvent>
 #include <QString>
-
+#include <QFileDialog>
 
 class Editor : public QObject
 {
     Q_OBJECT
 public:
-    Editor();
+    Editor(Model* model);
     int getSize() { return  this->_size; }
     QVector<QPoint> getRobots() { return this->robots; }
     QVector<QPair<QPoint, QSet<int>>> getPods() { return this->pods; }
     QVector<QPair<QPoint, int>> getTargets() { return this->targets; }
     QVector<QPoint> getDocks() { return this->docks; }
 private:
+     Model* _model;
      QWidget *editor;
      QWidget *sizeWindow;
 

@@ -2,9 +2,10 @@
 
 #include <QDebug>
 
-Editor::Editor()
+Editor::Editor(Model* model)
 {
     setupSizeWindow();
+    _model = model;
 }
 
 void Editor::okButtonClicked()
@@ -303,11 +304,13 @@ void Editor::controlButtonsClicked()
     }
     else if(btn->text() == "Load")
     {
-
+        QString filename = QFileDialog::getOpenFileName(editor, tr("Load State"), "", tr("Waresim State (*.wss)"));
+        _model->load(filename);
     }
     else if(btn->text() == "Save")
     {
-
+        QString filename = QFileDialog::getSaveFileName(editor, tr("Save State"), "", tr("Waresim State (*.wss)"));
+        _model->save(filename);
     }
     else if(btn->text() == "Apply and close")
     {
