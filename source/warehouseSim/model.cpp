@@ -159,9 +159,11 @@ void Model::tick()
             int order = orders.dequeue();
             Robot* r = robots[i];
             QPoint dest = findClosestPod(r->getPosition(), order);
+            //QPoint dest(11,8);
             int shortestPath = 0;
             int energyNeeded = 0;
             QQueue<Task> tasks;
+
             createPath(r->getPosition(), dest, shortestPath, energyNeeded, tasks, WGT_POD_TO_TARGET, r);
             qDebug() << order << ", destination: " << dest.x() << dest.y() << ", robot:" << r->getPosition().x() << r->getPosition().y() << ", shortest path: " << shortestPath << ", energy needed: " << energyNeeded;
         }
@@ -408,23 +410,23 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
             int row = loc.x() + rowNum[i];
             int col = loc.y() + colNum[i];
             if((isValid(row, col) && (weight == WGT_TO_POD && //is valid and going to pod
-                (warehouse[col][row]->getType() == "empty" || warehouse[col][row]->getType() == "pod" || warehouse[col][row]->getType() == "target" || warehouse[col][row]->getType() == "dock")) && //can go on empty, pod, target or dock squares
+                (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "pod" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, pod, target or dock squares
                 !visited[col][row])) {
-                qDebug() << warehouse[col][row]->getType() << col << row << "to pod";
+                qDebug() << warehouse[row][col]->getType() << row << col << "to pod";
                 visited[col][row] = true;
                 Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
                 q.enqueue(Adjcell);
             } else if((isValid(row, col) && ((weight == WGT_POD_TO_TARGET || weight == WGT_POD_TO_ORIGIN) && //is valid and carrying a pod
-                (warehouse[col][row]->getType() == "empty" || warehouse[col][row]->getType() == "target" || warehouse[col][row]->getType() == "dock")) && //can go on empty, target or dock squares
+                (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, target or dock squares
                 !visited[col][row])) {
-                qDebug() << warehouse[col][row]->getType() << row << col << "has pod";
+                qDebug() << warehouse[row][col]->getType() << row << col << "has pod";
                 visited[col][row] = true;
                 Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
                 q.enqueue(Adjcell);
             } else if((isValid(row, col) && (weight == WGT_CHARGE && //is valid and going to charge
-                (warehouse[col][row]->getType() == "empty" || warehouse[col][row]->getType() == "pod" || warehouse[col][row]->getType() == "target" || warehouse[col][row]->getType() == "dock")) && //can go on empty, pod, target or dock squares
+                (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "pod" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, pod, target or dock squares
                 !visited[col][row])) {
-                qDebug() << warehouse[col][row]->getType() << col << row << "to charge";
+                qDebug() << warehouse[row][col]->getType() << row << col << "to charge";
                 visited[col][row] = true;
                 Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
                 q.enqueue(Adjcell);
