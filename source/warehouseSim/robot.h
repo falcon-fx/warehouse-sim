@@ -26,6 +26,8 @@ public:
     QPoint getPosition();
     QPoint getNextPosition();
     void setPosition(QPoint pos);
+    int getProdNum() { return this->prodNum; }
+    void setProdNum(int prod) { this->prodNum = prod; }
 
     void move();
     void turnLeft();
@@ -40,6 +42,7 @@ private:
     int power;
     int maxPower;
     int usedPower;
+    int prodNum;
     Direction direction;
     QPoint position;
     Pod* pod;

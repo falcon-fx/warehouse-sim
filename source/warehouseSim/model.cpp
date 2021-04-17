@@ -155,21 +155,50 @@ int Model::getSize()
 void Model::tick()
 {
     for(int i = 0; i < robotCount; i++) {
-        if(tasks[i].isEmpty() && !orders.isEmpty()) {
+        Robot* r = robots[i];
+        int energyNeeded = 0;
+        int shortestPath = 0;
+        if(tasks[i].isEmpty() && !r->hasPod() && !orders.isEmpty() ) {
             int order = orders.dequeue();
-            Robot* r = robots[i];
-            QPoint dest = findClosestPod(r->getPosition(), order);
+            QPoint podDest = findClosestPod(r->getPosition(), order);
             //QPoint dest(11,8);
+            QPoint targetDest = findClosestTarget(podDest, order);
+            r->setProdNum(order);
+            createPath(r->getPosition(), podDest, shortestPath, energyNeeded, tasks[i], WGT_TO_POD, r);
+            createPath(podDest, targetDest, shortestPath, energyNeeded, tasks[i], WGT_POD_TO_TARGET, r);
+            if(energyNeeded > r->getPower()) {
+                tasks[i].clear();
+                orders.push_front(order);
+                shortestPath = 0;
+                energyNeeded = 0;
+                createPath(r->getPosition(), findClosestDock(r->getPosition()), shortestPath, energyNeeded, tasks[i], WGT_CHARGE, r);
+            }
+        } else if(tasks[i].isEmpty() && r->hasPod() && r->getProdNum() != -1) {
             int shortestPath = 0;
-            int energyNeeded = 0;
-            QQueue<Task> tasks;
+            QPoint dest = findClosestTarget(r->getPosition(), r->getProdNum());
+            createPath(r->getPosition(), dest, shortestPath, energyNeeded, tasks[i], WGT_POD_TO_TARGET, r);
 
-            createPath(r->getPosition(), dest, shortestPath, energyNeeded, tasks, WGT_TO_POD, r);
-            qDebug() << order << ", destination: " << dest.x() << dest.y() << ", robot:" << r->getPosition().x() << r->getPosition().y() << ", shortest path: " << shortestPath << ", energy needed: " << energyNeeded;
-            for(int j = 0; j < tasks.size(); j++) {
-                qDebug() << "robot direction:" << r->getDirection() << ", operation:" << tasks[j].op << ", weight:" << tasks[j].weight;
+            if(energyNeeded > r->getPower()) {
+                tasks[i].clear();
+                dest = findClosestDock(r->getPosition());
+                shortestPath = 0;
+                energyNeeded = 0;
+                createPath(r->getPosition(), dest, shortestPath, energyNeeded, tasks[i], WGT_CHARGE, r);
+            }
+        } else if(tasks[i].isEmpty() && r->hasPod() && r->getProdNum() == -1) {
+            int shortestPath = 0;
+            QQueue<Task> tempTasks;
+            QPoint dest = r->getPod()->getOriginalPosition();
+            createPath(r->getPosition(), dest, shortestPath, energyNeeded, tempTasks, WGT_POD_TO_ORIGIN, r);
+            if(energyNeeded > r->getPower()) {
+                tempTasks.clear();
+                dest = findClosestDock(r->getPosition());
+                shortestPath = 0;
+                energyNeeded = 0;
+                createPath(r->getPosition(), dest, shortestPath, energyNeeded, tempTasks, WGT_CHARGE, r);
             }
         }
+        executeTask(i);
     }
     emit onTick();
 }
@@ -203,6 +232,9 @@ void Model::executeTask(int id)
                 break;
             case OP_DROP:
                 r->dropPod();
+                break;
+            case OP_DELIVER:
+                r->setProdNum(-1);
                 break;
             case OP_CHARGE_STOP:
                 r->setPower(maxPower);
@@ -403,8 +435,8 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
                 qDebug() << "x:" << tmpPath[i].x() << "y:" << tmpPath[i].y();
             }
             qDebug() << "pathfinding: path vector" << tmpPath.size();
-            tasks = generatePathQueue(tmpPath, weight, robot);
-            energyNeeded = tasks.size();
+            tasks.append(generatePathQueue(tmpPath, weight, robot));
+            energyNeeded += tasks.size();
             Task tmp;
             tmp.weight = weight;
             switch(weight) {
