@@ -16,6 +16,7 @@ enum Operation
     OP_TURN_RIGHT,
     OP_LIFT,
     OP_DROP,
+    OP_DELIVER,
     OP_CHARGE,
     OP_CHARGE_STOP,
     OP_WAIT
@@ -23,11 +24,10 @@ enum Operation
 
 enum Weight
 {
-    WGT_WAIT,
-    WGT_POD_TO_TARGET,
-    WGT_POD_TO_ORIGIN,
+    WGT_CHARGE,
     WGT_TO_POD,
-    WGT_CHARGE
+    WGT_POD_TO_ORIGIN,
+    WGT_POD_TO_TARGET
 };
 
 struct Task
@@ -95,7 +95,7 @@ private:
     QPoint findClosestDock(QPoint pos);
     void createPath(QPoint start, QPoint end, int &shortestPath, int &energyNeeded, QQueue<Task> &tasks, Weight weight, Robot* robot);
     int calculateEnergyNeeded(Node* n, int& energy);
-    void createPathVector(Node* n, QVector<QPoint> path);
+    void createPathVector(Node* n, QVector<QPoint> &path);
     QQueue<Task> generatePathQueue(QVector<QPoint> path, Weight w, Robot* r);
     bool isValid(int row, int col);
 };
