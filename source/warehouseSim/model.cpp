@@ -468,7 +468,128 @@ void Model::createPathVector(Node *n, QVector<QPoint> path) {
 }
 
 QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) {
-
+    QQueue<Task> tasks;
+    Task task;
+    task.weight = w;
+    Robot::Direction dir = r->getDirection();
+    for (int i = 1; i < path.size(); i++)
+    {
+        if (path[i].x() < path[i - 1].x())
+        {
+            if (dir != Robot::Direction::NORTH)
+            {
+                switch (dir)
+                {
+                    case Robot::Direction::WEST:
+                        task.op = OP_TURN_RIGHT;
+                        tasks.append(task);
+                        break;
+                    case Robot::Direction::SOUTH:
+                        task.op = OP_TURN_RIGHT;
+                        tasks.append(task);
+                        tasks.append(task);
+                        break;
+                    case Robot::Direction::EAST:
+                        task.op = OP_TURN_LEFT;
+                        tasks.append(task);
+                        break;
+                }
+                dir = Robot::Direction::NORTH;
+            }
+        }
+        else if (path[i].x() > path[i - 1].x())
+        {
+            if (dir != Robot::Direction::SOUTH)
+            {
+                switch (dir)
+                {
+                    case Robot::Direction::WEST:
+                        task.op = OP_TURN_LEFT;
+                        tasks.append(task);
+                        break;
+                    case Robot::Direction::NORTH:
+                        task.op = OP_TURN_LEFT;
+                        tasks.append(task);
+                        tasks.append(task);
+                        break;
+                    case Robot::Direction::EAST:
+                        task.op = OP_TURN_RIGHT;
+                        tasks.append(task);
+                        break;
+                }
+                dir = Robot::Direction::SOUTH;
+            }
+        }
+        else if (path[i].y() < path[i - 1].y())
+        {
+            if (dir != Robot::Direction::WEST)
+            {
+                switch (dir)
+                {
+                    case Robot::Direction::EAST:
+                        task.op = OP_TURN_LEFT;
+                        tasks.append(task);
+                        tasks.append(task);
+                        break;
+                    case Robot::Direction::NORTH:
+                        task.op = OP_TURN_LEFT;
+                        tasks.append(task);
+                        break;
+                    case Robot::Direction::SOUTH:
+                        task.op = OP_TURN_RIGHT;
+                        tasks.append(task);
+                        break;
+                }
+                dir = Robot::Direction::WEST;
+            }
+        }
+        else if (path[i].y() > path[i - 1].y())
+        {
+            if (dir != Robot::Direction::EAST)
+            {
+                switch (dir)
+                {
+                    case Robot::Direction::WEST:
+                        task.op = OP_TURN_LEFT;
+                        tasks.append(task);
+                        tasks.append(task);
+                        break;
+                    case Robot::Direction::NORTH:
+                        task.op = OP_TURN_RIGHT;
+                        tasks.append(task);
+                        break;
+                    case Robot::Direction::SOUTH:
+                        task.op = OP_TURN_LEFT;
+                        tasks.append(task);
+                        break;
+                }
+                dir = Robot::Direction::EAST;
+            }
+        }
+        task.op = OP_MOVE;
+        tasks.append(task);
+    }
+    switch (w)
+    {
+        case WGT_POD_TO_ORIGIN:
+            task.op = OP_DROP;
+            break;
+        case WGT_TO_POD:
+            task.op = OP_LIFT;
+            break;
+        case WGT_WAIT:
+        case WGT_POD_TO_TARGET:
+        case WGT_CHARGE:
+            task.op = OP_CHARGE;
+            tasks.append(task);
+            tasks.append(task);
+            tasks.append(task);
+            tasks.append(task);
+            task.op = OP_CHARGE_STOP;
+            break;
+    }
+    tasks.append(task);
+    return tasks;
 }
 
 bool Model::isValid(int row, int col) {
