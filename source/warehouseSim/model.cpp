@@ -154,34 +154,18 @@ int Model::getSize()
 
 void Model::tick()
 {
-    /*for (int i = 0; i < robots.count(); i++)
-    {
-        Robot* r = robots[i];
-
-    }*/
-    /*for(int i = 0; i < tasks.size(); i++) {
-        QQueue<Task> t = tasks[i];
-        qDebug() << "task " << i+1 << ": " << t.size();
-        while(!t.isEmpty()) {
-            Task task = t.dequeue();
-            qDebug() << task.op << " " << task.weight;
-        }
-    }
-    qDebug() << "number of orders: " << orders.size() << " number of tasks: " << tasks.size();
     for(int i = 0; i < robotCount; i++) {
-        Robot* r = robots[i];
-        if(orders.size() != 0) {
+        if(tasks[i].isEmpty() && !orders.isEmpty()) {
             int order = orders.dequeue();
-            QPoint newDest = findClosestPod(r->getPosition(), order);
-        }
-    }*/
-    for(int i = 0; i < size; i++) {
-        for(int j = 0; j < size; j++) {
-            qDebug() << warehouse[i][j]->getType();
+            Robot* r = robots[i];
+            QPoint dest = findClosestPod(r->getPosition(), order);
+            int shortestPath = 0;
+            int energyNeeded = 0;
+            QQueue<Task> tasks;
+            createPath(r->getPosition(), dest, shortestPath, energyNeeded, tasks, WGT_POD_TO_TARGET, r);
+            qDebug() << order << ", destination: " << dest.x() << dest.y() << ", robot:" << r->getPosition().x() << r->getPosition().y() << ", shortest path: " << shortestPath << ", energy needed: " << energyNeeded;
         }
     }
-
-
     emit onTick();
 }
 
@@ -265,10 +249,11 @@ QPoint Model::findClosestPod(QPoint pos, int prodNum)
     {
         if (pods[i]->hasProduct(prodNum) && !pods[i]->isPickedUp())
         {
+            qDebug() << "podfind: " << distance << pos.manhattanLength() << pos.x() << pos.y() << "pod: " << pods[i]->getPosition().manhattanLength() << pods[i]->getPosition().x() << pods[i]->getPosition().y();
             if (distance == -1 || ((pos - pods[i]->getPosition()).manhattanLength() < distance))
             {
                 closest.setX(pods[i]->getPosition().x());
-                closest.setY(pods[i]->getPosition().x());
+                closest.setY(pods[i]->getPosition().y());
                 distance = (pos - pods[i]->getPosition()).manhattanLength();
             }
         }
@@ -386,10 +371,6 @@ void Model::load(QString filename)
 }
 
 void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyNeeded, QQueue<Task> &tasks, Weight weight, Robot* robot) {
-    if (warehouse[start.y()][start.x()]->getType() != "empty" || warehouse[start.y()][start.x()]->getType() == "empty") {
-            return;
-    }
-
     QVector<QVector<bool>> visited;
     for(int i = 0; i < size; i++) {
         QVector<bool> tmp;
@@ -419,23 +400,31 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
             return;
         }
 
-        qDebug() << "pointer: " << curr << curr->location.x() << ", y:" << curr->location.y() << ", dist: " << curr->distance << ", parent: " << curr->parent << "\n";
+        //qDebug() << "pointer: " << curr << curr->location.x() << ", y:" << curr->location.y() << ", dist: " << curr->distance << ", parent: " << curr->parent << "\n";
 
         q.dequeue();
 
         for (int i = 0; i < 4; i++) {
             int row = loc.x() + rowNum[i];
             int col = loc.y() + colNum[i];
-
-            if ((isValid(row, col) && (weight == WGT_TO_POD && //is valid and going to pod
-                (warehouse[col][row]->getType() == "empty" || warehouse[col][row]->getType() == "pod" || warehouse[col][row]->getType() == "target" || warehouse[col][row]->getType() == "dock")) && //can go on empty, pod, target or dock squares
-                !visited[col][row]) || //not yet visited
-                (isValid(row, col) && ((weight == WGT_POD_TO_TARGET || weight == WGT_POD_TO_ORIGIN) && //is valid and carrying a pod
-                (warehouse[col][row]->getType() == "empty" || warehouse[col][row]->getType() == "target" || warehouse[col][row]->getType() == "dock")) && //can go on empty, target or dock squares
-                !visited[col][row]) ||
-                (isValid(row, col) && (weight == WGT_CHARGE && //is valid and going to charge
+            if((isValid(row, col) && (weight == WGT_TO_POD && //is valid and going to pod
                 (warehouse[col][row]->getType() == "empty" || warehouse[col][row]->getType() == "pod" || warehouse[col][row]->getType() == "target" || warehouse[col][row]->getType() == "dock")) && //can go on empty, pod, target or dock squares
                 !visited[col][row])) {
+                qDebug() << warehouse[col][row]->getType() << col << row << "to pod";
+                visited[col][row] = true;
+                Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
+                q.enqueue(Adjcell);
+            } else if((isValid(row, col) && ((weight == WGT_POD_TO_TARGET || weight == WGT_POD_TO_ORIGIN) && //is valid and carrying a pod
+                (warehouse[col][row]->getType() == "empty" || warehouse[col][row]->getType() == "target" || warehouse[col][row]->getType() == "dock")) && //can go on empty, target or dock squares
+                !visited[col][row])) {
+                qDebug() << warehouse[col][row]->getType() << row << col << "has pod";
+                visited[col][row] = true;
+                Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
+                q.enqueue(Adjcell);
+            } else if((isValid(row, col) && (weight == WGT_CHARGE && //is valid and going to charge
+                (warehouse[col][row]->getType() == "empty" || warehouse[col][row]->getType() == "pod" || warehouse[col][row]->getType() == "target" || warehouse[col][row]->getType() == "dock")) && //can go on empty, pod, target or dock squares
+                !visited[col][row])) {
+                qDebug() << warehouse[col][row]->getType() << col << row << "to charge";
                 visited[col][row] = true;
                 Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
                 q.enqueue(Adjcell);
@@ -473,10 +462,11 @@ void Model::createPathVector(Node *n, QVector<QPoint> path) {
     }
     createPathVector(n->parent, path);
     path.append(n->location);
+    qDebug() << n->location.x() << ", " << n->location.y() << warehouse[n->location.x()][n->location.y()]->getType();
 }
 
 QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) {
-    //todo: figure out a way to convert the path vector to operations
+
 }
 
 bool Model::isValid(int row, int col) {
