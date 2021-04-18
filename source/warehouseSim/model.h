@@ -73,6 +73,7 @@ public slots:
 signals:
     void onTick();
     void onLoad();
+    void onFinished();
 private:
 
     int size;
@@ -98,6 +99,11 @@ private:
     void createPathVector(Node* n, QVector<QPoint> &path);
     QQueue<Task> generatePathQueue(QVector<QPoint> path, Weight w, Robot* r);
     bool isValid(int row, int col);
+    void gotoDock(Robot* robot, int robotID);
+    void gotoPod(Robot* robot, int robotID);
+    void gotoTarget(Robot* robot, int robotID);
+    void bringBackPod(Robot* robot, int robotID);
+    void gotoPodUnfinished(Robot* robot, int robotID);
 };
 
 #endif // MODEL_H

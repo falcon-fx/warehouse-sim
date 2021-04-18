@@ -5,6 +5,7 @@
 #include "model.h"
 
 #include <QMainWindow>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QTimer>
@@ -27,6 +28,9 @@ protected:
     QVector<QVector<QPushButton*>> _gridButtons;
     QHBoxLayout* buttonContainer;
     QTimer* timer;
+    QLabel* infoLabel;
+    QLabel* noDataLabel;
+    QPushButton *startButton;
 private:
     Model* _model;
     Editor* _editor;
@@ -34,6 +38,9 @@ private:
     void drawTable();
     void refreshTable();
     int _size;
+    int _steps;
+    QVector<int> _energyUsed;
+    int _allEnergyUsed;
 private slots:
     void editorButtonClicked();
     void startButtonClicked();
@@ -42,6 +49,7 @@ private slots:
     void editorApplyAndClose();
     void onTick();
     void onLoad();
+    void onFinished();
 };
 
 #endif // MAINWINDOW_H

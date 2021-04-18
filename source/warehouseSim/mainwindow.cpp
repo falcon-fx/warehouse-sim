@@ -10,10 +10,11 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     _size=12;
-
-    _model= new Model(_size, 20);
+    _steps=0;
+    _model= new Model(_size, 60);
     connect(_model, SIGNAL(onTick()), this, SLOT(onTick()));
     connect(_model, SIGNAL(onLoad()), this, SLOT(onLoad()));
+    connect(_model, SIGNAL(onFinished()), this, SLOT(onFinished()));
     // ez csak a minta szerinti állapot
     _model->setSize(12);
     _model->createDock(0, 1);
@@ -73,6 +74,10 @@ MainWindow::MainWindow(QWidget *parent)
     _model->createOrder(2);
     _model->createOrder(3);
     _model->createOrder(4);
+    _model->createOrder(3);
+    _model->createOrder(1);
+    _model->createOrder(4);
+    _model->createOrder(2);
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), _model, SLOT(tick()));
 
@@ -105,7 +110,8 @@ void MainWindow::setupWindow()
     title->setFont(f);
     _titleLayout->setAlignment(Qt::AlignTop);
     _titleLayout->addWidget(title);
-    _titleLayout->addWidget(new QLabel("Press Start or Open editor \nto start or edit the simulation"));
+    infoLabel = new QLabel("Press Start or Open editor \nto start or edit the simulation");
+    _titleLayout->addWidget(infoLabel);
 
     _infoLayout->setAlignment(Qt::AlignLeft);
     //_infoLayout->addWidget(new QLabel("itt lesznek a robot infok"));
@@ -113,7 +119,7 @@ void MainWindow::setupWindow()
     QPushButton *loadButton = new QPushButton("Load");
     QPushButton *saveButton = new QPushButton("Save");
     QPushButton *editorButton = new QPushButton("Open Editor");
-    QPushButton *startButton = new QPushButton("Start");
+    startButton = new QPushButton("Start");
 
     _buttonLayout->setAlignment(Qt::AlignBottom);
     //_buttonLayout->addWidget(new QLabel("No data loaded"),0,0);
@@ -153,8 +159,8 @@ void MainWindow::drawTable()
     _gridLayout->setAlignment(Qt::AlignCenter);
     if(_size==0)
     {
-        _gridLayout->addWidget(new QLabel("No data loaded. Please use\n the Load,"
-                                          " or Open editor buttons\n to set up the simulation."));
+        noDataLabel = new QLabel("No data loaded. Please use\n the Load, or Open editor buttons\n to set up the simulation.");
+        _gridLayout->addWidget(noDataLabel);
     }
     else
     {
@@ -186,6 +192,16 @@ void MainWindow::refreshTable()
         {
             _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }");
             _gridButtons[i][j]->setText("");
+
+            if (warehouse[i][j]->isDock())
+            {
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213); }");
+            }
+            else if (warehouse[i][j]->isTarget())
+            {
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(146, 208, 80); color: black; }");
+                _gridButtons[i][j]->setText(QString::number(warehouse[i][j]->getTarget()));
+            }
             if(_model->getPod(i, j) != nullptr)
             {
                 _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(230, 230, 230); color: black; }");
@@ -195,15 +211,6 @@ void MainWindow::refreshTable()
                     podText += QString::number(value) + " ";
                 }
                 _gridButtons[i][j]->setText(podText);
-            }
-            if (warehouse[i][j]->isDock())
-            {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213); }");
-            }
-            else if (warehouse[i][j]->isTarget())
-            {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(146, 208, 80); color: black; }");
-                _gridButtons[i][j]->setText(QString::number(warehouse[i][j]->getTarget()));
             }
             if(_model->getRobot(i, j) != nullptr)
             {
@@ -234,8 +241,14 @@ void MainWindow::saveButtonClicked()
 
 void MainWindow::startButtonClicked()
 {
-    timer->start(1000);
 
+    if(timer->isActive()) {
+        timer->stop();
+        startButton->setText("Start");
+    } else {
+        timer->start(600);
+        startButton->setText("Stop");
+    }
 }
 
 void MainWindow::editorApplyAndClose()
@@ -269,10 +282,36 @@ void MainWindow::editorApplyAndClose()
 void MainWindow::onTick()
 {
     refreshTable();
+    _steps++;
+    QString info;
+    for(int i = 0; i < _model->getRobots().size(); i++) {
+        Robot* r = _model->getRobots()[i];
+        info += "\nrobot " + QString::number(i+1) + "\nPower: " + QString::number(r->getPower()) +
+                ", position: " + QString::number(r->getPosition().x()) + " " + QString::number(r->getPosition().y()) +
+                ", prodnum: " + QString::number(r->getProdNum()) + "\n";
+        if(r->hasPod()) {
+            info +=  "pod original pos: " + QString::number(r->getPod()->getOriginalPosition().x()) + " " + QString::number(r->getPod()->getOriginalPosition().y()) + "\n";
+        }
+    }
+    info += "faszkabát";
+    infoLabel->setText(info);
 }
 
 void MainWindow::onLoad()
 {
     drawTable();
     refreshTable();
+}
+
+void MainWindow::onFinished() {
+    timer->stop();
+    _allEnergyUsed = 0;
+    _energyUsed.clear();
+    for(auto robot : _model->getRobots()) {
+        _allEnergyUsed += robot->getUsedPower();
+        _energyUsed.push_back(robot->getUsedPower());
+    }
+    QMessageBox results;
+    results.setText("YEET:\n" + QString::number(_allEnergyUsed) + "\nxd:\n" + QString::number(_steps));
+    results.exec();
 }

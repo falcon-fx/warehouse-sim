@@ -37,6 +37,12 @@ public:
     void liftPod(Pod* pod);
     void dropPod();
     bool hasPod();
+    bool isUnfinished() { return this->unfinished; }
+    void setUnfinished(bool uf);
+    bool isFinished() { return this->finished; }
+    void setFinished(bool f);
+    void setTempPodPos(QPoint point) { this->tempPodPos = point; }
+    QPoint getTempPodPos() { return this->tempPodPos; }
 private:
     int id;
     int power;
@@ -46,6 +52,9 @@ private:
     Direction direction;
     QPoint position;
     Pod* pod;
+    bool unfinished;
+    bool finished;
+    QPoint tempPodPos;
 };
 
 #endif // ROBOT_H
