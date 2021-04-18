@@ -95,7 +95,6 @@ private:
     QPoint findClosestPod(QPoint pos, int prodNum);
     QPoint findClosestDock(QPoint pos);
     void createPath(QPoint start, QPoint end, int &shortestPath, int &energyNeeded, QQueue<Task> &tasks, Weight weight, Robot* robot);
-    int calculateEnergyNeeded(Node* n, int& energy);
     void createPathVector(Node* n, QVector<QPoint> &path);
     QQueue<Task> generatePathQueue(QVector<QPoint> path, Weight w, Robot* r);
     bool isValid(int row, int col);

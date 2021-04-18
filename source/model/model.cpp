@@ -655,30 +655,6 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
     }
 }
 
-int Model::calculateEnergyNeeded(Node *n, int &energy) {
-    /*if(n == nullptr) {
-        return energy;
-    } else {
-        if(n->parent->parent == nullptr || n->parent == nullptr) {
-            energy++;
-            return energy;
-        } else if(((n->location.x() != n->parent->location.y() && n->location.x() == n->parent->location.x())
-            && (n->parent->location.y() == n->parent->parent->location.y() && n->parent->location.x() != n->parent->parent->location.x()))
-            || ((n->location.y() == n->parent->location.y() && n->location.x() != n->parent->location.x())
-            && (n->parent->location.y() != n->parent->parent->location.y() && n->parent->location.x() == n->parent->parent->location.x()))) {
-            //turn ahead
-            energy += 2;
-            calculateEnergyNeeded(n->parent, energy);
-        } else if((n->parent->location.x() != n->location.x() && n->parent->location.y() == n->location.y())
-               || (n->parent->location.y() != n->location.y() && n->parent->location.x() == n->location.x())) {
-            //no turn ahead
-            energy++;
-            calculateEnergyNeeded(n->parent, energy);
-        }
-    }*/
-    return 0; //path queue size is more accurate
-}
-
 void Model::createPathVector(Node *n, QVector<QPoint> &path) {
     if(n == nullptr) {
         return;
