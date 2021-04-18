@@ -26,6 +26,7 @@ QVector<QVector<WTile*>> Model::getWarehouse()
 
 void Model::makeWarehouse()
 {
+    tasksDone = 0;
     robotCount = 0;
     robots.clear();
     pods.clear();
@@ -321,6 +322,7 @@ void Model::bringBackPod(Robot *robot, int robotID) {
         gotoDock(robot, robotID);
     } else {
         robot->setFinished(true);
+        tasksDone++;
     }
     qDebug() << "robot #" << robotID << "brings back pod";
 }
@@ -851,4 +853,18 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
 bool Model::isValid(int row, int col) {
     return (row >= 0) && (row < size) &&
            (col >= 0) && (col < size);
+}
+
+void Model::saveResults(QString filename, QList<int> energyUsed, int allEnergy, int allSteps) {
+    QFile file(filename);
+
+    if (!file.open(QFile::WriteOnly))
+    {
+        qDebug() << "Failed to open file" << filename;
+        return;
+    }
+    file.write("Results:\n\nAll steps: " + QString::number(allSteps).toUtf8() + "\nAll energy used: " + QString::number(allEnergy).toUtf8() + "\nEnergy used by individual robots:\n");
+    for(int i = 0; i < energyUsed.size(); i++) {
+        file.write("Robot #" + QString::number(i+1).toUtf8() + ": " + QString::number(energyUsed[i]).toUtf8() + "\n");
+    }
 }

@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     _size = 12;
     _steps = 0;
-    _model = new Model(_size, 60);
+    _model = new Model(_size, 500);
     connect(_model, SIGNAL(onTick()), this, SLOT(onTick()));
     connect(_model, SIGNAL(onLoad()), this, SLOT(onLoad()));
     connect(_model, SIGNAL(onFinished()), this, SLOT(onFinished()));
@@ -295,13 +295,14 @@ void MainWindow::onTick()
     refreshTable();
     _steps++;
     QString info;
+    info += "Tasks done: " + QString::number(_model->getTasksDone()) + "\n";
     for(int i = 0; i < _model->getRobots().size(); i++) {
         Robot* r = _model->getRobots()[i];
-        info += "\nrobot " + QString::number(i+1) + "\nPower: " + QString::number(r->getPower()) +
-                ", position: " + QString::number(r->getPosition().x()) + " " + QString::number(r->getPosition().y()) +
-                ", prodnum: " + QString::number(r->getProdNum()) + "\n";
+        info += "\nRobot " + QString::number(i+1) + "\nPower: " + QString::number(round((float)r->getPower()/(float)_model->getMaxPower()*100)) +
+                "% position: x:" + QString::number(r->getPosition().x()) + ", y:" + QString::number(r->getPosition().y()) +
+                "\nProduct number: " + QString::number(r->getProdNum()) + " Has pod: " + (r->hasPod() ? "true" : "false") + "\n";
         if(r->hasPod()) {
-            info +=  "pod original pos: " + QString::number(r->getPod()->getOriginalPosition().x()) + " " + QString::number(r->getPod()->getOriginalPosition().y()) + "\n";
+            info +=  "Pod's original position: x:" + QString::number(r->getPod()->getOriginalPosition().x()) + ", y:" + QString::number(r->getPod()->getOriginalPosition().y()) + "\n";
         }
     }
     infoLabel->setText(info);
@@ -322,6 +323,24 @@ void MainWindow::onFinished() {
         _energyUsed.push_back(robot->getUsedPower());
     }
     QMessageBox results;
-    results.setText("Összes energiahasználat:\n" + QString::number(_allEnergyUsed) + "\nLépések száma:\n" + QString::number(_steps));
-    results.exec();
+    QString res = "Number of steps:\n" + QString::number(_steps) + "\nAll energy used:\n" + QString::number(_allEnergyUsed) + "\nEnergy used by individual robots::\n";
+    for(int i = 0; i < _energyUsed.size(); i++) {
+        res.append(QString::number(i+1) + ". robot: " + QString::number(_energyUsed[i]) + "\n");
+    }
+    results.setText(res);
+    results.setInformativeText("Click Save to save simulation results.");
+    results.setStandardButtons(QMessageBox::Save | QMessageBox::Ok);
+    int ret = results.exec();
+
+    switch (ret) {
+        case QMessageBox::Save: {
+            QString filename = QFileDialog::getSaveFileName(this, tr("Simulation Log"), "", tr("Text file (*.txt)"));
+            _model->saveResults(filename, _energyUsed, _allEnergyUsed, _steps);
+            break;
+        }
+        case QMessageBox::Ok:
+            break;
+        default:
+            break;
+    }
 }

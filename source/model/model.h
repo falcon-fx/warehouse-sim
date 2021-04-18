@@ -64,11 +64,14 @@ public:
     void createDock(int x, int y);
     void createOrder(int prodNum);
     QQueue<int> getOrders();
+    int getTasksDone() { return this->tasksDone; }
+    int getMaxPower() { return this->maxPower; }
 
     int getSize();
 
     void save(QString filename);
     void load(QString filename);
+    void saveResults(QString filename, QList<int> energyUsed, int allEnergy, int allSteps);
 public slots:
     void tick();
 signals:
@@ -88,6 +91,7 @@ private:
     QVector<QQueue<Task>> tasks;
     QVector<int> rowNum;
     QVector<int> colNum;
+    int tasksDone;
 
     void executeTask(int id);
 
