@@ -1,5 +1,4 @@
-#include "mainwindow.h"
-
+#include <view/mainwindow.h>
 #include <QPainter>
 #include <QDebug>
 #include <QLabel>

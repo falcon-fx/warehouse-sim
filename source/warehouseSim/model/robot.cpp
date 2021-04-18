@@ -1,4 +1,4 @@
-#include "robot.h"
+#include <model/robot.h>
 
 Robot::Robot(int id, int maxP, int x, int y)
 {

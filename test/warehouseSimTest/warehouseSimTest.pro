@@ -7,13 +7,13 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 SOURCES +=  tst_modeltest.cpp \
-    ../../source/warehouseSim/model.cpp \
-    ../../source/warehouseSim/pod.cpp \
-    ../../source/warehouseSim/robot.cpp \
-    ../../source/warehouseSim/wtile.cpp
+    ../../source/warehouseSim/model/model.cpp \
+    ../../source/warehouseSim/model/pod.cpp \
+    ../../source/warehouseSim/model/robot.cpp \
+    ../../source/warehouseSim/model/wtile.cpp
 
 HEADERS += \
-    ../../source/warehouseSim/model.h \
-    ../../source/warehouseSim/pod.h \
-    ../../source/warehouseSim/robot.h \
-    ../../source/warehouseSim/wtile.h
+    ../../source/warehouseSim/model/model.h \
+    ../../source/warehouseSim/model/pod.h \
+    ../../source/warehouseSim/model/robot.h \
+    ../../source/warehouseSim/model/wtile.h

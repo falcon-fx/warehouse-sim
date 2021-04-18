@@ -5,9 +5,9 @@
 #include <QVector>
 #include <QList>
 #include <QQueue>
-#include "wtile.h"
-#include "robot.h"
-#include "pod.h"
+#include <model/wtile.h>
+#include <model/robot.h>
+#include <model/pod.h>
 
 enum Operation
 {

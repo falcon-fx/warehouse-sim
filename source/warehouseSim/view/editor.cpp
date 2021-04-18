@@ -1,4 +1,4 @@
-#include "editor.h"
+#include <view/editor.h>
 
 #include <QDebug>
 

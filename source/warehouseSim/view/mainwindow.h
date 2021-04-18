@@ -1,8 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "editor.h"
-#include "model.h"
+#include <view/editor.h>
+#include <model/model.h>
 
 #include <QMainWindow>
 #include <QMessageBox>

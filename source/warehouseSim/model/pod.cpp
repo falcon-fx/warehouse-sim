@@ -1,4 +1,4 @@
-#include "pod.h"
+#include <model/pod.h>
 
 Pod::Pod(QSet<int> prods, int origin_x, int origin_y)
 {

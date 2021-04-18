@@ -1,7 +1,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include <model.h>
+#include <model/model.h>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QWidget>

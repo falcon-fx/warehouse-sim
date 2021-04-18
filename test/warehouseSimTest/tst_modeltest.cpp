@@ -1,7 +1,7 @@
 #include <QtTest>
 
 // add necessary includes here
-#include <../../source/warehouseSim/model.h>
+#include <../../source/warehouseSim/model/model.h>
 
 class ModelTest : public QObject
 {

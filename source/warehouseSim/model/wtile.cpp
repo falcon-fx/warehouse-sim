@@ -1,4 +1,4 @@
-#include "wtile.h"
+#include <model/wtile.h>
 
 WTile::WTile()
 {
