@@ -71,8 +71,6 @@ private:
      QLineEdit* _changeProdNumsLEdit;
 
      QPushButton* _newButton;
-     QPushButton* _loadButton;
-     QPushButton* _saveButton;
      QPushButton* _applyButton;
 
      QPushButton* selectedButton;

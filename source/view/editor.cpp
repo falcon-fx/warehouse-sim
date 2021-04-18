@@ -97,8 +97,6 @@ void Editor::setupEditor()
     _prodNumCBox = new QComboBox();
 
     _newButton= new QPushButton("New");
-    _loadButton= new QPushButton("Load");
-    _saveButton= new QPushButton("Save");
     _applyButton= new QPushButton("Apply and close");
 
     _selectUp= new QPushButton("Move Up");
@@ -137,8 +135,6 @@ void Editor::setupEditor()
      _selectNewProdLayout->addWidget(_changeProdOkButton);
 
     _infoButtonsLayout->addWidget(_newButton);
-    _infoButtonsLayout->addWidget(_loadButton);
-    _infoButtonsLayout->addWidget(_saveButton);
     _infoButtonsLayout->addWidget(_applyButton);
 
     _bottomLayout->addLayout(_editButtonsLayout);
@@ -165,8 +161,6 @@ void Editor::setupEditor()
     connect(_changeProdOkButton,SIGNAL(clicked()),this,SLOT(changeProd()));
 
     connect(_newButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
-    connect(_loadButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
-    connect(_saveButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
     connect(_applyButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
 
     //connect(,SIGNAL(pressed()),this,SLOT(keyPressEvent(QKeyEvent* event)));
@@ -301,16 +295,6 @@ void Editor::controlButtonsClicked()
     {
         editor->close();
         setupSizeWindow();
-    }
-    else if(btn->text() == "Load")
-    {
-        QString filename = QFileDialog::getOpenFileName(editor, tr("Load State"), "", tr("Waresim State (*.wss)"));
-        _model->load(filename);
-    }
-    else if(btn->text() == "Save")
-    {
-        QString filename = QFileDialog::getSaveFileName(editor, tr("Save State"), "", tr("Waresim State (*.wss)"));
-        _model->save(filename);
     }
     else if(btn->text() == "Apply and close")
     {
