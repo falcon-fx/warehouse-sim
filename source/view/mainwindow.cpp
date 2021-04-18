@@ -351,6 +351,7 @@ void MainWindow::onFinished() {
 void MainWindow:: newOrder()
 {
     timer->stop();
+    startButton->setText("Start");
     orderWindow = new QWidget;
     orderWindow->setWindowTitle("New Order");
 
