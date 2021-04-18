@@ -55,6 +55,7 @@ public:
     QList<Robot*> getRobots();
     Robot* getRobot(int x, int y);
     void createPod(int x, int y, QSet<int> prods);
+    void createPod(int x, int y, int ox, int oy, QSet<int> prods);
     QList<Pod*> getPods();
     Pod* getPod(int x, int y);
     QList<QPair<QPoint, int>> getTargets();

@@ -8,6 +8,7 @@ class Pod
 {
 public:
     Pod(QSet<int> prods, int origin_x, int origin_y);
+    Pod(QSet<int> prods, int x, int y, int origin_x, int origin_y);
     bool hasProduct(int prodNum);
     void addProduct(int prodNum);
     void removeProduct(int prodNum);

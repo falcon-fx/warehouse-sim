@@ -26,6 +26,7 @@ QVector<QVector<WTile*>> Model::getWarehouse()
 
 void Model::makeWarehouse()
 {
+    robotCount = 0;
     robots.clear();
     pods.clear();
     tasks.clear();
@@ -53,6 +54,12 @@ void Model::createRobot(int x, int y)
 void Model::createPod(int x, int y, QSet<int> prods)
 {
     pods.append(new Pod(prods, y, x));
+    warehouse[y][x]->setType(2);
+}
+
+void Model::createPod(int x, int y, int ox, int oy, QSet<int> prods)
+{
+    pods.append(new Pod(prods, y, x, oy, ox));
     warehouse[y][x]->setType(2);
 }
 
@@ -237,8 +244,6 @@ void Model::tick()
         emit onFinished();
     }
 }
-
-
 
 void Model::gotoPodUnfinished(Robot* robot, int robotID) {
     tasks[robotID].clear();
@@ -443,6 +448,20 @@ QPoint Model::findClosestDock(QPoint pos)
 }
 void Model::save(QString filename)
 {
+    /*
+        Formátum:
+        [pálya mérete]
+        [robotok száma]
+          [x] [y] [energia] [elhasznált energia]
+        [podok száma]
+          [x] [y] [eredeti x] [eredeti y] [áruk száma] {áruk}
+        [célállomások száma]
+          [x] [y] [áru id]
+        [töltők száma]
+          [x] [y]
+        [rendelések száma]
+          [id]
+    */
     QFile file(filename);
 
     if (!file.open(QFile::WriteOnly))
@@ -451,43 +470,50 @@ void Model::save(QString filename)
         return;
     }
 
-    file.write(QString::number(size).toUtf8() + "\n");
-    file.write(QString::number(robots.count()).toUtf8() + "\n");
+    file.write(QString::number(size).toUtf8() + "\n"); // a pálya mérete
+    file.write(QString::number(robots.count()).toUtf8() + "\n"); // robotok száma
     for (int i = 0; i < robots.count(); i++)
     {
-        file.write(QString::number(robots[i]->getPosition().x()).toUtf8() + " ");
-        file.write(QString::number(robots[i]->getPosition().y()).toUtf8() + " ");
-        file.write(QString::number(robots[i]->getPower()).toUtf8() + " ");
-        file.write(QString::number(robots[i]->getUsedPower()).toUtf8() + "\n");
+        file.write(QString::number(robots[i]->getPosition().x()).toUtf8() + " "); //
+        file.write(QString::number(robots[i]->getPosition().y()).toUtf8() + " "); // robot pozíciója
+        file.write(QString::number(robots[i]->getPower()).toUtf8() + " "); // robot mentéskori energiája
+        file.write(QString::number(robots[i]->getUsedPower()).toUtf8() + "\n"); // robot elhasznált energiája
     }
-    file.write(QString::number(pods.count()).toUtf8() + "\n");
+    file.write(QString::number(pods.count()).toUtf8() + "\n"); // podok száma
     for (int i = 0; i < pods.count(); i++)
     {
-        file.write(QString::number(pods[i]->getPosition().x()).toUtf8() + " ");
-        file.write(QString::number(pods[i]->getPosition().y()).toUtf8() + " ");
-        file.write(QString::number(pods[i]->getProducts().count()).toUtf8() + " ");
+        file.write(QString::number(pods[i]->getPosition().x()).toUtf8() + " "); //
+        file.write(QString::number(pods[i]->getPosition().y()).toUtf8() + " "); // pod pozíciója
+        file.write(QString::number(pods[i]->getOriginalPosition().x()).toUtf8() + " "); //
+        file.write(QString::number(pods[i]->getOriginalPosition().y()).toUtf8() + " "); // pod eredeti pozíciója
+        file.write(QString::number(pods[i]->getProducts().count()).toUtf8() + " "); // pod áruk száma
         foreach (const int &v, pods[i]->getProducts())
         {
-            file.write(QString::number(v).toUtf8() + " ");
+            file.write(QString::number(v).toUtf8() + " "); // áruk száma
         }
         file.write("\n");
     }
     QList<QPair<QPoint, int>> targets = getTargets();
-    file.write(QString::number(targets.count()).toUtf8() + "\n");
+    file.write(QString::number(targets.count()).toUtf8() + "\n"); // célállomások száma
     for (int i = 0; i < targets.count(); i++)
     {
-        file.write(QString::number(targets[i].first.x()).toUtf8() + " ");
-        file.write(QString::number(targets[i].first.y()).toUtf8() + " ");
+        file.write(QString::number(targets[i].first.x()).toUtf8() + " "); //
+        file.write(QString::number(targets[i].first.y()).toUtf8() + " "); // célállomás pozíciója
         file.write(QString::number(targets[i].second).toUtf8() + "\n");
     }
     QList<QPoint> docks = getDocks();
-    file.write(QString::number(docks.count()).toUtf8() + "\n");
+    file.write(QString::number(docks.count()).toUtf8() + "\n"); // töltők száma
     for (int i = 0; i < docks.count(); i++)
     {
-        file.write(QString::number(docks[i].x()).toUtf8() + " ");
-        file.write(QString::number(docks[i].y()).toUtf8() + "\n");
+        file.write(QString::number(docks[i].x()).toUtf8() + " ");  //
+        file.write(QString::number(docks[i].y()).toUtf8() + "\n"); // töltő pozíciója
     }
     file.close();
+    file.write(QString::number(orders.count()).toUtf8() + "\n"); // rendelések száma
+    for (int i = 0; i < orders.count(); i++)
+    {
+        file.write(QString::number(orders[i]).toUtf8() + "\n"); // áru id
+    }
 }
 
 void Model::load(QString filename)
@@ -504,11 +530,11 @@ void Model::load(QString filename)
     int s;
     in >> s;
     this->setSize(s);
-    int rc;
+    int rc; // robotok száma
     in >> rc;
     for (int i = 0; i < rc; i++)
     {
-        int x, y, pwr, upwr;
+        int x, y, pwr, upwr; // x, y, energia, elhasznált energia
         in >> x >> y >> pwr >> upwr;
         createRobot(x, y);
         QPoint p(x, y);
@@ -516,36 +542,44 @@ void Model::load(QString filename)
         robots[i]->setPower(pwr);
         robots[i]->setUsedPower(upwr);
     }
-    int pc;
+    int pc; // podok száma
     in >> pc;
     for (int i = 0; i < pc; i++)
     {
-        int x, y, prc;
-        in >> x >> y >> prc;
+        int x, y, ox, oy, prc; // x, y, eredeti x, eredeti y, áruk száma
+        in >> x >> y >> ox >> oy >> prc;
         QSet<int> pr;
         for (int j = 0; j < prc; j++)
         {
-            int prn;
+            int prn; // áru
             in >> prn;
             pr.insert(prn);
         }
-        createPod(y, x, pr);
+        createPod(y, x, oy, ox, pr);
     }
-    int tc;
+    int tc; // célállomások száma
     in >> tc;
     for (int i = 0; i < tc; i++)
     {
-        int x, y, tn;
+        int x, y, tn; // x, y, áru id
         in >> x >> y >> tn;
         createTarget(x, y, tn);
     }
-    int dc;
+    int dc; // töltők száma
     in >> dc;
     for (int i = 0; i < dc; i++)
     {
-        int x, y;
+        int x, y; // x, y
         in >> x >> y;
         createDock(x, y);
+    }
+    int oc; // rendelések száma
+    in >> oc;
+    for (int i = 0; i < oc; i++)
+    {
+        int id; // áru
+        in >> id;
+        orders.append(id);
     }
     emit onLoad();
 }
