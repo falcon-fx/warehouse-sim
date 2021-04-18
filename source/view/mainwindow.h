@@ -43,7 +43,7 @@ private:
     void refreshTable();
     int _size;
     int _steps;
-    QVector<int> _energyUsed;
+    QList<int> _energyUsed;
     int _allEnergyUsed;
 
 private slots:

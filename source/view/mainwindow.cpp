@@ -301,7 +301,7 @@ void MainWindow::onTick()
     info += "Tasks done: " + QString::number(_model->getTasksDone()) + "\n";
     for(int i = 0; i < _model->getRobots().size(); i++) {
         Robot* r = _model->getRobots()[i];
-        info += "\nRobot " + QString::number(i+1) + "\nPower: " + QString::number(round((float)r->getPower()/(float)_model->getMaxPower()*100)) +
+        info += "\nRobot " + QString::number(i+1) + "\nPower: " + QString::number((int)((float)r->getPower()/(float)_model->getMaxPower()*100)) +
                 "% position: x:" + QString::number(r->getPosition().x()) + ", y:" + QString::number(r->getPosition().y()) +
                 "\nProduct number: " + QString::number(r->getProdNum()) + " Has pod: " + (r->hasPod() ? "true" : "false") + "\n";
         if(r->hasPod()) {
