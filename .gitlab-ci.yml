@@ -12,14 +12,14 @@ before_script:
 build_sim:
     stage: build
     script:
-        - cd source/warehouseSim
+        - cd source
         - qmake
         - make
     
 test_sim:
     stage: test
     script:
-        - cd test/warehouseSimTest
+        - cd test
         - qmake
         - make
         - make check

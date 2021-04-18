@@ -1,4 +1,4 @@
-#include <model/model.h>
+#include "model.h"
 #include <QDebug>
 #include <QFile>
 
@@ -719,6 +719,8 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
                         tasks.append(task);
                         //qDebug() << "east turn left";
                         break;
+                    default:
+                        break;
                 }
                 dir = Robot::Direction::NORTH;
             }
@@ -745,6 +747,8 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
                         task.op = OP_TURN_RIGHT;
                         tasks.append(task);
                         //qDebug() << "east turn right";
+                        break;
+                    default:
                         break;
                 }
                 dir = Robot::Direction::SOUTH;
@@ -773,6 +777,8 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
                         tasks.append(task);
                         //qDebug() << "south turn right";
                         break;
+                    default:
+                        break;
                 }
                 dir = Robot::Direction::WEST;
             }
@@ -799,6 +805,8 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
                         task.op = OP_TURN_LEFT;
                         tasks.append(task);
                         //qDebug() << "south turn left";
+                        break;
+                    default:
                         break;
                 }
                 dir = Robot::Direction::EAST;

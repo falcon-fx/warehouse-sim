@@ -1,7 +1,7 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
-#include <model/pod.h>
+#include "pod.h"
 #include <QPoint>
 #include <QQueue>
 
