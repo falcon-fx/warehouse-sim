@@ -30,7 +30,8 @@ protected:
     QTimer* timer;
     QLabel* infoLabel;
     QLabel* noDataLabel;
-    QPushButton *startButton;
+    QPushButton* startButton;
+    QSlider* speedSlider;
 private:
     Model* _model;
     Editor* _editor;
@@ -46,6 +47,7 @@ private slots:
     void startButtonClicked();
     void saveButtonClicked();
     void loadButtonClicked();
+    void speedSliderChanged(int value);
     void editorApplyAndClose();
     void onTick();
     void onLoad();

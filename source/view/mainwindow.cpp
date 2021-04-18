@@ -8,9 +8,9 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    _size=12;
-    _steps=0;
-    _model= new Model(_size, 60);
+    _size = 12;
+    _steps = 0;
+    _model = new Model(_size, 60);
     connect(_model, SIGNAL(onTick()), this, SLOT(onTick()));
     connect(_model, SIGNAL(onLoad()), this, SLOT(onLoad()));
     connect(_model, SIGNAL(onFinished()), this, SLOT(onFinished()));
@@ -80,9 +80,9 @@ MainWindow::MainWindow(QWidget *parent)
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), _model, SLOT(tick()));
 
-    window= new QWidget;
+    window = new QWidget;
     window->setWindowTitle("Waresim");
-    window->setMinimumSize(500,500);
+    window->setMinimumSize(500, 500);
     _mainLayout = new QHBoxLayout(window);
     _leftsideLayout = new QVBoxLayout();
     _titleLayout = new QVBoxLayout();
@@ -97,14 +97,12 @@ MainWindow::MainWindow(QWidget *parent)
     window->show();
 }
 
-MainWindow::~MainWindow()
-{
-}
+MainWindow::~MainWindow() { }
 
 void MainWindow::setupWindow()
 {
-    QFont f( "Arial", 45, QFont::Bold);
-    QLabel *title = new QLabel("Waresim");
+    QFont f("Arial", 45, QFont::Bold);
+    QLabel* title = new QLabel("Waresim");
     title->setStyleSheet("QLabel { color : gray; }");
     title->setFont(f);
     _titleLayout->setAlignment(Qt::AlignTop);
@@ -119,13 +117,19 @@ void MainWindow::setupWindow()
     QPushButton *saveButton = new QPushButton("Save");
     QPushButton *editorButton = new QPushButton("Open Editor");
     startButton = new QPushButton("Start");
+    speedSlider = new QSlider(Qt::Horizontal);
+    speedSlider->setMinimum(0);
+    speedSlider->setMaximum(5000);
+    speedSlider->setTickInterval(100);
+    speedSlider->setValue(600);
 
     _buttonLayout->setAlignment(Qt::AlignBottom);
     //_buttonLayout->addWidget(new QLabel("No data loaded"),0,0);
-    _buttonLayout->addWidget(loadButton,1,0);
-    _buttonLayout->addWidget(saveButton,1,1);
-    _buttonLayout->addWidget(editorButton,2,0,1,2);
-    _buttonLayout->addWidget(startButton,3,0,3,2);
+    _buttonLayout->addWidget(loadButton, 1, 0);
+    _buttonLayout->addWidget(saveButton, 1, 1);
+    _buttonLayout->addWidget(editorButton, 2, 0, 1, 2);
+    _buttonLayout->addWidget(speedSlider, 3, 0, 1, 2);
+    _buttonLayout->addWidget(startButton, 4, 0, 3, 2);
 
     _leftsideLayout->addLayout(_titleLayout);
     _leftsideLayout->addLayout(_infoLayout);
@@ -136,27 +140,27 @@ void MainWindow::setupWindow()
     _rightsideLayout->addLayout(_gridLayout);
     _mainLayout->addLayout(_rightsideLayout);
 
-     connect(editorButton,SIGNAL(clicked()),this,SLOT(editorButtonClicked()));
-     connect(loadButton,SIGNAL(clicked()),this,SLOT(loadButtonClicked()));
-     connect(saveButton,SIGNAL(clicked()),this,SLOT(saveButtonClicked()));
-     connect(startButton,SIGNAL(clicked()),this,SLOT(startButtonClicked()));
+    connect(editorButton, SIGNAL(clicked()), this, SLOT(editorButtonClicked()));
+    connect(loadButton, SIGNAL(clicked()), this, SLOT(loadButtonClicked()));
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(saveButtonClicked()));
+    connect(startButton, SIGNAL(clicked()), this, SLOT(startButtonClicked()));
+    connect(speedSlider, SIGNAL(valueChanged(int)), this, SLOT(speedSliderChanged(int)));
 }
 
 void MainWindow::drawTable()
 {
     _size = _model->getSize();
     if (_gridLayout->rowCount() != 0 || _gridLayout->columnCount() != 0) {
-            while ( QLayoutItem* item = _gridLayout->takeAt( 0 ) )
-                {
-                    Q_ASSERT( ! item->layout() );
-                    delete item->widget();
-                    delete item;
-                }
-     }
+        while (QLayoutItem* item = _gridLayout->takeAt(0)) {
+            Q_ASSERT(!item->layout());
+            delete item->widget();
+            delete item;
+        }
+    }
     _gridButtons.clear();
 
     _gridLayout->setAlignment(Qt::AlignCenter);
-    if(_size==0)
+    if(_size == 0)
     {
         noDataLabel = new QLabel("No data loaded. Please use\n the Load, or Open editor buttons\n to set up the simulation.");
         _gridLayout->addWidget(noDataLabel);
@@ -171,7 +175,7 @@ void MainWindow::drawTable()
             for (int j = 0; j < _size; j++)
             {
                 _gridButtons[i][j]= new QPushButton(this);
-                _gridButtons[i][j]->setFixedSize(QSize(40,40));
+                _gridButtons[i][j]->setFixedSize(QSize(40, 40));
                 _gridButtons[i][j]->setEnabled(false);
                 _gridLayout->setSpacing(0);
                 _gridLayout->addWidget(_gridButtons[i][j], i, j);
@@ -240,13 +244,21 @@ void MainWindow::saveButtonClicked()
 
 void MainWindow::startButtonClicked()
 {
-
     if(timer->isActive()) {
         timer->stop();
         startButton->setText("Start");
     } else {
-        timer->start(600);
+        timer->start(speedSlider->value());
         startButton->setText("Stop");
+    }
+}
+
+void MainWindow::speedSliderChanged(int value)
+{
+    if (timer->isActive())
+    {
+        timer->stop();
+        timer->start(value);
     }
 }
 
@@ -292,7 +304,6 @@ void MainWindow::onTick()
             info +=  "pod original pos: " + QString::number(r->getPod()->getOriginalPosition().x()) + " " + QString::number(r->getPod()->getOriginalPosition().y()) + "\n";
         }
     }
-    info += "faszkabát";
     infoLabel->setText(info);
 }
 
@@ -311,6 +322,6 @@ void MainWindow::onFinished() {
         _energyUsed.push_back(robot->getUsedPower());
     }
     QMessageBox results;
-    results.setText("YEET:\n" + QString::number(_allEnergyUsed) + "\nxd:\n" + QString::number(_steps));
+    results.setText("Összes energiahasználat:\n" + QString::number(_allEnergyUsed) + "\nLépések száma:\n" + QString::number(_steps));
     results.exec();
 }
