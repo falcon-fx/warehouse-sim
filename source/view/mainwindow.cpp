@@ -381,12 +381,14 @@ void MainWindow::confirmButtonClicked()
 {
     int ord =_s->text().toInt();
     bool isContain = false;
+    qDebug() << _model->getProdSet().contains(ord);
     int counter=0;
-    /*while (!isContain /*&& counter < _model-> )
+    while (!isContain && counter < _model->getProdSet().size() )
     {
+        isContain = _model->getProdSet().contains(ord);
         counter++;
-    }*/
-    if(true)
+    }
+    if(isContain)
         _model->createOrder(ord);
     else
     {

@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QList>
 #include <QQueue>
+#include <QSet>
 #include "wtile.h"
 #include "robot.h"
 #include "pod.h"
@@ -66,6 +67,8 @@ public:
     QQueue<int> getOrders();
     int getTasksDone() { return this->tasksDone; }
     int getMaxPower() { return this->maxPower; }
+    QSet<int> getProdSet() {this->prodTypes(); return this->prodSet; };
+    void prodTypes();
 
     int getSize();
 
@@ -92,6 +95,7 @@ private:
     QVector<int> rowNum;
     QVector<int> colNum;
     int tasksDone;
+    QSet<int> prodSet;
 
     void executeTask(int id);
 

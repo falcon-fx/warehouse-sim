@@ -868,3 +868,9 @@ void Model::saveResults(QString filename, QList<int> energyUsed, int allEnergy, 
         file.write("Robot #" + QString::number(i+1).toUtf8() + ": " + QString::number(energyUsed[i]).toUtf8() + "\n");
     }
 }
+
+void Model::prodTypes()
+{
+    for(int i=0;i< pods.count();i++)
+        prodSet.unite(pods[i]->getProducts());
+}
