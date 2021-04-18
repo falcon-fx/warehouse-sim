@@ -186,10 +186,6 @@ void MainWindow::refreshTable()
         {
             _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }");
             _gridButtons[i][j]->setText("");
-            if(_model->getRobot(i, j) != nullptr)
-            {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(255, 192, 0); }");
-            }
             if(_model->getPod(i, j) != nullptr)
             {
                 _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(230, 230, 230); color: black; }");
@@ -208,6 +204,10 @@ void MainWindow::refreshTable()
             {
                 _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(146, 208, 80); color: black; }");
                 _gridButtons[i][j]->setText(QString::number(warehouse[i][j]->getTarget()));
+            }
+            if(_model->getRobot(i, j) != nullptr)
+            {
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(255, 192, 0); }");
             }
         }
     }

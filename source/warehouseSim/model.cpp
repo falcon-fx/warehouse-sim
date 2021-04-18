@@ -298,6 +298,26 @@ QPoint Model::findClosestPod(QPoint pos, int prodNum)
     return closest;
 }
 
+QPoint Model::findClosestDock(QPoint pos)
+{
+    int distance = -1;
+    QPoint closest;
+    for (int i = 0; i < getDocks().size(); i++)
+    {
+        if (true) //meg  kene nezni hogy van e a dockon robot
+        {
+            if (distance == -1 || ((pos - getDocks()[i]).manhattanLength() < distance))
+            {
+                closest.setX(getDocks()[i].x());
+                closest.setY(getDocks()[i].y());
+                distance = (pos - pods[i]->getPosition()).manhattanLength();
+            }
+        }
+    }
+    qDebug() << closest;
+    return closest;
+
+}
 void Model::save(QString filename)
 {
     QFile file(filename);
