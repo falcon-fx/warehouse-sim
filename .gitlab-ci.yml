@@ -7,8 +7,8 @@ stages:
 before_script:
     - apt update -y
     - apt install python3-pip -y
-    - pip install -U pip
-    - pip install aqtinstall
+    - pip3 install -U pip
+    - pip3 install aqtinstall
     - aqt install 6.0.1 linux desktop
 
 build_sim:
