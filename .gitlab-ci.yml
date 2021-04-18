@@ -6,10 +6,6 @@ stages:
 
 before_script:
     - apt update -yqq
-    #- apt install python3-pip -yqq
-    #- pip3 install -U pip
-    #- pip3 install aqtinstall
-    #- aqt install 6.0.1 linux desktop
     - apt install -yqq build-essential
     - apt install -yqq qt5-default
 
