@@ -32,6 +32,9 @@ protected:
     QLabel* noDataLabel;
     QPushButton* startButton;
     QSlider* speedSlider;
+    QPushButton* _newOrderButton;
+    QWidget *orderWindow;
+    QLineEdit* _s;
 private:
     Model* _model;
     Editor* _editor;
@@ -52,6 +55,9 @@ private slots:
     void onTick();
     void onLoad();
     void onFinished();
+    void newOrder();
+    void closeButtonClicked();
+    void confirmButtonClicked();
 };
 
 #endif // MAINWINDOW_H
