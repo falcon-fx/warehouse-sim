@@ -109,6 +109,7 @@ void MainWindow::setupWindow()
     _titleLayout->addWidget(title);
     infoLabel = new QLabel("Press Start or Open editor \nto start or edit the simulation");
     _titleLayout->addWidget(infoLabel);
+    _newOrderButton = new QPushButton("New Order");
 
     _infoLayout->setAlignment(Qt::AlignLeft);
     //_infoLayout->addWidget(new QLabel("itt lesznek a robot infok"));
@@ -125,11 +126,12 @@ void MainWindow::setupWindow()
 
     _buttonLayout->setAlignment(Qt::AlignBottom);
     //_buttonLayout->addWidget(new QLabel("No data loaded"),0,0);
-    _buttonLayout->addWidget(loadButton, 1, 0);
-    _buttonLayout->addWidget(saveButton, 1, 1);
-    _buttonLayout->addWidget(editorButton, 2, 0, 1, 2);
-    _buttonLayout->addWidget(speedSlider, 3, 0, 1, 2);
-    _buttonLayout->addWidget(startButton, 4, 0, 3, 2);
+    _buttonLayout->addWidget(_newOrderButton, 1, 0,1,2);
+    _buttonLayout->addWidget(loadButton, 2, 0);
+    _buttonLayout->addWidget(saveButton, 2, 1);
+    _buttonLayout->addWidget(editorButton, 3, 0, 1, 2);
+    _buttonLayout->addWidget(speedSlider, 4, 0, 1, 2);
+    _buttonLayout->addWidget(startButton, 5, 0, 3, 2);
 
     _leftsideLayout->addLayout(_titleLayout);
     _leftsideLayout->addLayout(_infoLayout);
@@ -145,6 +147,7 @@ void MainWindow::setupWindow()
     connect(saveButton, SIGNAL(clicked()), this, SLOT(saveButtonClicked()));
     connect(startButton, SIGNAL(clicked()), this, SLOT(startButtonClicked()));
     connect(speedSlider, SIGNAL(valueChanged(int)), this, SLOT(speedSliderChanged(int)));
+    connect(_newOrderButton, SIGNAL(clicked()), this, SLOT(newOrder()));
 }
 
 void MainWindow::drawTable()
@@ -343,4 +346,54 @@ void MainWindow::onFinished() {
         default:
             break;
     }
+}
+
+void MainWindow:: newOrder()
+{
+    timer->stop();
+    orderWindow = new QWidget;
+    orderWindow->setWindowTitle("New Order");
+
+    QGridLayout* sizeLayout = new QGridLayout(orderWindow);
+    _s = new QLineEdit();
+    QPushButton* confrimButton = new QPushButton("Confirm");
+    QPushButton* closeButton = new QPushButton("Close");
+
+    sizeLayout->addWidget(new QLabel("Order number:"),0,1);
+    sizeLayout->addWidget(_s,0,2);
+    sizeLayout->addWidget(confrimButton,1,2);
+    sizeLayout->addWidget(closeButton,1,3);
+
+    connect(confrimButton,SIGNAL(clicked()),this,SLOT(confirmButtonClicked()));
+    connect(closeButton,SIGNAL(clicked()),this,SLOT(closeButtonClicked()));
+
+    orderWindow->show();
+}
+
+void MainWindow::closeButtonClicked()
+{
+    orderWindow->close();
+  //  timer->start();
+}
+
+void MainWindow::confirmButtonClicked()
+{
+    int ord =_s->text().toInt();
+    bool isContain = false;
+    int counter=0;
+    /*while (!isContain /*&& counter < _model-> )
+    {
+        counter++;
+    }*/
+    if(true)
+        _model->createOrder(ord);
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText("The order number is incorrect");
+        msgBox.exec();
+    }
+
+    orderWindow->close();
+    //timer->start();
 }

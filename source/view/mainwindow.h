@@ -45,6 +45,7 @@ private:
     int _steps;
     QVector<int> _energyUsed;
     int _allEnergyUsed;
+
 private slots:
     void editorButtonClicked();
     void startButtonClicked();
