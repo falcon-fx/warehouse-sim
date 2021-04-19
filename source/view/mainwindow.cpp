@@ -192,21 +192,21 @@ void MainWindow::refreshTable()
     {
         for(int j = 0; j < _size; j++)
         {
-            _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }");
+            _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #fff; border: 1px solid #ddd; }");
             _gridButtons[i][j]->setText("");
 
             if (warehouse[i][j]->isDock())
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213); }");
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #5b9bd5; border: 1px solid #ddd; }");
             }
             else if (warehouse[i][j]->isTarget())
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(146, 208, 80); color: black; }");
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #92d050; color: black; border: 1px solid #ddd; }");
                 _gridButtons[i][j]->setText(QString::number(warehouse[i][j]->getTarget()));
             }
             if(_model->getPod(i, j) != nullptr)
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(230, 230, 230); color: black; }");
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #e6e6e6; color: black; border: 1px solid #ddd; }");
                 QString podText ="P\n";
                 foreach (const int &value, _model->getPod(i, j)->getProducts())
                 {
@@ -216,7 +216,21 @@ void MainWindow::refreshTable()
             }
             if(_model->getRobot(i, j) != nullptr)
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: rgb(255, 192, 0); }");
+                switch (_model->getRobot(i, j)->getDirection())
+                {
+                    case Robot::Direction::NORTH:
+                        _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #ffc000; color: black; border: 1px solid #ddd; border-top: 3px solid #cc7700; }");
+                        break;
+                    case Robot::Direction::SOUTH:
+                        _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #ffc000; color: black; border: 1px solid #ddd; border-bottom: 3px solid #cc7700; }");
+                        break;
+                    case Robot::Direction::WEST:
+                        _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #ffc000; color: black; border: 1px solid #ddd; border-left: 3px solid #cc7700; }");
+                        break;
+                    case Robot::Direction::EAST:
+                        _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #ffc000; color: black; border: 1px solid #ddd; border-right: 3px solid #cc7700; }");
+                        break;
+                }
             }
         }
     }
