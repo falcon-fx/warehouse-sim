@@ -192,21 +192,21 @@ void MainWindow::refreshTable()
     {
         for(int j = 0; j < _size; j++)
         {
-            _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #fff; border: 1px solid #ddd; }");
+            _gridButtons[i][j]->setStyleSheet("background-color: #fff; border: 1px solid #adadad;");
             _gridButtons[i][j]->setText("");
 
             if (warehouse[i][j]->isDock())
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #5b9bd5; border: 1px solid #ddd; }");
+                _gridButtons[i][j]->setStyleSheet("background-color: #5b9bd5; border: 1px solid #adadad;");
             }
             else if (warehouse[i][j]->isTarget())
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #92d050; color: black; border: 1px solid #ddd; }");
+                _gridButtons[i][j]->setStyleSheet("background-color: #92d050; color: black; border: 1px solid #adadad;");
                 _gridButtons[i][j]->setText(QString::number(warehouse[i][j]->getTarget()));
             }
             if(_model->getPod(i, j) != nullptr)
             {
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #e6e6e6; color: black; border: 1px solid #ddd; }");
+                _gridButtons[i][j]->setStyleSheet("background-color: #e6e6e6; color: black; border: 1px solid #adadad;");
                 QString podText ="P\n";
                 foreach (const int &value, _model->getPod(i, j)->getProducts())
                 {
@@ -219,16 +219,16 @@ void MainWindow::refreshTable()
                 switch (_model->getRobot(i, j)->getDirection())
                 {
                     case Robot::Direction::NORTH:
-                        _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #ffc000; color: black; border: 1px solid #ddd; border-top: 3px solid #cc7700; }");
+                        _gridButtons[i][j]->setStyleSheet("background-color: #ffc000; color: black; border: 1px solid #adadad; border-top: 3px solid #cc7700;");
                         break;
                     case Robot::Direction::SOUTH:
-                        _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #ffc000; color: black; border: 1px solid #ddd; border-bottom: 3px solid #cc7700; }");
+                        _gridButtons[i][j]->setStyleSheet("background-color: #ffc000; color: black; border: 1px solid #adadad; border-bottom: 3px solid #cc7700;");
                         break;
                     case Robot::Direction::WEST:
-                        _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #ffc000; color: black; border: 1px solid #ddd; border-left: 3px solid #cc7700; }");
+                        _gridButtons[i][j]->setStyleSheet("background-color: #ffc000; color: black; border: 1px solid #adadad; border-left: 3px solid #cc7700;");
                         break;
                     case Robot::Direction::EAST:
-                        _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: #ffc000; color: black; border: 1px solid #ddd; border-right: 3px solid #cc7700; }");
+                        _gridButtons[i][j]->setStyleSheet("background-color: #ffc000; color: black; border: 1px solid #adadad; border-right: 3px solid #cc7700;");
                         break;
                 }
             }
@@ -308,7 +308,7 @@ void MainWindow::onTick()
     refreshTable();
     _steps++;
     QString info;
-    info += "Tasks done: " + QString::number(_model->getTasksDone()) + "\n";
+    info += "Tasks done: " + QString::number(_model->getTasksDone()) + " \ Tasks left: " + QString::number(_model->getTotalTasks() - _model->getTasksDone()) + "\n";
     for(int i = 0; i < _model->getRobots().size(); i++) {
         Robot* r = _model->getRobots()[i];
         info += "\nRobot " + QString::number(i+1) + "\nPower: " + QString::number((int)((float)r->getPower()/(float)_model->getMaxPower()*100)) +

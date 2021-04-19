@@ -66,6 +66,7 @@ public:
     void createDock(int x, int y);
     void createOrder(int prodNum);
     QQueue<int> getOrders();
+    int getTotalTasks() { return this->totalTasks; }
     int getTasksDone() { return this->tasksDone; }
     int getMaxPower() { return this->maxPower; }
     QSet<int> getProdSet() {this->prodTypes(); return this->prodSet; };
@@ -96,6 +97,7 @@ private:
     QVector<QQueue<Task>> tasks;
     QVector<int> rowNum;
     QVector<int> colNum;
+    int totalTasks;
     int tasksDone;
     QSet<int> prodSet;
 

@@ -26,6 +26,7 @@ QVector<QVector<WTile*>> Model::getWarehouse()
 
 void Model::makeWarehouse()
 {
+    totalTasks = 0;
     tasksDone = 0;
     robotCount = 0;
     robots.clear();
@@ -157,6 +158,7 @@ void Model::createDock(int x, int y)
 }
 
 void Model::createOrder(int prodNum) {
+    this->totalTasks++;
     this->orders.append(prodNum);
 }
 
