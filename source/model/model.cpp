@@ -386,7 +386,7 @@ QPoint Model::findClosestTarget(QPoint pos, int prodNum)
             }
         }
     }
-    closest.setX(closest.x() - 1);
+    //closest.setX(closest.x() - 1);
     return closest;
 }
 
