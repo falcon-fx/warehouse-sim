@@ -1,10 +1,11 @@
-#include "editor.h"
+#include <view/editor.h>
 
 #include <QDebug>
 
-Editor::Editor()
+Editor::Editor(Model* model)
 {
     setupSizeWindow();
+    _model = model;
 }
 
 void Editor::okButtonClicked()
@@ -12,6 +13,10 @@ void Editor::okButtonClicked()
     //_height=_h->text().toInt();
     //_width=_w->text().toInt();
     _size = _s->text().toInt();
+    _model->setSize(_size);
+    _model->setMaxPower(_rPower->text().toInt());
+    qDebug() << _model->getMaxPower();
+    isSelected=false;
 
     sizeWindow->close();
     firstClicked=true;
@@ -53,7 +58,7 @@ void Editor::setupTable()
                 _gridButtons[i][j]= new QPushButton();
                 _gridButtons[i][j]->setFixedSize(QSize(40,40));
                 _gridButtons[i][j]->setEnabled(false);
-                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; }");
+                _gridButtons[i][j]->setStyleSheet("QPushButton { background-color: white; border:0.5px solid gray;}");
                 _gridLayout->setSpacing(0);
                 _gridLayout->addWidget(_gridButtons[i][j], i, j);
 
@@ -68,6 +73,9 @@ void Editor::setupTable()
 void Editor::setupEditor()
 {
     editor= new QWidget();
+
+    //selectedNumber=0;
+
     editor->setWindowTitle("Editor");
     _mainLayout= new QVBoxLayout(editor);
     _gridLayout = new QGridLayout();
@@ -75,6 +83,8 @@ void Editor::setupEditor()
     _editButtonsLayout = new QHBoxLayout();
     _infoLayout = new QGridLayout();
     _infoButtonsLayout= new QHBoxLayout();
+    _selectArrowLayout = new QHBoxLayout();
+    _selectNewProdLayout = new QHBoxLayout();
 
     _selectButton = new QPushButton("Select");
     _robotButton= new QPushButton("Robot");
@@ -86,12 +96,24 @@ void Editor::setupEditor()
     //_redoButton= new QPushButton("Redo");
 
     _prodNumsLEdit = new QLineEdit();
+
     _prodNumCBox = new QComboBox();
 
     _newButton= new QPushButton("New");
-    _loadButton= new QPushButton("Load");
-    _saveButton= new QPushButton("Save");
     _applyButton= new QPushButton("Apply and close");
+
+    _selectUp= new QPushButton("Move Up");
+    _selectUp->setVisible(false);
+    _selectDown=new QPushButton("Move Down");
+    _selectDown->setVisible(false);
+    _selectLeft=new QPushButton("Move Left");
+    _selectLeft->setVisible(false);
+    _selectRight=new QPushButton("Move Right");
+    _selectRight->setVisible(false);
+    _changeProdOkButton=new QPushButton("Put new products");
+    _changeProdOkButton->setVisible(false);
+    _changeProdNumsLEdit = new QLineEdit();
+    _changeProdNumsLEdit->setVisible(false);
 
     setupTable();
 
@@ -107,12 +129,20 @@ void Editor::setupEditor()
     _infoLayout->addWidget(_prodNumCBox, 0, 2);
     _infoLayout->addWidget(_targetButton, 0, 3);
 
+    _selectArrowLayout->addWidget(_selectUp);
+    _selectArrowLayout->addWidget(_selectDown);
+    _selectArrowLayout->addWidget(_selectLeft);
+    _selectArrowLayout->addWidget(_selectRight);
+
+    _selectNewProdLayout->addWidget(_changeProdNumsLEdit);
+     _selectNewProdLayout->addWidget(_changeProdOkButton);
+
     _infoButtonsLayout->addWidget(_newButton);
-    _infoButtonsLayout->addWidget(_loadButton);
-    _infoButtonsLayout->addWidget(_saveButton);
     _infoButtonsLayout->addWidget(_applyButton);
 
     _bottomLayout->addLayout(_editButtonsLayout);
+    _bottomLayout->addLayout(_selectArrowLayout);
+    _bottomLayout->addLayout(_selectNewProdLayout);
     _bottomLayout->addLayout(_infoLayout);
     _bottomLayout->addLayout(_infoButtonsLayout);
 
@@ -127,11 +157,16 @@ void Editor::setupEditor()
     connect(_deleteButton,SIGNAL(clicked()),this,SLOT(editButtonsClicked()));
     //connect(_undoButton,SIGNAL(clicked()),this,SLOT(editButtonsClicked()));
    // connect(_redoButton,SIGNAL(clicked()),this,SLOT(editButtonsClicked()));
+    connect(_selectUp,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
+    connect(_selectDown,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
+    connect(_selectRight,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
+    connect(_selectLeft,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
+    connect(_changeProdOkButton,SIGNAL(clicked()),this,SLOT(changeProd()));
 
     connect(_newButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
-    connect(_loadButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
-    connect(_saveButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
     connect(_applyButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
+
+    //connect(,SIGNAL(pressed()),this,SLOT(keyPressEvent(QKeyEvent* event)));
 
     robots.clear();
     pods.clear();
@@ -151,15 +186,18 @@ void Editor::setupSizeWindow()
 
     QGridLayout* sizeLayout = new QGridLayout(sizeWindow);
     _s = new QLineEdit("10");
+    _rPower = new QLineEdit("100");
     //_w = new QLineEdit("10");
     okButton = new QPushButton("OK");
     closeButton = new QPushButton("Close");
 
     sizeLayout->addWidget(new QLabel("Set size:"),0,1);
+    sizeLayout->addWidget(new QLabel("Set robot power:"),1,1);
     sizeLayout->addWidget(_s,0,2);
+    sizeLayout->addWidget(_rPower,1,2);
     //sizeLayout->addWidget(_w,0,3);
-    sizeLayout->addWidget(okButton,1,2);
-    sizeLayout->addWidget(closeButton,1,3);
+    sizeLayout->addWidget(okButton,2,2);
+    sizeLayout->addWidget(closeButton,2,3);
 
     connect(okButton,SIGNAL(clicked()),this,SLOT(okButtonClicked()));
     connect(closeButton,SIGNAL(clicked()),this,SLOT(closeButtonClicked()));
@@ -211,13 +249,47 @@ void Editor::editButtonsClicked()
     {
         status=6;
     }
-    else if(selectedButton->text() == "Undo")
+    /*else if(selectedButton->text() == "Undo")
     {
 
     }
     else if(selectedButton->text() == "Redo")
     {
 
+    }*/
+
+    if(status!=1) //selectrol elkattintunk, eltuntetjuk a mozgato gombokat
+    {
+        isSelected = false;
+        _selectUp->setVisible(false);
+        _selectDown->setVisible(false);
+        _selectLeft->setVisible(false);
+        _selectRight->setVisible(false);
+        _changeProdOkButton->setVisible(false);
+        _changeProdNumsLEdit->setVisible(false);
+
+    }
+    else//select opcioban vagyunk, bekapcsoljuk a mozgato gombokat
+    {
+        isSelected=true;
+        _selectUp->setVisible(true);
+        _selectDown->setVisible(true);
+        _selectLeft->setVisible(true);
+        _selectRight->setVisible(true);
+        _changeProdOkButton->setVisible(true);
+        _changeProdNumsLEdit->setVisible(true);
+    }
+
+    selectedGridButtons.clear();//a kivalasztast toroljuk
+    selectedProds.clear();
+
+    for (int i = 0; i < _size; i++)//visszaallitjuk a mezoket a selectrol(eltunik a piros keret)
+    {
+        for (int j = 0; j < _size; j++)
+        {
+            QColor color = _gridButtons[i][j]->palette().button().color();
+            _gridButtons[i][j]->setStyleSheet("border:0.5px solid gray; background-color: " + color.name() +";");
+        }
     }
 }
 
@@ -229,14 +301,6 @@ void Editor::controlButtonsClicked()
     {
         editor->close();
         setupSizeWindow();
-    }
-    else if(btn->text() == "Load")
-    {
-
-    }
-    else if(btn->text() == "Save")
-    {
-
     }
     else if(btn->text() == "Apply and close")
     {
@@ -265,18 +329,13 @@ void Editor::controlButtonsClicked()
     }
 }
 
- void Editor::gridButtonClicked()
+void Editor::gridButtonClicked()
 {
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
-    btn->setText("");
-
-    /*for (int i = 0; i < _height; i++)
-    {
-        for (int j = 0; j < _width; j++)
-            _gridButtons[i][j]->setEnabled(true);
-    }*/
+    //btn->setText("");
 
     QPoint p = btn->pos() - _gridButtons[0][0]->pos();
+
     QSet<int> prods;
     if (!_prodNumsLEdit->text().isEmpty())
     {
@@ -292,6 +351,7 @@ void Editor::controlButtonsClicked()
     {
         podText += QString::number(value) + " ";
     }
+
     int prodNum = _prodNumCBox->currentText().toInt();
     QPair<QPoint, QSet<int>> pod_pair(p, prods);
     QPair<QPoint, int> target_pair(p, prodNum);
@@ -299,8 +359,27 @@ void Editor::controlButtonsClicked()
     switch(status)
     {
     case 1://select
-        //btn->setStyleSheet("QPushButton { background-color: gray; }");
+    {
+        QColor color = btn->palette().button().color();
+        if(isSelected && color.name() == "#e6e6e6")
+        {
+            btn->setStyleSheet("border:3px solid red; background-color: " + color.name() +";");
+
+            bool contains=false;
+            for(int i = 0; i<selectedGridButtons.count();i++) //ellenorizzuk, hogy nincs e mar a vectorban a kivalasztott mezo
+                if(selectedGridButtons[i] == p) contains = true;
+
+
+            if(!contains)
+            {
+
+                selectedGridButtons.append(QPoint((btn->pos().x()-11) ,(btn->pos().y()-11)));
+                //place.append(QPoint(selectedGridButtons.last().x()/40,selectedGridButtons.last().y()/40));
+                selectedProds.append(btn->text());
+            }
+        }
         break;
+    }
     case 2://robot
         btn->setStyleSheet("QPushButton { background-color: rgb(255, 192, 0); }");
         robots.append(p);
@@ -380,6 +459,7 @@ void Editor::controlButtonsClicked()
         break;
     case 6://delete
         btn->setStyleSheet("QPushButton { background-color: white; }");
+        btn->setText("");
         robots.removeOne(p);
         for (int i = 0; i < pods.count(); i++)
         {
@@ -400,4 +480,109 @@ void Editor::controlButtonsClicked()
         docks.removeOne(p);
         break;
     }
+ }
+
+void Editor::selectMoveButtonClicked()
+{
+    QPushButton* btn = qobject_cast<QPushButton*>(sender());
+    int dirX=0;
+    int dirY=0;
+    if(btn->text() =="Move Up")//irany beallitasa
+    {
+        dirX = 0;
+        dirY = -40;
+    }
+    else if(btn->text() =="Move Down")
+    {
+        dirX = 0;
+        dirY = 40;
+    }
+    else if(btn->text() =="Move Left")
+    {
+        dirX = -40;
+        dirY = 0;
+    }
+    else if(btn->text() =="Move Right")
+    {
+        dirX = 40;
+        dirY = 0;
+    }
+    for(int i=0; i < selectedGridButtons.count();i++)
+    {
+        int number=0;
+        while(pods[number].first != selectedGridButtons[i] && number < pods.size()-1) // megkeressuk a podsban hanyadik a kivalasztott elem
+            number++;
+
+        if(selectedGridButtons[i].y()+dirY>=0 && selectedGridButtons[i].y()+dirY<_size*40 && selectedGridButtons[i].x()+dirX>=0 && selectedGridButtons[i].x()+dirX<_size*40)
+        {
+            _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton { background-color: white; }"); // valamiert fel vannak cserelodve a koordinatak ahhh
+            _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText("");
+            selectedGridButtons[i] = QPoint(selectedGridButtons[i].x()+dirX,selectedGridButtons[i].y()+dirY);
+            _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton {border:3px solid red; background-color: #e6e6e6; }");
+            _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText(selectedProds[i]);
+
+            QPoint newPlace = QPoint(selectedGridButtons[i].x(),selectedGridButtons[i].y());
+            QSet<int> prods;
+
+            //utban levo dolgok torlese
+            robots.removeOne(newPlace);
+            for (int i = 0; i < targets.count(); i++)
+            {
+                if (targets[i].first == newPlace)
+                {
+                    targets.remove(i);
+                    break;
+                }
+            }
+            docks.removeOne(newPlace);
+
+            //pod helyenek frissitese
+            QStringList prodnum = selectedProds[i].split(" ");
+            prodnum[0].remove(0,2);
+            if(prodnum.size()!=1)
+                prodnum.removeLast();
+
+
+            if(prodnum[0]!="")
+                for (int j = 0; j < prodnum.count(); j++)
+                    prods.insert(prodnum[j].toInt());
+
+            QPair<QPoint, QSet<int>> pod_pair(newPlace, prods);
+            pods.replace(number,pod_pair);
+        }
+    }
+}
+
+void Editor::changeProd()
+{
+    for(int i=0; i < selectedGridButtons.count();i++)
+    {
+        int number=0;
+        while(pods[number].first != selectedGridButtons[i] && number < pods.size()-1) // megkeressuk a podsban hanyadik a kivalasztott elem
+            number++;
+
+        QPoint newPlace = QPoint(selectedGridButtons[i].x(),selectedGridButtons[i].y());
+        QSet<int> prods;
+        if (!_changeProdNumsLEdit->text().isEmpty())
+        {
+            QStringList numbers = _changeProdNumsLEdit->text().split(",");
+            for (int i = 0; i < numbers.count(); i++)
+            {
+                prods.insert(numbers[i].toInt());
+                prodNums.insert(numbers[i].toInt());
+            }
+        }
+        QString podText ="P\n";
+        foreach (const int &value, prods)
+        {
+            podText += QString::number(value) + " ";
+        }
+
+        selectedProds[i] = podText;
+        _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText(podText);
+        QPair<QPoint, QSet<int>> pod_pair(newPlace, prods);
+        pods.replace(number,pod_pair);
+
+    }
+
 }

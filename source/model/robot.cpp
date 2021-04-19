@@ -10,6 +10,7 @@ Robot::Robot(int id, int maxP, int x, int y)
     this->position.setY(y);
     this->direction = NORTH;
     this->pod = nullptr;
+    this->setProdNum(-1);
 }
 
 int Robot::getID()
@@ -82,20 +83,20 @@ void Robot::setPosition(QPoint pos)
 
 void Robot::move()
 {
-    power--;
+    lowerPower();
     switch (direction)
     {
         case NORTH:
-            this->position.ry()--;
+            this->position.rx()--;
             break;
         case EAST:
-            this->position.rx()++;
-            break;
-        case SOUTH:
             this->position.ry()++;
             break;
+        case SOUTH:
+            this->position.rx()++;
+            break;
         case WEST:
-            this->position.rx()--;
+            this->position.ry()--;
             break;
     }
     if (pod != nullptr)
@@ -106,7 +107,7 @@ void Robot::move()
 
 void Robot::turnLeft()
 {
-    power--;
+    lowerPower();
     switch (direction)
     {
         case NORTH:
@@ -126,7 +127,7 @@ void Robot::turnLeft()
 
 void Robot::turnRight()
 {
-    power--;
+    lowerPower();
     switch (direction)
     {
         case NORTH:
@@ -151,14 +152,14 @@ Pod* Robot::getPod()
 
 void Robot::liftPod(Pod* pod)
 {
-    power--;
+    lowerPower();
     pod->setPickedUp(true);
     this->pod = pod;
 }
 
 void Robot::dropPod()
 {
-    power--;
+    lowerPower();
     this->pod->setPickedUp(false);
     this->pod = nullptr;
 }

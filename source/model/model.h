@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QList>
 #include <QQueue>
+#include <QSet>
 #include "wtile.h"
 #include "robot.h"
 #include "pod.h"
@@ -16,6 +17,7 @@ enum Operation
     OP_TURN_RIGHT,
     OP_LIFT,
     OP_DROP,
+    OP_DELIVER,
     OP_CHARGE,
     OP_CHARGE_STOP,
     OP_WAIT
@@ -23,17 +25,24 @@ enum Operation
 
 enum Weight
 {
-    WGT_WAIT,
-    WGT_POD_TO_TARGET,
-    WGT_POD_TO_ORIGIN,
+    WGT_CHARGE,
     WGT_TO_POD,
-    WGT_CHARGE
+    WGT_POD_TO_ORIGIN,
+    WGT_POD_TO_TARGET
 };
 
 struct Task
 {
     Operation op;
     Weight weight;
+};
+
+struct Node {
+    QPoint location;
+    int distance;
+    Node* parent;
+    Node() {parent = nullptr;}
+    Node(QPoint loc, int dist, Node* par) : location(loc), distance(dist), parent(par) {}
 };
 
 class Model : public QObject
@@ -47,24 +56,35 @@ public:
     QList<Robot*> getRobots();
     Robot* getRobot(int x, int y);
     void createPod(int x, int y, QSet<int> prods);
+    void createPod(int x, int y, int ox, int oy, QSet<int> prods);
     QList<Pod*> getPods();
     Pod* getPod(int x, int y);
+    QVector<int> getProducts();
     QList<QPair<QPoint, int>> getTargets();
     QList<QPoint> getDocks();
     void createTarget(int x, int y, int prodNum);
     void createDock(int x, int y);
     void createOrder(int prodNum);
     QQueue<int> getOrders();
+    int getTotalTasks() { return this->totalTasks; }
+    int getTasksDone() { return this->tasksDone; }
+    int getMaxPower() { return this->maxPower; }
+    void setMaxPower(int pwr){(size*10<pwr)?this->maxPower = pwr:this->maxPower=size*10;}
+    QSet<int> getProdSet() {this->prodTypes(); return this->prodSet; };
+    void prodTypes();
 
     int getSize();
 
     void save(QString filename);
     void load(QString filename);
+    void saveResults(QString filename, QList<int> energyUsed, int allEnergy, int allSteps);
+
 public slots:
     void tick();
 signals:
     void onTick();
     void onLoad();
+    void onFinished();
 private:
 
     int size;
@@ -74,8 +94,14 @@ private:
     QList<Robot*> robots;
     int robotCount;
     QList<Pod*> pods;
+    QVector<int> products;
     QQueue<int> orders;
     QVector<QQueue<Task>> tasks;
+    QVector<int> rowNum;
+    QVector<int> colNum;
+    int totalTasks;
+    int tasksDone;
+    QSet<int> prodSet;
 
     void executeTask(int id);
 
@@ -83,6 +109,15 @@ private:
     bool isPodAvailable(int prodNum);
     QPoint findClosestPod(QPoint pos, int prodNum);
     QPoint findClosestDock(QPoint pos);
+    void createPath(QPoint start, QPoint end, int &shortestPath, int &energyNeeded, QQueue<Task> &tasks, Weight weight, Robot* robot);
+    void createPathVector(Node* n, QVector<QPoint> &path);
+    QQueue<Task> generatePathQueue(QVector<QPoint> path, Weight w, Robot* r);
+    bool isValid(int row, int col);
+    void gotoDock(Robot* robot, int robotID);
+    void gotoPod(Robot* robot, int robotID);
+    void gotoTarget(Robot* robot, int robotID);
+    void bringBackPod(Robot* robot, int robotID);
+    void gotoPodUnfinished(Robot* robot, int robotID);
 };
 
 #endif // MODEL_H

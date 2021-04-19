@@ -1,6 +1,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include <model/model.h>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QWidget>
@@ -12,18 +13,22 @@
 #include <QSet>
 #include <QPair>
 #include <QComboBox>
+#include <QKeyEvent>
+#include <QString>
+#include <QFileDialog>
 
 class Editor : public QObject
 {
     Q_OBJECT
 public:
-    Editor();
+    Editor(Model* model);
     int getSize() { return  this->_size; }
     QVector<QPoint> getRobots() { return this->robots; }
     QVector<QPair<QPoint, QSet<int>>> getPods() { return this->pods; }
     QVector<QPair<QPoint, int>> getTargets() { return this->targets; }
     QVector<QPoint> getDocks() { return this->docks; }
 private:
+     Model* _model;
      QWidget *editor;
      QWidget *sizeWindow;
 
@@ -31,6 +36,7 @@ private:
      QPushButton* okButton;
      QPushButton* closeButton;
      QLineEdit* _s;
+     QLineEdit* _rPower;
 
      //layouts:
      QVBoxLayout* _mainLayout;
@@ -40,6 +46,9 @@ private:
      QGridLayout* _infoLayout;
      QHBoxLayout* _infoButtonsLayout;
      QHBoxLayout* buttonContainer;
+     QHBoxLayout* _selectArrowLayout;
+     QHBoxLayout* _selectNewProdLayout;
+
 
      //buttons:
      QVector<QVector<QPushButton*>> _gridButtons;
@@ -51,14 +60,18 @@ private:
      QPushButton* _deleteButton;
      QPushButton* _undoButton;
      QPushButton* _redoButton;
+     QPushButton* _selectUp;
+     QPushButton* _selectDown;
+     QPushButton* _selectLeft;
+     QPushButton* _selectRight;
+     QPushButton* _changeProdOkButton;
 
      //inputs:
      QLineEdit* _prodNumsLEdit;
      QComboBox* _prodNumCBox;
+     QLineEdit* _changeProdNumsLEdit;
 
      QPushButton* _newButton;
-     QPushButton* _loadButton;
-     QPushButton* _saveButton;
      QPushButton* _applyButton;
 
      QPushButton* selectedButton;
@@ -66,6 +79,12 @@ private:
 
      int _size;
      int status;//1-select 2-robot 3-pod 4-target 5-dock 6-delete
+     bool isSelected;
+     //int selectedNumber;
+
+     QVector<QPoint> place;
+     QVector<QPoint> selectedGridButtons;
+     QVector<QString> selectedProds;
 
 
      QVector<QPoint> robots;
@@ -79,6 +98,9 @@ private:
      void setupSizeWindow();
      void setupTable();
 
+protected:
+     //void keyPressEvent(QKeyEvent* event);
+
 private slots:
      void okButtonClicked();
      void closeButtonClicked();
@@ -87,6 +109,11 @@ private slots:
      void controlButtonsClicked();
 
      void gridButtonClicked();
+
+     void selectMoveButtonClicked();
+
+     void changeProd();
+
 
 signals:
      void applyAndClose();

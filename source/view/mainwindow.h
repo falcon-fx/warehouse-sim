@@ -1,10 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "editor.h"
-#include "model.h"
+#include <view/editor.h>
+#include <model/model.h>
 
 #include <QMainWindow>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QTimer>
@@ -27,6 +28,13 @@ protected:
     QVector<QVector<QPushButton*>> _gridButtons;
     QHBoxLayout* buttonContainer;
     QTimer* timer;
+    QLabel* infoLabel;
+    QLabel* noDataLabel;
+    QPushButton* startButton;
+    QSlider* speedSlider;
+    QPushButton* _newOrderButton;
+    QWidget *orderWindow;
+    QLineEdit* _s;
 private:
     Model* _model;
     Editor* _editor;
@@ -34,14 +42,23 @@ private:
     void drawTable();
     void refreshTable();
     int _size;
+    int _steps;
+    QList<int> _energyUsed;
+    int _allEnergyUsed;
+
 private slots:
     void editorButtonClicked();
     void startButtonClicked();
     void saveButtonClicked();
     void loadButtonClicked();
+    void speedSliderChanged(int value);
     void editorApplyAndClose();
     void onTick();
     void onLoad();
+    void onFinished();
+    void newOrder();
+    void closeButtonClicked();
+    void confirmButtonClicked();
 };
 
 #endif // MAINWINDOW_H

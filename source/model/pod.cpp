@@ -11,6 +11,17 @@ Pod::Pod(QSet<int> prods, int origin_x, int origin_y)
     this->reserved = false;
 }
 
+Pod::Pod(QSet<int> prods, int x, int y, int origin_x, int origin_y)
+{
+    this->products = prods;
+    this->pos.setX(x);
+    this->pos.setY(y);
+    this->originalPos.setX(origin_x);
+    this->originalPos.setY(origin_y);
+    this->pickedUp = false;
+    this->reserved = false;
+}
+
 bool Pod::hasProduct(int prodNum)
 {
     return this->products.contains(prodNum);

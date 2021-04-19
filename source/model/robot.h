@@ -26,6 +26,8 @@ public:
     QPoint getPosition();
     QPoint getNextPosition();
     void setPosition(QPoint pos);
+    int getProdNum() { return this->prodNum; }
+    void setProdNum(int prod) { this->prodNum = prod; }
 
     void move();
     void turnLeft();
@@ -35,14 +37,18 @@ public:
     void liftPod(Pod* pod);
     void dropPod();
     bool hasPod();
+    void setTempPodPos(QPoint point) { this->tempPodPos = point; }
+    QPoint getTempPodPos() { return this->tempPodPos; }
 private:
     int id;
     int power;
     int maxPower;
     int usedPower;
+    int prodNum;
     Direction direction;
     QPoint position;
     Pod* pod;
+    QPoint tempPodPos;
 };
 
 #endif // ROBOT_H
