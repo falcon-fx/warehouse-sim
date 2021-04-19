@@ -69,14 +69,6 @@ MainWindow::MainWindow(QWidget *parent)
     _model->createTarget(4, 11, 2);
     _model->createTarget(6, 11, 3);
     _model->createTarget(8, 11, 4);
-    _model->createOrder(1);
-    _model->createOrder(2);
-    _model->createOrder(3);
-    _model->createOrder(4);
-    _model->createOrder(4);
-    _model->createOrder(2);
-    _model->createOrder(3);
-    _model->createOrder(1);
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), _model, SLOT(tick()));
 
@@ -312,7 +304,7 @@ void MainWindow::onTick()
     refreshTable();
     _steps++;
     QString info;
-    info += "Tasks done: " + QString::number(_model->getTasksDone()) + " \ Tasks left: " + QString::number(_model->getTotalTasks() - _model->getTasksDone()) + "\n";
+    info += "Tasks done: " + QString::number(_model->getTasksDone()) + "\n";
     for(int i = 0; i < _model->getRobots().size(); i++) {
         Robot* r = _model->getRobots()[i];
         info += "\nRobot " + QString::number(i+1) + "\nPower: " + QString::number((int)((float)r->getPower()/(float)_model->getMaxPower()*100)) +
@@ -360,6 +352,7 @@ void MainWindow::onFinished() {
         default:
             break;
     }
+    _steps = 0;
 }
 
 void MainWindow:: newOrder()

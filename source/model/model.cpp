@@ -30,6 +30,7 @@ void Model::makeWarehouse()
     tasksDone = 0;
     robotCount = 0;
     robots.clear();
+    orders.clear();
     pods.clear();
     tasks.clear();
     warehouse.clear();
