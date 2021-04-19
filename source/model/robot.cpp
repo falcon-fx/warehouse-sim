@@ -10,7 +10,6 @@ Robot::Robot(int id, int maxP, int x, int y)
     this->position.setY(y);
     this->direction = NORTH;
     this->pod = nullptr;
-    this->unfinished = false;
     this->setProdNum(-1);
 }
 
@@ -168,15 +167,4 @@ void Robot::dropPod()
 bool Robot::hasPod()
 {
     return this->pod != nullptr;
-}
-
-void Robot::setUnfinished(bool uf) {
-    this->unfinished = uf;
-    if(this->unfinished == true) {
-        this->setTempPodPos(this->getPod()->getPosition());
-    }
-}
-
-void Robot::setFinished(bool f) {
-    this->finished = f;
 }

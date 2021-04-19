@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     _size = 12;
     _steps = 0;
-    _model = new Model(_size, 500);
+    _model = new Model(_size, 60);
     connect(_model, SIGNAL(onTick()), this, SLOT(onTick()));
     connect(_model, SIGNAL(onLoad()), this, SLOT(onLoad()));
     connect(_model, SIGNAL(onFinished()), this, SLOT(onFinished()));
@@ -73,6 +73,10 @@ MainWindow::MainWindow(QWidget *parent)
     _model->createOrder(2);
     _model->createOrder(3);
     _model->createOrder(4);
+    _model->createOrder(4);
+    _model->createOrder(2);
+    _model->createOrder(3);
+    _model->createOrder(1);
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), _model, SLOT(tick()));
 

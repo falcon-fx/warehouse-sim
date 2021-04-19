@@ -239,10 +239,6 @@ void Model::tick()
             gotoTarget(r, i);
         } else if(r->getProdNum() == -1 && r->hasPod() && r->getPod()->getOriginalPosition() != r->getPosition() && tasks[i].isEmpty()) {
             bringBackPod(r, i);
-        } else if(r->getProdNum() != -1 && !r->hasPod() && tasks[i].isEmpty() && r->isUnfinished()) {
-            gotoPodUnfinished(r, i);
-        } else if(r->getProdNum() != -1 && r->hasPod() && tasks[i].isEmpty() && !r->isFinished()) {
-            bringBackPod(r, i);
         }
         executeTask(i);
     }
@@ -260,17 +256,6 @@ void Model::tick()
     if(allEmpty) {
         emit onFinished();
     }
-}
-
-void Model::gotoPodUnfinished(Robot* robot, int robotID) {
-    tasks[robotID].clear();
-    QPoint closestPod = robot->getTempPodPos();
-    int energyNeeded = 0;
-    int path = 0;
-    createPath(robot->getPosition(), closestPod, path, energyNeeded, tasks[robotID], WGT_TO_POD, robot);
-    qDebug() << "robot #" << robotID << "position:" << robot->getPosition() << ", closest pod:" << closestPod;
-    robot->setUnfinished(false);
-    qDebug() << "robot #" << robotID << "goes to pod";
 }
 
 void Model::gotoDock(Robot *robot, int robotID) {
@@ -298,9 +283,6 @@ void Model::gotoPod(Robot *robot, int robotID) {
         orders.push_front(robot->getProdNum());
         robot->setProdNum(-1);
         gotoDock(robot, robotID);
-    } else {
-        robot->setUnfinished(false);
-        robot->setFinished(true);
     }
     qDebug() << "robot #" << robotID << "goes to pod";
 }
@@ -312,34 +294,25 @@ void Model::gotoTarget(Robot *robot, int robotID) {
     int path = 0;
     createPath(robot->getPosition(), closestTarget, path, energyNeeded, tasks[robotID], WGT_POD_TO_TARGET, robot);
     qDebug() << "robot #" << robotID << "position:" << robot->getPosition() << ", closest target:" << closestTarget;
-    if(energyNeeded > robot->getPower()) {
+    if(energyNeeded*2 > robot->getPower()) {
         orders.push_front(robot->getProdNum());
         robot->setProdNum(-1);
+        robot->dropPod();
         gotoDock(robot, robotID);
     } else {
-        robot->setUnfinished(false);
-        robot->setFinished(true);
+        tasksDone++;
     }
     qDebug() << "robot #" << robotID << "goes to target";
 }
 
 void Model::bringBackPod(Robot *robot, int robotID) {
     tasks[robotID].clear();
-    QPoint origin = robot->getPod()->getOriginalPosition();
     int energyNeeded = 0;
     int path = 0;
+    QPoint origin = robot->getPod()->getOriginalPosition();
     createPath(robot->getPosition(), origin, path, energyNeeded, tasks[robotID], WGT_POD_TO_ORIGIN, robot);
-    qDebug() << "robot #" << robotID << "position:" << robot->getPosition() << ", origin:" << origin;
-    if(energyNeeded > robot->getPower()) {
-        robot->setUnfinished(true);
-        robot->setFinished(false);
-        robot->setTempPodPos(robot->getPod()->getPosition());
-        robot->dropPod();
-        gotoDock(robot, robotID);
-    } else {
-        robot->setFinished(true);
-        tasksDone++;
-    }
+
+    qDebug() << "robot #" << robotID << "position:" << robot->getPosition() << ", origin:" << origin << "path:" << path;
     qDebug() << "robot #" << robotID << "brings back pod";
 }
 
@@ -352,10 +325,10 @@ void Model::executeTask(int id)
         switch (op)
         {
             case OP_MOVE: {
-                int tmpx = r->getPosition().x();
-                int tmpy = r->getPosition().y();
+                //int tmpx = r->getPosition().x();
+                //int tmpy = r->getPosition().y();
                 r->move();
-                qDebug() << "robot id:" << id << "temp x:" << tmpx << "temp y:" << tmpy << "previous tile type:" << warehouse[tmpx][tmpy]->getType();
+                //qDebug() << "robot id:" << id << "temp x:" << tmpx << "temp y:" << tmpy << "previous tile type:" << warehouse[tmpx][tmpy]->getType();
                 break;
             }
             case OP_TURN_LEFT:
@@ -374,9 +347,11 @@ void Model::executeTask(int id)
                         break;
                     }
                 }
+                qDebug() << "pod picked up by robot #" << id;
                 break;
             case OP_DROP:
-                warehouse[r->getPod()->getPosition().y()][r->getPod()->getPosition().x()]->setType(2);
+                warehouse[r->getPod()->getPosition().x()][r->getPod()->getPosition().y()]->setType(2);
+                qDebug() << "pod dropped by robot #" << id;
                 r->dropPod();
                 break;
             case OP_DELIVER:
@@ -411,6 +386,7 @@ QPoint Model::findClosestTarget(QPoint pos, int prodNum)
             }
         }
     }
+    closest.setX(closest.x() - 1);
     return closest;
 }
 
@@ -617,6 +593,7 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
     QQueue<Node*> q;
 
     Node* s = new Node(start, 0, nullptr);
+    qDebug() << "end:" << end.x() << end.y() << "type: " << warehouse[end.x()][end.y()]->getType();
     q.enqueue(s);
     while (!q.empty()) {
         Node* curr = q.front();
@@ -627,9 +604,9 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
             QVector<QPoint> tmpPath;
             createPathVector(q.front(), tmpPath);
             for(int i = 0; i < tmpPath.size(); i++) {
-                //qDebug() << "x:" << tmpPath[i].x() << "y:" << tmpPath[i].y();
+                qDebug() << "x:" << tmpPath[i].x() << "y:" << tmpPath[i].y();
             }
-            //qDebug() << "pathfinding: path vector" << tmpPath.size();
+            qDebug() << "pathfinding: path vector" << tmpPath.size();
             tasks.append(generatePathQueue(tmpPath, weight, robot));
             for(int i = 0; i < tasks.size(); i++) {
                 //qDebug() << "path queue:" << tasks[i].op << ", weight:" << tasks[i].weight;
@@ -694,7 +671,7 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
                 visited[col][row] = true;
                 Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
                 q.enqueue(Adjcell);
-                //qDebug() << "pod to origin" << warehouse[row][col]->getType() << row << col << "has pod";
+                qDebug() << "pod to origin" << warehouse[row][col]->getType() << row << col << "has pod";
             } else if((isValid(row, col) && (weight == WGT_CHARGE && //is valid and going to charge
                 (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "pod" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, pod, target or dock squares
                 !visited[col][row])) {
