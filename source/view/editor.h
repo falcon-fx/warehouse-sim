@@ -36,6 +36,7 @@ private:
      QPushButton* okButton;
      QPushButton* closeButton;
      QLineEdit* _s;
+     QLineEdit* _rPower;
 
      //layouts:
      QVBoxLayout* _mainLayout;

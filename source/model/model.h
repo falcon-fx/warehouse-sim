@@ -69,6 +69,7 @@ public:
     int getTotalTasks() { return this->totalTasks; }
     int getTasksDone() { return this->tasksDone; }
     int getMaxPower() { return this->maxPower; }
+    void setMaxPower(int pwr){(size*10<pwr)?this->maxPower = pwr:this->maxPower=size*10;}
     QSet<int> getProdSet() {this->prodTypes(); return this->prodSet; };
     void prodTypes();
 
@@ -77,6 +78,7 @@ public:
     void save(QString filename);
     void load(QString filename);
     void saveResults(QString filename, QList<int> energyUsed, int allEnergy, int allSteps);
+
 public slots:
     void tick();
 signals:

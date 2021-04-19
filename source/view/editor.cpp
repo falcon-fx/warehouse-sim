@@ -13,6 +13,9 @@ void Editor::okButtonClicked()
     //_height=_h->text().toInt();
     //_width=_w->text().toInt();
     _size = _s->text().toInt();
+    _model->setSize(_size);
+    _model->setMaxPower(_rPower->text().toInt());
+    qDebug() << _model->getMaxPower();
     isSelected=false;
 
     sizeWindow->close();
@@ -183,15 +186,18 @@ void Editor::setupSizeWindow()
 
     QGridLayout* sizeLayout = new QGridLayout(sizeWindow);
     _s = new QLineEdit("10");
+    _rPower = new QLineEdit("100");
     //_w = new QLineEdit("10");
     okButton = new QPushButton("OK");
     closeButton = new QPushButton("Close");
 
     sizeLayout->addWidget(new QLabel("Set size:"),0,1);
+    sizeLayout->addWidget(new QLabel("Set robot power:"),1,1);
     sizeLayout->addWidget(_s,0,2);
+    sizeLayout->addWidget(_rPower,1,2);
     //sizeLayout->addWidget(_w,0,3);
-    sizeLayout->addWidget(okButton,1,2);
-    sizeLayout->addWidget(closeButton,1,3);
+    sizeLayout->addWidget(okButton,2,2);
+    sizeLayout->addWidget(closeButton,2,3);
 
     connect(okButton,SIGNAL(clicked()),this,SLOT(okButtonClicked()));
     connect(closeButton,SIGNAL(clicked()),this,SLOT(closeButtonClicked()));

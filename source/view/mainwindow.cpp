@@ -8,7 +8,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    _size = 12;
+    _size = 10;
     _steps = 0;
     _model = new Model(_size, 60);
     connect(_model, SIGNAL(onTick()), this, SLOT(onTick()));
