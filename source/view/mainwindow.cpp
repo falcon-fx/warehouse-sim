@@ -73,10 +73,6 @@ MainWindow::MainWindow(QWidget *parent)
     _model->createOrder(2);
     _model->createOrder(3);
     _model->createOrder(4);
-    _model->createOrder(3);
-    _model->createOrder(1);
-    _model->createOrder(4);
-    _model->createOrder(2);
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), _model, SLOT(tick()));
 
@@ -122,7 +118,7 @@ void MainWindow::setupWindow()
     speedSlider->setMinimum(0);
     speedSlider->setMaximum(5000);
     speedSlider->setTickInterval(100);
-    speedSlider->setValue(600);
+    speedSlider->setValue(speedSlider->maximum() - 600);
 
     _buttonLayout->setAlignment(Qt::AlignBottom);
     //_buttonLayout->addWidget(new QLabel("No data loaded"),0,0);
@@ -251,7 +247,7 @@ void MainWindow::startButtonClicked()
         timer->stop();
         startButton->setText("Start");
     } else {
-        timer->start(speedSlider->value());
+        timer->start(speedSlider->maximum() - speedSlider->value());
         startButton->setText("Stop");
     }
 }
@@ -261,7 +257,7 @@ void MainWindow::speedSliderChanged(int value)
     if (timer->isActive())
     {
         timer->stop();
-        timer->start(value);
+        timer->start(speedSlider->maximum() - value);
     }
 }
 
@@ -328,7 +324,7 @@ void MainWindow::onFinished() {
     QMessageBox results;
     QString res = "Number of steps:\n" + QString::number(_steps) + "\nAll energy used:\n" + QString::number(_allEnergyUsed) + "\nEnergy used by individual robots::\n";
     for(int i = 0; i < _energyUsed.size(); i++) {
-        res.append(QString::number(i+1) + ". robot: " + QString::number(_energyUsed[i]) + "\n");
+        res.append("Robot #" + QString::number(i+1) + ": " + QString::number(_energyUsed[i]) + "\n");
     }
     results.setText(res);
     results.setInformativeText("Click Save to save simulation results.");
@@ -380,13 +376,7 @@ void MainWindow::closeButtonClicked()
 void MainWindow::confirmButtonClicked()
 {
     int ord =_s->text().toInt();
-    bool isContain = false;
-    int counter=0;
-    /*while (!isContain /*&& counter < _model-> )
-    {
-        counter++;
-    }*/
-    if(true)
+    if(_model->getProducts().contains(ord))
         _model->createOrder(ord);
     else
     {
@@ -394,7 +384,6 @@ void MainWindow::confirmButtonClicked()
         msgBox.setText("The order number is incorrect");
         msgBox.exec();
     }
-
     orderWindow->close();
     //timer->start();
 }

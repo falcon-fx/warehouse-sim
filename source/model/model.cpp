@@ -55,12 +55,18 @@ void Model::createRobot(int x, int y)
 void Model::createPod(int x, int y, QSet<int> prods)
 {
     pods.append(new Pod(prods, y, x));
+    foreach (const int &p, prods)
+        if (!products.contains(p))
+            products.append(p);
     warehouse[y][x]->setType(2);
 }
 
 void Model::createPod(int x, int y, int ox, int oy, QSet<int> prods)
 {
     pods.append(new Pod(prods, y, x, oy, ox));
+    foreach (const int &p, prods)
+        if (!products.contains(p))
+            products.append(p);
     warehouse[y][x]->setType(2);
 }
 
@@ -92,6 +98,11 @@ Pod* Model::getPod(int x, int y)
             return pods[i];
     }
     return nullptr;
+}
+
+QVector<int> Model::getProducts()
+{
+    return this->products;
 }
 
 QList<QPair<QPoint, int>> Model::getTargets()
@@ -235,6 +246,9 @@ void Model::tick()
     }
     emit onTick();
     bool allEmpty = orders.isEmpty();
+    for (int i = 0; i < robots.size() && allEmpty; i++) {
+        allEmpty = allEmpty && robots[i]->getProdNum() == -1;
+    }
     for(int i = 0; i < tasks.size() && allEmpty; i++) {
         allEmpty = allEmpty && tasks[i].isEmpty();
     }

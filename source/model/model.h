@@ -58,6 +58,7 @@ public:
     void createPod(int x, int y, int ox, int oy, QSet<int> prods);
     QList<Pod*> getPods();
     Pod* getPod(int x, int y);
+    QVector<int> getProducts();
     QList<QPair<QPoint, int>> getTargets();
     QList<QPoint> getDocks();
     void createTarget(int x, int y, int prodNum);
@@ -87,6 +88,7 @@ private:
     QList<Robot*> robots;
     int robotCount;
     QList<Pod*> pods;
+    QVector<int> products;
     QQueue<int> orders;
     QVector<QQueue<Task>> tasks;
     QVector<int> rowNum;
