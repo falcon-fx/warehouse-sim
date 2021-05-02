@@ -387,7 +387,7 @@ void MainWindow::closeButtonClicked()
 void MainWindow::confirmButtonClicked()
 {
     int ord =_s->text().toInt();
-    if(_model->getProducts().contains(ord))
+    if(_model->getProdSet().contains(ord))
         _model->createOrder(ord);
     else
     {

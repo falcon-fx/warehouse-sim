@@ -524,8 +524,21 @@ void Editor::selectMoveButtonClicked()
             QPoint newPlace = QPoint(selectedGridButtons[i].x(),selectedGridButtons[i].y());
             QSet<int> prods;
 
+            //qDebug()<< "pod number " << pods.count();
+            //for(int i = 0; i < pods.count();i++)
+            //qDebug() << "pruducts: " << _model->getProdSet();
+
             //utban levo dolgok torlese
             robots.removeOne(newPlace);
+            //int secondPodCount=0;;
+            for (int i = 0; i < pods.count(); i++)
+            {
+                if (pods[i].first == newPlace)
+                {
+                    pods.remove(i);
+                    break;
+                }
+            }
             for (int i = 0; i < targets.count(); i++)
             {
                 if (targets[i].first == newPlace)
