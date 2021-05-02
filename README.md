@@ -1,3 +1,3 @@
 # Gitegylet
-## Warehouse Simulator Work in progress / 2nd prototype
-Ezen az ágon folyik jelenleg a WarehouseSim második prototípusának fejlesztése.
+## Warehouse Simulator Editor
+Ezen az ágon folyik az editor fejlesztése.
