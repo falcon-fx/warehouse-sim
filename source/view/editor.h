@@ -16,6 +16,7 @@
 #include <QKeyEvent>
 #include <QString>
 #include <QFileDialog>
+#include <QMessageBox>
 
 class Editor : public QObject
 {
@@ -80,7 +81,10 @@ private:
      int _size;
      int status;//1-select 2-robot 3-pod 4-target 5-dock 6-delete
      bool isSelected;
-     //int selectedNumber;
+
+     //megfelelo palya letrehozasahoz szukseges feltetelek
+     QSet<int> necTargets;
+     QSet<int> prodNums;
 
      QVector<QPoint> place;
      QVector<QPoint> selectedGridButtons;
@@ -92,13 +96,12 @@ private:
      QVector<QPair<QPoint, int>> targets;
      QVector<QPoint> docks;
 
-     QSet<int> prodNums;
-
      void setupEditor();
      void setupSizeWindow();
      void setupTable();
 
-     bool IsEmptyTile(QPoint);
+     bool IsEmptyTile(QPoint);//az adott mezot ellenorizzuk, hogy van-e rajta valami
+     bool isTheTableGood(); // ellenorzi, hogy a tabla, amit a felhasznalo keszitett alkalmas-e a szimulacio futtatasara
 
 protected:
      //void keyPressEvent(QKeyEvent* event);

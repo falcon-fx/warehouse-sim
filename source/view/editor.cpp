@@ -304,28 +304,36 @@ void Editor::controlButtonsClicked()
     }
     else if(btn->text() == "Apply and close")
     {
-        for (int i = 0; i < robots.count(); i++)
+        if(isTheTableGood())
         {
-            robots[i].setX(robots[i].x() / _gridButtons[0][0]->size().width());
-            robots[i].setY(robots[i].y() / _gridButtons[0][0]->size().width());
+            for (int i = 0; i < robots.count(); i++)
+            {
+                robots[i].setX(robots[i].x() / _gridButtons[0][0]->size().width());
+                robots[i].setY(robots[i].y() / _gridButtons[0][0]->size().width());
+            }
+            for (int i = 0; i < pods.count(); i++)
+            {
+                pods[i].first.setX(pods[i].first.x() / _gridButtons[0][0]->size().width());
+                pods[i].first.setY(pods[i].first.y() / _gridButtons[0][0]->size().width());
+            }
+            for (int i = 0; i < targets.count(); i++)
+            {
+                targets[i].first.setX(targets[i].first.x() / _gridButtons[0][0]->size().width());
+                targets[i].first.setY(targets[i].first.y() / _gridButtons[0][0]->size().width());
+            }
+            for (int i = 0; i < docks.count(); i++)
+            {
+                docks[i].setX(docks[i].x() / _gridButtons[0][0]->size().width());
+                docks[i].setY(docks[i].y() / _gridButtons[0][0]->size().width());
+            }
+            emit applyAndClose();
+            editor->close();
         }
-        for (int i = 0; i < pods.count(); i++)
-        {
-            pods[i].first.setX(pods[i].first.x() / _gridButtons[0][0]->size().width());
-            pods[i].first.setY(pods[i].first.y() / _gridButtons[0][0]->size().width());
+        else{
+            QMessageBox msgBox;
+            msgBox.setText("The simulation has to have at least one robot, one dock, one product and one target to every the product");
+            msgBox.exec();
         }
-        for (int i = 0; i < targets.count(); i++)
-        {
-            targets[i].first.setX(targets[i].first.x() / _gridButtons[0][0]->size().width());
-            targets[i].first.setY(targets[i].first.y() / _gridButtons[0][0]->size().width());
-        }
-        for (int i = 0; i < docks.count(); i++)
-        {
-            docks[i].setX(docks[i].x() / _gridButtons[0][0]->size().width());
-            docks[i].setY(docks[i].y() / _gridButtons[0][0]->size().width());
-        }
-        emit applyAndClose();
-        editor->close();
     }
 }
 
@@ -405,6 +413,7 @@ void Editor::gridButtonClicked()
                 break;
             btn->setStyleSheet("QPushButton { background-color: rgb(146, 208, 80); }");
             btn->setText(QString::number(prodNum));
+            necTargets.insert(prodNum);
             robots.removeOne(p);
             for (int i = 0; i < pods.count(); i++)
             {
@@ -611,6 +620,15 @@ bool Editor::IsEmptyTile(QPoint point)
             return false;
     }
     return true;
+}
+
+bool Editor::isTheTableGood()
+{
+    if(robots.count()>=1 && docks.count()>=1 && necTargets == prodNums && prodNums.count() >= 1)
+    {
+        return true;
+    }
+    return false;
 }
 
 
