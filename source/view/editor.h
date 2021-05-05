@@ -98,6 +98,8 @@ private:
      void setupSizeWindow();
      void setupTable();
 
+     bool IsEmptyTile(QPoint);
+
 protected:
      //void keyPressEvent(QKeyEvent* event);
 

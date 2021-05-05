@@ -336,29 +336,112 @@ void Editor::gridButtonClicked()
 
     QPoint p = btn->pos() - _gridButtons[0][0]->pos();
 
-    QSet<int> prods;
-    if (!_prodNumsLEdit->text().isEmpty())
+    if(IsEmptyTile(p))
     {
-        QStringList numbers = _prodNumsLEdit->text().split(",");
-        for (int i = 0; i < numbers.count(); i++)
+        QSet<int> prods;
+        if (!_prodNumsLEdit->text().isEmpty())
         {
-            prods.insert(numbers[i].toInt());
-            prodNums.insert(numbers[i].toInt());
+            QStringList numbers = _prodNumsLEdit->text().split(",");
+            for (int i = 0; i < numbers.count(); i++)
+            {
+                prods.insert(numbers[i].toInt());
+                prodNums.insert(numbers[i].toInt());
+            }
+        }
+        QString podText ="P\n";
+        foreach (const int &value, prods)
+        {
+            podText += QString::number(value) + " ";
+        }
+
+        int prodNum = _prodNumCBox->currentText().toInt();
+        QPair<QPoint, QSet<int>> pod_pair(p, prods);
+        QPair<QPoint, int> target_pair(p, prodNum);
+
+        switch(status)
+        {
+        case 2://robot
+            btn->setStyleSheet("QPushButton { background-color: rgb(255, 192, 0); }");
+            robots.append(p);
+            for (int i = 0; i < pods.count(); i++)
+            {
+                if (pods[i].first == p)
+                {
+                    pods.remove(i);
+                    break;
+                }
+            }
+            for (int i = 0; i < targets.count(); i++)
+            {
+                if (targets[i].first == p)
+                {
+                    targets.remove(i);
+                    break;
+                }
+            }
+            docks.removeOne(p);
+
+            break;
+        case 3://pod
+            btn->setStyleSheet("QPushButton { background-color: rgb(230, 230, 230); }");
+            btn->setText(podText);
+            foreach (const int &value, prodNums)
+                if (_prodNumCBox->findText(QString::number(value)) == -1)
+                    _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
+            robots.removeOne(p);
+            pods.append(pod_pair);
+            for (int i = 0; i < targets.count(); i++)
+            {
+                if (targets[i].first == p)
+                {
+                    targets.remove(i);
+                    break;
+                }
+            }
+            docks.removeOne(p);
+            break;
+        case 4://target
+            if (_prodNumCBox->count() == 0)
+                break;
+            btn->setStyleSheet("QPushButton { background-color: rgb(146, 208, 80); }");
+            btn->setText(QString::number(prodNum));
+            robots.removeOne(p);
+            for (int i = 0; i < pods.count(); i++)
+            {
+                if (pods[i].first == p)
+                {
+                    pods.remove(i);
+                    break;
+                }
+            }
+            targets.append(target_pair);
+            docks.removeOne(p);
+            break;
+        case 5://dock
+            btn->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213); }");
+            robots.removeOne(p);
+            for (int i = 0; i < pods.count(); i++)
+            {
+                if (pods[i].first == p)
+                {
+                    pods.remove(i);
+                    break;
+                }
+            }
+            for (int i = 0; i < targets.count(); i++)
+            {
+                if (targets[i].first == p)
+                {
+                    targets.remove(i);
+                    break;
+                }
+            }
+            docks.append(p);
+            break;
         }
     }
-    QString podText ="P\n";
-    foreach (const int &value, prods)
-    {
-        podText += QString::number(value) + " ";
-    }
-
-    int prodNum = _prodNumCBox->currentText().toInt();
-    QPair<QPoint, QSet<int>> pod_pair(p, prods);
-    QPair<QPoint, int> target_pair(p, prodNum);
-
-    switch(status)
-    {
-    case 1://select
+    switch (status) {
+    case 1:
     {
         QColor color = btn->palette().button().color();
         if(isSelected && color.name() == "#e6e6e6")
@@ -372,7 +455,6 @@ void Editor::gridButtonClicked()
 
             if(!contains)
             {
-
                 selectedGridButtons.append(QPoint((btn->pos().x()-11) ,(btn->pos().y()-11)));
                 //place.append(QPoint(selectedGridButtons.last().x()/40,selectedGridButtons.last().y()/40));
                 selectedProds.append(btn->text());
@@ -380,84 +462,8 @@ void Editor::gridButtonClicked()
         }
         break;
     }
-    case 2://robot
-        btn->setStyleSheet("QPushButton { background-color: rgb(255, 192, 0); }");
-        robots.append(p);
-        for (int i = 0; i < pods.count(); i++)
-        {
-            if (pods[i].first == p)
-            {
-                pods.remove(i);
-                break;
-            }
-        }
-        for (int i = 0; i < targets.count(); i++)
-        {
-            if (targets[i].first == p)
-            {
-                targets.remove(i);
-                break;
-            }
-        }
-        docks.removeOne(p);
-        break;
-    case 3://pod
-        btn->setStyleSheet("QPushButton { background-color: rgb(230, 230, 230); }");
-        btn->setText(podText);
-        foreach (const int &value, prodNums)
-            if (_prodNumCBox->findText(QString::number(value)) == -1)
-                _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
-        robots.removeOne(p);
-        pods.append(pod_pair);
-        for (int i = 0; i < targets.count(); i++)
-        {
-            if (targets[i].first == p)
-            {
-                targets.remove(i);
-                break;
-            }
-        }
-        docks.removeOne(p);
-        break;
-    case 4://target
-        if (_prodNumCBox->count() == 0)
-            break;
-        btn->setStyleSheet("QPushButton { background-color: rgb(146, 208, 80); }");
-        btn->setText(QString::number(prodNum));
-        robots.removeOne(p);
-        for (int i = 0; i < pods.count(); i++)
-        {
-            if (pods[i].first == p)
-            {
-                pods.remove(i);
-                break;
-            }
-        }
-        targets.append(target_pair);
-        docks.removeOne(p);
-        break;
-    case 5://dock
-        btn->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213); }");
-        robots.removeOne(p);
-        for (int i = 0; i < pods.count(); i++)
-        {
-            if (pods[i].first == p)
-            {
-                pods.remove(i);
-                break;
-            }
-        }
-        for (int i = 0; i < targets.count(); i++)
-        {
-            if (targets[i].first == p)
-            {
-                targets.remove(i);
-                break;
-            }
-        }
-        docks.append(p);
-        break;
-    case 6://delete
+    case 6:
+    {
         btn->setStyleSheet("QPushButton { background-color: white; }");
         btn->setText("");
         robots.removeOne(p);
@@ -479,6 +485,7 @@ void Editor::gridButtonClicked()
         }
         docks.removeOne(p);
         break;
+    }
     }
  }
 
@@ -515,53 +522,29 @@ void Editor::selectMoveButtonClicked()
 
         if(selectedGridButtons[i].y()+dirY>=0 && selectedGridButtons[i].y()+dirY<_size*40 && selectedGridButtons[i].x()+dirX>=0 && selectedGridButtons[i].x()+dirX<_size*40)
         {
-            _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton { background-color: white; }"); // valamiert fel vannak cserelodve a koordinatak ahhh
-            _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText("");
-            selectedGridButtons[i] = QPoint(selectedGridButtons[i].x()+dirX,selectedGridButtons[i].y()+dirY);
-            _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton {border:3px solid red; background-color: #e6e6e6; }");
-            _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText(selectedProds[i]);
-
-            QPoint newPlace = QPoint(selectedGridButtons[i].x(),selectedGridButtons[i].y());
-            QSet<int> prods;
-
-            //qDebug()<< "pod number " << pods.count();
-            //for(int i = 0; i < pods.count();i++)
-            //qDebug() << "pruducts: " << _model->getProdSet();
-
-            //utban levo dolgok torlese
-            robots.removeOne(newPlace);
-            //int secondPodCount=0;;
-            for (int i = 0; i < pods.count(); i++)
+            QPoint newPlace =QPoint(selectedGridButtons[i].x()+dirX,selectedGridButtons[i].y()+dirY);
+            if(IsEmptyTile(newPlace))
             {
-                if (pods[i].first == newPlace)
-                {
-                    pods.remove(i);
-                    break;
-                }
+                _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton { background-color: white; }"); // valamiert fel vannak cserelodve a koordinatak ahhh
+                _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText("");
+                selectedGridButtons[i] = QPoint(selectedGridButtons[i].x()+dirX,selectedGridButtons[i].y()+dirY);
+                _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton {border:3px solid red; background-color: #e6e6e6; }");
+                _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText(selectedProds[i]);
+
+                QSet<int> prods;
+                //pod helyenek frissitese
+                QStringList prodnum = selectedProds[i].split(" ");
+                prodnum[0].remove(0,2);
+                if(prodnum.size()!=1)
+                    prodnum.removeLast();
+
+                if(prodnum[0]!="")
+                    for (int j = 0; j < prodnum.count(); j++)
+                        prods.insert(prodnum[j].toInt());
+
+                QPair<QPoint, QSet<int>> pod_pair(newPlace, prods);
+                pods.replace(number,pod_pair);
             }
-            for (int i = 0; i < targets.count(); i++)
-            {
-                if (targets[i].first == newPlace)
-                {
-                    targets.remove(i);
-                    break;
-                }
-            }
-            docks.removeOne(newPlace);
-
-            //pod helyenek frissitese
-            QStringList prodnum = selectedProds[i].split(" ");
-            prodnum[0].remove(0,2);
-            if(prodnum.size()!=1)
-                prodnum.removeLast();
-
-
-            if(prodnum[0]!="")
-                for (int j = 0; j < prodnum.count(); j++)
-                    prods.insert(prodnum[j].toInt());
-
-            QPair<QPoint, QSet<int>> pod_pair(newPlace, prods);
-            pods.replace(number,pod_pair);
         }
     }
 }
@@ -599,3 +582,39 @@ void Editor::changeProd()
     }
 
 }
+
+
+bool Editor::IsEmptyTile(QPoint point)
+{
+    //check robots
+    for(int i = 0; i < robots.count();i++)
+    {
+        if(robots[i].x()== point.x() && robots[i].y() == point.y())
+            return false;
+    }
+    //check pods
+    for(int i= 0; i < pods.count();i++)
+    {
+        if(pods[i].first.x() == point.x() && pods[i].first.y() == point.y())
+            return false;
+    }
+    //check targets
+    for(int i= 0; i < targets.count();i++)
+    {
+        if(targets[i].first.x() == point.x() && targets[i].first.y() == point.y())
+            return false;
+    }
+    //check docks
+    for(int i= 0; i < docks.count();i++)
+    {
+        if(docks[i].x() == point.x() && docks[i].y() == point.y())
+            return false;
+    }
+    return true;
+}
+
+
+
+
+
+
