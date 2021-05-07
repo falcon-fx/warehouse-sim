@@ -6,18 +6,35 @@ Editor::Editor(Model* model)
 {
     setupSizeWindow();
     _model = model;
+
 }
 
 void Editor::okButtonClicked()
 {
     _size = _s->text().toInt();
-    //_model->setSize(_size);// ne lehessen bealltani a meretet, csak ha ujjat kezdunk
+    _model->setSize(_size);// ne lehessen bealltani a meretet, csak ha ujjat kezdunk
     _model->setMaxPower(_rPower->text().toInt());
     isSelected=false;
 
     sizeWindow->close();
     firstClicked=true;
 
+    setupEditor();
+}
+
+void Editor::newTableButtonClicked()
+{
+    _s->setReadOnly(false);
+    _rPower->setReadOnly(false);
+    okButton->setDisabled(false);
+}
+
+void Editor::loadTableButtonClicked()
+{
+    _size = _model->getSize();
+    isSelected=false;
+    sizeWindow->close();
+    firstClicked=true;
     setupEditor();
 }
 
@@ -184,22 +201,31 @@ void Editor::setupSizeWindow()
     sizeWindow->setWindowTitle("New");
 
     QGridLayout* sizeLayout = new QGridLayout(sizeWindow);
+    _newTableButton = new QPushButton("New simulation");
+    _loadTableButton = new QPushButton("Load current simulation");
     _s = new QLineEdit("12");
     _rPower = new QLineEdit("100");
     //_w = new QLineEdit("10");
     okButton = new QPushButton("OK");
     closeButton = new QPushButton("Close");
 
-    sizeLayout->addWidget(new QLabel("Set size:"),0,1);
-    sizeLayout->addWidget(new QLabel("Set robot power:"),1,1);
-    sizeLayout->addWidget(_s,0,2);
-    sizeLayout->addWidget(_rPower,1,2);
-    //sizeLayout->addWidget(_w,0,3);
-    sizeLayout->addWidget(okButton,2,2);
-    sizeLayout->addWidget(closeButton,2,3);
+    sizeLayout->addWidget(_loadTableButton,0,1,1,3);
+    sizeLayout->addWidget(_newTableButton,1,1,2,3);
+    sizeLayout->addWidget(new QLabel("Set size:"),3,1);
+    sizeLayout->addWidget(new QLabel("Set robot power:"),4,1);
+    sizeLayout->addWidget(_s,3,2);
+    sizeLayout->addWidget(_rPower,4,2);
+    sizeLayout->addWidget(okButton,5,2);
+    sizeLayout->addWidget(closeButton,5,3);
+
+    _s->setReadOnly(true);
+    _rPower->setReadOnly(true);
+    okButton->setDisabled(true);
 
     connect(okButton,SIGNAL(clicked()),this,SLOT(okButtonClicked()));
     connect(closeButton,SIGNAL(clicked()),this,SLOT(closeButtonClicked()));
+    connect(_newTableButton,SIGNAL(clicked()),this,SLOT(newTableButtonClicked()));
+    connect(_loadTableButton,SIGNAL(clicked()),this,SLOT(loadTableButtonClicked()));
 
     sizeWindow->show();
 }
@@ -207,15 +233,25 @@ void Editor::setupSizeWindow()
 void Editor::loadExistingTable()
 {
 
-    /*int prodNum = _prodNumCBox->currentText().toInt();
-    QPair<QPoint, QSet<int>> pod_pair(p, prods);
-    QPair<QPoint, int> target_pair(p, prodNum);*/
+    //targetek betoltese
+    for(int i = 0; i < _model->getTargets().count();i++)
+    {
+        QPoint p = QPoint(_model->getTargets()[i].first.x()*40,_model->getTargets()[i].first.y()*40);
+        QPair<QPoint, int> target_pair(p, _model->getTargets()[i].second);
+        targets.append(target_pair);
+        necTargets.insert( _model->getTargets()[i].second);
+        _gridButtons[_model->getTargets()[i].first.y()][_model->getTargets()[i].first.x()]->setStyleSheet("QPushButton { background-color:rgb(146, 208, 80);  }");
+        _gridButtons[_model->getTargets()[i].first.y()][_model->getTargets()[i].first.x()]->setText(QString::number(_model->getTargets()[i].second));
 
-    //robotok betoltese
-    for(int i = 0; i < _model->getRobots().count();i++){
-        QPoint p = QPoint(_model->getRobots()[i]->getPosition().y()*40,_model->getRobots()[i]->getPosition().x()*40);
-        robots.append(p);
-        _gridButtons[_model->getRobots()[i]->getPosition().x()][_model->getRobots()[i]->getPosition().y()]->setStyleSheet("QPushButton { background-color:  rgb(255, 192, 0); }");
+    }
+
+    //dockok betoltese
+
+    for(int i = 0; i < _model->getDocks().count();i++)
+    {
+        QPoint p = QPoint(_model->getDocks()[i].x()*40,_model->getDocks()[i].y()*40);
+        docks.append(p);
+        _gridButtons[_model->getDocks()[i].y()][_model->getDocks()[i].x()]->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213);  }");
     }
 
     //podok betoltese
@@ -239,26 +275,13 @@ void Editor::loadExistingTable()
         _gridButtons[_model->getPods()[i]->getPosition().x()][_model->getPods()[i]->getPosition().y()]->setText(podText);
     }
 
-    //targetek betoltese
-    for(int i = 0; i < _model->getTargets().count();i++)
-    {
-        QPoint p = QPoint(_model->getTargets()[i].first.x()*40,_model->getTargets()[i].first.y()*40);
-        QPair<QPoint, int> target_pair(p, _model->getTargets()[i].second);
-        targets.append(target_pair);
-        necTargets.insert( _model->getTargets()[i].second);
-        _gridButtons[_model->getTargets()[i].first.y()][_model->getTargets()[i].first.x()]->setStyleSheet("QPushButton { background-color:rgb(146, 208, 80);  }");
-        _gridButtons[_model->getTargets()[i].first.y()][_model->getTargets()[i].first.x()]->setText(QString::number(_model->getTargets()[i].second));
-
+    //robotok betoltese
+    for(int i = 0; i < _model->getRobots().count();i++){
+        QPoint p = QPoint(_model->getRobots()[i]->getPosition().y()*40,_model->getRobots()[i]->getPosition().x()*40);
+        robots.append(p);
+        _gridButtons[_model->getRobots()[i]->getPosition().x()][_model->getRobots()[i]->getPosition().y()]->setStyleSheet("QPushButton { background-color:  rgb(255, 192, 0); }");
     }
 
-    //dockok betoltese
-
-    for(int i = 0; i < _model->getDocks().count();i++)
-    {
-        QPoint p = QPoint(_model->getDocks()[i].x()*40,_model->getDocks()[i].y()*40);
-        docks.append(p);
-        _gridButtons[_model->getDocks()[i].y()][_model->getDocks()[i].x()]->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213);  }");
-    }
 
 }
 

@@ -66,6 +66,8 @@ private:
      QPushButton* _selectLeft;
      QPushButton* _selectRight;
      QPushButton* _changeProdOkButton;
+     QPushButton* _newTableButton;
+     QPushButton* _loadTableButton;
 
      //inputs:
      QLineEdit* _prodNumsLEdit;
@@ -74,6 +76,7 @@ private:
 
      QPushButton* _newButton;
      QPushButton* _applyButton;
+
 
      QPushButton* selectedButton;
      bool firstClicked;
@@ -119,6 +122,9 @@ private slots:
      void selectMoveButtonClicked();
 
      void changeProd();
+
+     void newTableButtonClicked();
+     void loadTableButtonClicked();
 
 
 signals:
