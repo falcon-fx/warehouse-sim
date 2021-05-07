@@ -102,6 +102,7 @@ private:
 
      bool IsEmptyTile(QPoint);//az adott mezot ellenorizzuk, hogy van-e rajta valami
      bool isTheTableGood(); // ellenorzi, hogy a tabla, amit a felhasznalo keszitett alkalmas-e a szimulacio futtatasara
+     void loadExistingTable();
 
 protected:
      //void keyPressEvent(QKeyEvent* event);

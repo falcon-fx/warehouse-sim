@@ -10,12 +10,9 @@ Editor::Editor(Model* model)
 
 void Editor::okButtonClicked()
 {
-    //_height=_h->text().toInt();
-    //_width=_w->text().toInt();
     _size = _s->text().toInt();
-    _model->setSize(_size);
+    //_model->setSize(_size);// ne lehessen bealltani a meretet, csak ha ujjat kezdunk
     _model->setMaxPower(_rPower->text().toInt());
-    qDebug() << _model->getMaxPower();
     isSelected=false;
 
     sizeWindow->close();
@@ -176,6 +173,8 @@ void Editor::setupEditor()
     prodNums.clear();
     _prodNumCBox->clear();
 
+    loadExistingTable();
+
     editor->show();
 }
 
@@ -185,7 +184,7 @@ void Editor::setupSizeWindow()
     sizeWindow->setWindowTitle("New");
 
     QGridLayout* sizeLayout = new QGridLayout(sizeWindow);
-    _s = new QLineEdit("10");
+    _s = new QLineEdit("12");
     _rPower = new QLineEdit("100");
     //_w = new QLineEdit("10");
     okButton = new QPushButton("OK");
@@ -203,6 +202,64 @@ void Editor::setupSizeWindow()
     connect(closeButton,SIGNAL(clicked()),this,SLOT(closeButtonClicked()));
 
     sizeWindow->show();
+}
+
+void Editor::loadExistingTable()
+{
+
+    /*int prodNum = _prodNumCBox->currentText().toInt();
+    QPair<QPoint, QSet<int>> pod_pair(p, prods);
+    QPair<QPoint, int> target_pair(p, prodNum);*/
+
+    //robotok betoltese
+    for(int i = 0; i < _model->getRobots().count();i++){
+        QPoint p = QPoint(_model->getRobots()[i]->getPosition().y()*40,_model->getRobots()[i]->getPosition().x()*40);
+        robots.append(p);
+        _gridButtons[_model->getRobots()[i]->getPosition().x()][_model->getRobots()[i]->getPosition().y()]->setStyleSheet("QPushButton { background-color:  rgb(255, 192, 0); }");
+    }
+
+    //podok betoltese
+    for(int i = 0; i < _model->getPods().count();i++)
+    {
+        QPoint p = QPoint(_model->getPods()[i]->getPosition().y()*40,_model->getPods()[i]->getPosition().x()*40);
+
+        QPair<QPoint, QSet<int>> pod_pair(p,_model->getPods()[i]->getProducts());
+        pods.append(pod_pair);
+
+        _gridButtons[_model->getPods()[i]->getPosition().x()][_model->getPods()[i]->getPosition().y()]->setStyleSheet("QPushButton { background-color:   rgb(230, 230, 230) }");
+
+        for (int j = 0; j <  _model->getPods()[i]->getProducts().count(); j++)
+            prodNums = prodNums.unite(_model->getPods()[i]->getProducts());
+
+        QString podText ="P\n";
+        foreach (const int &value, _model->getPods()[i]->getProducts())
+        {
+            podText += QString::number(value) + " ";
+        }
+        _gridButtons[_model->getPods()[i]->getPosition().x()][_model->getPods()[i]->getPosition().y()]->setText(podText);
+    }
+
+    //targetek betoltese
+    for(int i = 0; i < _model->getTargets().count();i++)
+    {
+        QPoint p = QPoint(_model->getTargets()[i].first.x()*40,_model->getTargets()[i].first.y()*40);
+        QPair<QPoint, int> target_pair(p, _model->getTargets()[i].second);
+        targets.append(target_pair);
+        necTargets.insert( _model->getTargets()[i].second);
+        _gridButtons[_model->getTargets()[i].first.y()][_model->getTargets()[i].first.x()]->setStyleSheet("QPushButton { background-color:rgb(146, 208, 80);  }");
+        _gridButtons[_model->getTargets()[i].first.y()][_model->getTargets()[i].first.x()]->setText(QString::number(_model->getTargets()[i].second));
+
+    }
+
+    //dockok betoltese
+
+    for(int i = 0; i < _model->getDocks().count();i++)
+    {
+        QPoint p = QPoint(_model->getDocks()[i].x()*40,_model->getDocks()[i].y()*40);
+        docks.append(p);
+        _gridButtons[_model->getDocks()[i].y()][_model->getDocks()[i].x()]->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213);  }");
+    }
+
 }
 
 void Editor::editButtonsClicked()
@@ -249,14 +306,6 @@ void Editor::editButtonsClicked()
     {
         status=6;
     }
-    /*else if(selectedButton->text() == "Undo")
-    {
-
-    }
-    else if(selectedButton->text() == "Redo")
-    {
-
-    }*/
 
     if(status!=1) //selectrol elkattintunk, eltuntetjuk a mozgato gombokat
     {
@@ -331,7 +380,7 @@ void Editor::controlButtonsClicked()
         }
         else{
             QMessageBox msgBox;
-            msgBox.setText("The simulation has to have at least one robot, one dock, one product and one target to every the product");
+            msgBox.setText("The simulation has to have at least one robot, one dock, one product and one target to every product");
             msgBox.exec();
         }
     }
