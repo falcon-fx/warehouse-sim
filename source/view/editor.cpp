@@ -606,6 +606,7 @@ void Editor::selectMoveButtonClicked()
             QPoint newPlace =QPoint(selectedGridButtons[i].x()+dirX,selectedGridButtons[i].y()+dirY);
             if(IsEmptyTile(newPlace))
             {
+                //qDebug() <<"x:"<< selectedGridButtons[i].y()/40 <<"y"<< selectedGridButtons[i].x()/40;
                 _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton { background-color: white; }"); // valamiert fel vannak cserelodve a koordinatak ahhh
                 _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText("");
                 selectedGridButtons[i] = QPoint(selectedGridButtons[i].x()+dirX,selectedGridButtons[i].y()+dirY);
@@ -668,27 +669,32 @@ void Editor::changeProd()
 bool Editor::IsEmptyTile(QPoint point)
 {
     //check robots
+
+    point = QPoint(point.x()/40,point.y()/40);
+
+    //qDebug() <<"pod"<<point.x()/40 << point.y()/40;
     for(int i = 0; i < robots.count();i++)
     {
-        if(robots[i].x()== point.x() && robots[i].y() == point.y())
+        if(robots[i].x()/40== point.x() && robots[i].y()/40 == point.y())
             return false;
+        //qDebug() <<"robot" <<robots[i].x()/40 << robots[i].y()/40;
     }
     //check pods
     for(int i= 0; i < pods.count();i++)
     {
-        if(pods[i].first.x() == point.x() && pods[i].first.y() == point.y())
+        if(pods[i].first.x()/40 == point.x() && pods[i].first.y()/40 == point.y())
             return false;
     }
     //check targets
     for(int i= 0; i < targets.count();i++)
     {
-        if(targets[i].first.x() == point.x() && targets[i].first.y() == point.y())
+        if(targets[i].first.x()/40 == point.x() && targets[i].first.y()/40 == point.y())
             return false;
     }
     //check docks
     for(int i= 0; i < docks.count();i++)
     {
-        if(docks[i].x() == point.x() && docks[i].y() == point.y())
+        if(docks[i].x()/40 == point.x() && docks[i].y()/40 == point.y())
             return false;
     }
     return true;
