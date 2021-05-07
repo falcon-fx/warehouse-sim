@@ -11,8 +11,12 @@ Editor::Editor(Model* model)
 
 void Editor::okButtonClicked()
 {
-    _size = _s->text().toInt();
-    _model->setSize(_size);// ne lehessen bealltani a meretet, csak ha ujjat kezdunk
+    if(_s->text().toInt()<3) // palya minimum merete
+        _size=3;
+    else
+        _size = _s->text().toInt();
+
+    _model->setSize(_size);
     _model->setMaxPower(_rPower->text().toInt());
     isSelected=false;
 
@@ -672,12 +676,10 @@ bool Editor::IsEmptyTile(QPoint point)
 
     point = QPoint(point.x()/40,point.y()/40);
 
-    //qDebug() <<"pod"<<point.x()/40 << point.y()/40;
     for(int i = 0; i < robots.count();i++)
     {
         if(robots[i].x()/40== point.x() && robots[i].y()/40 == point.y())
             return false;
-        //qDebug() <<"robot" <<robots[i].x()/40 << robots[i].y()/40;
     }
     //check pods
     for(int i= 0; i < pods.count();i++)
