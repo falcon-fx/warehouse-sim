@@ -525,7 +525,7 @@ void Editor::gridButtonClicked()
             break;
         }
     }
-    switch (status) {
+    switch (status) { //select
     case 1:
     {
         QColor color = btn->palette().button().color();
@@ -540,14 +540,16 @@ void Editor::gridButtonClicked()
 
             if(!contains)
             {
-                selectedGridButtons.append(QPoint((btn->pos().x()-11) ,(btn->pos().y()-11)));
-                //place.append(QPoint(selectedGridButtons.last().x()/40,selectedGridButtons.last().y()/40));
+                if(_size>7)
+                    selectedGridButtons.append(QPoint((btn->pos().x()-11) ,(btn->pos().y()-11)));
+                else
+                    selectedGridButtons.append(QPoint((btn->pos().x()-11 -45 -(7-_size)*20) ,(btn->pos().y()-11)));
                 selectedProds.append(btn->text());
             }
         }
         break;
     }
-    case 6:
+    case 6: //delete
     {
         btn->setStyleSheet("QPushButton { background-color: white; }");
         btn->setText("");
@@ -610,7 +612,6 @@ void Editor::selectMoveButtonClicked()
             QPoint newPlace =QPoint(selectedGridButtons[i].x()+dirX,selectedGridButtons[i].y()+dirY);
             if(IsEmptyTile(newPlace))
             {
-                //qDebug() <<"x:"<< selectedGridButtons[i].y()/40 <<"y"<< selectedGridButtons[i].x()/40;
                 _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton { background-color: white; }"); // valamiert fel vannak cserelodve a koordinatak ahhh
                 _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText("");
                 selectedGridButtons[i] = QPoint(selectedGridButtons[i].x()+dirX,selectedGridButtons[i].y()+dirY);
