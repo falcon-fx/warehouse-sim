@@ -1,3 +1,3 @@
 # Gitegylet
-## Warehouse Simulator Editor
-Ezen az ágon folyik az editor fejlesztése.
+## Warehouse Simulator
+Ezen az ágon folyik jelenleg a WarehouseSim fejlesztése.
