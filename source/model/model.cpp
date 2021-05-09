@@ -328,7 +328,9 @@ void Model::executeTask(int id)
             case OP_MOVE: {
                 //int tmpx = r->getPosition().x();
                 //int tmpy = r->getPosition().y();
+                warehouse[r->getPosition().x()][r->getPosition().y()]->setReserved(false);
                 r->move();
+
                 //qDebug() << "robot id:" << id << "temp x:" << tmpx << "temp y:" << tmpy << "previous tile type:" << warehouse[tmpx][tmpy]->getType();
                 break;
             }
@@ -427,19 +429,19 @@ QPoint Model::findClosestDock(QPoint pos)
     QPoint closest;
     for (int i = 0; i < getDocks().size(); i++)
     {
-        if (true) //meg  kene nezni hogy van e a dockon robot
+        bool isFree = true;
+        for (int i = 0; i < robots.size() && isFree; i++)
+            isFree = robots[i]->getPosition() != getDocks()[i];
+
+        if (isFree && (distance == -1 || ((pos - getDocks()[i]).manhattanLength() < distance)))
         {
-            if (distance == -1 || ((pos - getDocks()[i]).manhattanLength() < distance))
-            {
-                closest.setX(getDocks()[i].y());
-                closest.setY(getDocks()[i].x());
-                distance = (pos - pods[i]->getPosition()).manhattanLength();
-            }
+            closest.setX(getDocks()[i].y());
+            closest.setY(getDocks()[i].x());
+            distance = (pos - getDocks()[i]).manhattanLength();
         }
     }
     //qDebug() << closest;
     return closest;
-
 }
 void Model::save(QString filename)
 {
@@ -652,28 +654,28 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
         for (int i = 0; i < 4; i++) {
             int row = loc.x() + rowNum[i];
             int col = loc.y() + colNum[i];
-            if((isValid(row, col) && (weight == WGT_TO_POD && //is valid and going to pod
+            if((isValid(row, col) && !warehouse[row][col]->isReserved() && (weight == WGT_TO_POD && //is valid and going to pod
                 (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "pod" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, pod, target or dock squares
                 !visited[col][row])) {
                 //qDebug() << warehouse[row][col]->getType() << row << col << "to pod";
                 visited[col][row] = true;
                 Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
                 q.enqueue(Adjcell);
-            } else if((isValid(row, col) && (weight == WGT_POD_TO_TARGET && //is valid and carrying a pod
+            } else if((isValid(row, col) && !warehouse[row][col]->isReserved() && (weight == WGT_POD_TO_TARGET && //is valid and carrying a pod
                 (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, target or dock squares
                 !visited[col][row])) {
                 //qDebug() << warehouse[row][col]->getType() << row << col << "has pod";
                 visited[col][row] = true;
                 Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
                 q.enqueue(Adjcell);
-            } else if((isValid(row, col) && (weight == WGT_POD_TO_ORIGIN && //is valid and carrying a pod back to origin
+            } else if((isValid(row, col) && !warehouse[row][col]->isReserved() && (weight == WGT_POD_TO_ORIGIN && //is valid and carrying a pod back to origin
                 (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, target or dock squares
                 !visited[col][row])) {
                 visited[col][row] = true;
                 Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
                 q.enqueue(Adjcell);
                 qDebug() << "pod to origin" << warehouse[row][col]->getType() << row << col << "has pod";
-            } else if((isValid(row, col) && (weight == WGT_CHARGE && //is valid and going to charge
+            } else if((isValid(row, col) && !warehouse[row][col]->isReserved() && (weight == WGT_CHARGE && //is valid and going to charge
                 (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "pod" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, pod, target or dock squares
                 !visited[col][row])) {
                 //qDebug() << warehouse[row][col]->getType() << row << col << "to charge";
@@ -691,6 +693,7 @@ void Model::createPathVector(Node *n, QVector<QPoint> &path) {
     }
     createPathVector(n->parent, path);
     path.append(n->location);
+    warehouse[n->location.x()][n->location.y()]->setReserved(true);
     //qDebug() << n->location.x() << ", " << n->location.y() << warehouse[n->location.x()][n->location.y()]->getType();
 }
 
