@@ -17,6 +17,7 @@
 #include <QString>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QCloseEvent>
 
 class Editor : public QObject
 {
@@ -84,6 +85,7 @@ private:
      int _size;
      int status;//1-select 2-robot 3-pod 4-target 5-dock 6-delete
      bool isSelected;
+     bool _loadTable;
 
      //megfelelo palya letrehozasahoz szukseges feltetelek
      QSet<int> necTargets;
@@ -106,9 +108,6 @@ private:
      bool IsEmptyTile(QPoint);//az adott mezot ellenorizzuk, hogy van-e rajta valami
      bool isTheTableGood(); // ellenorzi, hogy a tabla, amit a felhasznalo keszitett alkalmas-e a szimulacio futtatasara
      void loadExistingTable();
-
-protected:
-     //void keyPressEvent(QKeyEvent* event);
 
 private slots:
      void okButtonClicked();

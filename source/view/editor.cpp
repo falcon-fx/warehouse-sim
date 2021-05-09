@@ -6,7 +6,6 @@ Editor::Editor(Model* model)
 {
     setupSizeWindow();
     _model = model;
-
 }
 
 void Editor::okButtonClicked()
@@ -16,18 +15,17 @@ void Editor::okButtonClicked()
     else
         _size = _s->text().toInt();
 
-    _model->setSize(_size);
     _model->setMaxPower(_rPower->text().toInt());
     isSelected=false;
 
     sizeWindow->close();
     firstClicked=true;
-
     setupEditor();
 }
 
 void Editor::newTableButtonClicked()
 {
+    _loadTable=false;
     _s->setReadOnly(false);
     _rPower->setReadOnly(false);
     okButton->setDisabled(false);
@@ -35,6 +33,7 @@ void Editor::newTableButtonClicked()
 
 void Editor::loadTableButtonClicked()
 {
+    _loadTable=true;
     _size = _model->getSize();
     isSelected=false;
     sizeWindow->close();
@@ -92,8 +91,6 @@ void Editor::setupEditor()
 {
     editor= new QWidget();
 
-    //selectedNumber=0;
-
     editor->setWindowTitle("Editor");
     _mainLayout= new QVBoxLayout(editor);
     _gridLayout = new QGridLayout();
@@ -110,8 +107,6 @@ void Editor::setupEditor()
     _targetButton= new QPushButton("Target");
     _dockButton= new QPushButton("Dock");
     _deleteButton= new QPushButton("Delete");
-    //_undoButton= new QPushButton("Undo");
-    //_redoButton= new QPushButton("Redo");
 
     _prodNumsLEdit = new QLineEdit();
 
@@ -139,8 +134,6 @@ void Editor::setupEditor()
     _editButtonsLayout->addWidget(_robotButton);
     _editButtonsLayout->addWidget(_dockButton);
     _editButtonsLayout->addWidget(_deleteButton);
-    //_editButtonsLayout->addWidget(_undoButton);
-    //_editButtonsLayout->addWidget(_redoButton);
 
     _infoLayout->addWidget(_prodNumsLEdit, 0, 0);
     _infoLayout->addWidget(_podButton, 0, 1);
@@ -173,8 +166,6 @@ void Editor::setupEditor()
     connect(_targetButton,SIGNAL(clicked()),this,SLOT(editButtonsClicked()));
     connect(_dockButton,SIGNAL(clicked()),this,SLOT(editButtonsClicked()));
     connect(_deleteButton,SIGNAL(clicked()),this,SLOT(editButtonsClicked()));
-    //connect(_undoButton,SIGNAL(clicked()),this,SLOT(editButtonsClicked()));
-   // connect(_redoButton,SIGNAL(clicked()),this,SLOT(editButtonsClicked()));
     connect(_selectUp,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
     connect(_selectDown,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
     connect(_selectRight,SIGNAL(clicked()),this,SLOT(selectMoveButtonClicked()));
@@ -184,8 +175,6 @@ void Editor::setupEditor()
     connect(_newButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
     connect(_applyButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
 
-    //connect(,SIGNAL(pressed()),this,SLOT(keyPressEvent(QKeyEvent* event)));
-
     robots.clear();
     pods.clear();
     targets.clear();
@@ -194,7 +183,8 @@ void Editor::setupEditor()
     prodNums.clear();
     _prodNumCBox->clear();
 
-    loadExistingTable();
+    if(_loadTable)
+        loadExistingTable();
 
     editor->show();
 }
@@ -209,7 +199,6 @@ void Editor::setupSizeWindow()
     _loadTableButton = new QPushButton("Load current simulation");
     _s = new QLineEdit("12");
     _rPower = new QLineEdit("100");
-    //_w = new QLineEdit("10");
     okButton = new QPushButton("OK");
     closeButton = new QPushButton("Close");
 
@@ -236,7 +225,7 @@ void Editor::setupSizeWindow()
 
 void Editor::loadExistingTable()
 {
-
+    qDebug() << _model->getTargets().count();
     //targetek betoltese
     for(int i = 0; i < _model->getTargets().count();i++)
     {
@@ -421,6 +410,8 @@ void Editor::controlButtonsClicked()
 
 void Editor::gridButtonClicked()
 {
+    if(!_loadTable && firstClicked)
+        _model->setSize(_size);
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
     //btn->setText("");
 
@@ -645,7 +636,6 @@ void Editor::selectMoveButtonClicked()
 
 void Editor::changeProd()
 {
-    qDebug() << "hello?";
     for(int i=0; i < selectedGridButtons.count();i++)
     {
         int number=0;
@@ -678,7 +668,6 @@ void Editor::changeProd()
             if (_prodNumCBox->findText(QString::number(value)) == -1)
                 _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
          _prodNumCBox->model()->sort(0, Qt::AscendingOrder);
-
     }
 
 }
@@ -724,6 +713,7 @@ bool Editor::isTheTableGood()
     }
     return false;
 }
+
 
 
 
