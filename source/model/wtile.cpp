@@ -3,15 +3,16 @@
 WTile::WTile()
 {
     this->dock = false;
+    this->reserved = false;
     this->target = -1;
-    this->setReserved(false);
+    this->type = EMPTY;
 }
 
 WTile::WTile(int field_type) {
     this->dock = false;
+    this->reserved = false;
     this->target = -1;
     this->setType(field_type);
-    this->setReserved(false);
 }
 
 void WTile::setType(int field_type) {
@@ -33,14 +34,8 @@ void WTile::setTarget(int prodNum)
     this->target = prodNum;
 }
 
-void WTile::setReserved(bool res) {
-    this->reserved = res;
-}
-
 QString WTile::getType() {
-    if(this->type == EMPTY) {
-        return "empty";
-    } else if(this->type == DOCK) {
+    if(this->type == DOCK) {
         return "dock";
     } else if(this->type == POD) {
         return "pod";
@@ -49,6 +44,7 @@ QString WTile::getType() {
     } else if(this->type == TARGET) {
         return "target";
     }
+    return "empty";
 }
 
 void WTile::clearTarget()
@@ -82,4 +78,14 @@ bool WTile::isEmptyTile() {
 
 void WTile::setEmpty(bool empty) {
     this->isEmpty = empty;
+}
+
+void WTile::setReserved(bool reserved)
+{
+    this->reserved = reserved;
+}
+
+bool WTile::isReserved()
+{
+    return this->reserved;
 }

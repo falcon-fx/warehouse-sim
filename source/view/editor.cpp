@@ -444,6 +444,24 @@ void Editor::gridButtonClicked()
         case 2://robot
             btn->setStyleSheet("QPushButton { background-color: rgb(255, 192, 0); }");
             robots.append(p);
+            for (int i = 0; i < pods.count(); i++)
+            {
+                if (pods[i].first == p)
+                {
+                    pods.remove(i);
+                    break;
+                }
+            }
+            for (int i = 0; i < targets.count(); i++)
+            {
+                if (targets[i].first == p)
+                {
+                    targets.remove(i);
+                    break;
+                }
+            }
+            docks.removeOne(p);
+
             break;
         case 3://pod
             btn->setStyleSheet("QPushButton { background-color: rgb(230, 230, 230); }");
@@ -452,8 +470,17 @@ void Editor::gridButtonClicked()
                 if (_prodNumCBox->findText(QString::number(value)) == -1)
                     _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
              _prodNumCBox->model()->sort(0, Qt::AscendingOrder);
+            robots.removeOne(p);
             pods.append(pod_pair);
-
+            for (int i = 0; i < targets.count(); i++)
+            {
+                if (targets[i].first == p)
+                {
+                    targets.remove(i);
+                    break;
+                }
+            }
+            docks.removeOne(p);
             break;
         case 4://target
             if (_prodNumCBox->count() == 0)
@@ -461,10 +488,37 @@ void Editor::gridButtonClicked()
             btn->setStyleSheet("QPushButton { background-color: rgb(146, 208, 80); }");
             btn->setText(QString::number(prodNum));
             necTargets.insert(prodNum);
+            robots.removeOne(p);
+            for (int i = 0; i < pods.count(); i++)
+            {
+                if (pods[i].first == p)
+                {
+                    pods.remove(i);
+                    break;
+                }
+            }
             targets.append(target_pair);
+            docks.removeOne(p);
             break;
         case 5://dock
             btn->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213); }");
+            robots.removeOne(p);
+            for (int i = 0; i < pods.count(); i++)
+            {
+                if (pods[i].first == p)
+                {
+                    pods.remove(i);
+                    break;
+                }
+            }
+            for (int i = 0; i < targets.count(); i++)
+            {
+                if (targets[i].first == p)
+                {
+                    targets.remove(i);
+                    break;
+                }
+            }
             docks.append(p);
             break;
         }

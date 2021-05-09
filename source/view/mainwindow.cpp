@@ -210,6 +210,15 @@ void MainWindow::refreshTable()
                 }
                 _gridButtons[i][j]->setText(podText);
             }
+            /*QVector<QVector<QPoint>> reservedPoints = _model->getReservedPoints();
+            for (int k = 0; k < reservedPoints.size(); k++)
+            {
+                for (int l = 0; l < reservedPoints[k].size(); l++ )
+                {
+                    _gridButtons[reservedPoints[k][l].x()][reservedPoints[k][l].y()]->setText(QString::number(k));
+                    _gridButtons[reservedPoints[k][l].x()][reservedPoints[k][l].y()]->setStyleSheet("background-color: black; color: white;");
+                }
+            }*/
             if(_model->getRobot(i, j) != nullptr)
             {
                 switch (_model->getRobot(i, j)->getDirection())
