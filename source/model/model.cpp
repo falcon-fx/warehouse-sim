@@ -429,19 +429,19 @@ QPoint Model::findClosestDock(QPoint pos)
     QPoint closest;
     for (int i = 0; i < getDocks().size(); i++)
     {
-        if (true) //meg  kene nezni hogy van e a dockon robot
+        bool isFree = true;
+        for (int i = 0; i < robots.size() && isFree; i++)
+            isFree = robots[i]->getPosition() != getDocks()[i];
+
+        if (isFree && (distance == -1 || ((pos - getDocks()[i]).manhattanLength() < distance)))
         {
-            if (distance == -1 || ((pos - getDocks()[i]).manhattanLength() < distance))
-            {
-                closest.setX(getDocks()[i].y());
-                closest.setY(getDocks()[i].x());
-                distance = (pos - pods[i]->getPosition()).manhattanLength();
-            }
+            closest.setX(getDocks()[i].y());
+            closest.setY(getDocks()[i].x());
+            distance = (pos - getDocks()[i]).manhattanLength();
         }
     }
     //qDebug() << closest;
     return closest;
-
 }
 void Model::save(QString filename)
 {
