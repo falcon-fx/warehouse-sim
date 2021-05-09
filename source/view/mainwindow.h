@@ -18,6 +18,7 @@ public:
     ~MainWindow();
 protected:
     QWidget *window;
+    //layoutok
     QHBoxLayout* _mainLayout;
     QVBoxLayout* _leftsideLayout;
     QVBoxLayout* _titleLayout;
@@ -25,8 +26,9 @@ protected:
     QGridLayout* _buttonLayout;
     QVBoxLayout *_rightsideLayout;
     QGridLayout* _gridLayout;
-    QVector<QVector<QPushButton*>> _gridButtons;
     QHBoxLayout* buttonContainer;
+    QVector<QVector<QPushButton*>> _gridButtons;
+
     QTimer* timer;
     QLabel* infoLabel;
     QLabel* noDataLabel;

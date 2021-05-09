@@ -91,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() { }
 
-void MainWindow::setupWindow()
+void MainWindow::setupWindow() //foablak kinezetenek elkeszitese
 {
     QFont f("Arial", 45, QFont::Bold);
     QLabel* title = new QLabel("Waresim");
@@ -104,7 +104,6 @@ void MainWindow::setupWindow()
     _newOrderButton = new QPushButton("New Order");
 
     _infoLayout->setAlignment(Qt::AlignLeft);
-    //_infoLayout->addWidget(new QLabel("itt lesznek a robot infok"));
 
     QPushButton *loadButton = new QPushButton("Load");
     QPushButton *saveButton = new QPushButton("Save");
@@ -117,7 +116,6 @@ void MainWindow::setupWindow()
     speedSlider->setValue(speedSlider->maximum() - 600);
 
     _buttonLayout->setAlignment(Qt::AlignBottom);
-    //_buttonLayout->addWidget(new QLabel("No data loaded"),0,0);
     _buttonLayout->addWidget(_newOrderButton, 1, 0,1,2);
     _buttonLayout->addWidget(loadButton, 2, 0);
     _buttonLayout->addWidget(saveButton, 2, 1);
@@ -142,10 +140,10 @@ void MainWindow::setupWindow()
     connect(_newOrderButton, SIGNAL(clicked()), this, SLOT(newOrder()));
 }
 
-void MainWindow::drawTable()
+void MainWindow::drawTable() //a tabla elso felallitasa
 {
     _size = _model->getSize();
-    if (_gridLayout->rowCount() != 0 || _gridLayout->columnCount() != 0) {
+    if (_gridLayout->rowCount() != 0 || _gridLayout->columnCount() != 0) { // itemek kitorlese a gridbol
         while (QLayoutItem* item = _gridLayout->takeAt(0)) {
             Q_ASSERT(!item->layout());
             delete item->widget();
@@ -164,7 +162,7 @@ void MainWindow::drawTable()
     {
         _gridButtons.clear();
         _gridButtons.resize(_size);
-        for (int i = 0; i < _size; i++)
+        for (int i = 0; i < _size; i++)// mezok letrehozasa
         {
             _gridButtons[i].resize(_size);
             for (int j = 0; j < _size; j++)
@@ -181,7 +179,7 @@ void MainWindow::drawTable()
     refreshTable();
 }
 
-void MainWindow::refreshTable()
+void MainWindow::refreshTable() //tabla frissitese
 {
     QVector<QVector<WTile*>> warehouse = _model->getWarehouse();
     for(int i = 0; i < _size; i++)
@@ -191,16 +189,16 @@ void MainWindow::refreshTable()
             _gridButtons[i][j]->setStyleSheet("background-color: #fff; border: 1px solid #adadad;");
             _gridButtons[i][j]->setText("");
 
-            if (warehouse[i][j]->isDock())
+            if (warehouse[i][j]->isDock()) //dock
             {
                 _gridButtons[i][j]->setStyleSheet("background-color: #5b9bd5; border: 1px solid #adadad;");
             }
-            else if (warehouse[i][j]->isTarget())
+            else if (warehouse[i][j]->isTarget()) //target
             {
                 _gridButtons[i][j]->setStyleSheet("background-color: #92d050; color: black; border: 1px solid #adadad;");
                 _gridButtons[i][j]->setText(QString::number(warehouse[i][j]->getTarget()));
             }
-            if(_model->getPod(i, j) != nullptr)
+            if(_model->getPod(i, j) != nullptr) //pod
             {
                 _gridButtons[i][j]->setStyleSheet("background-color: #e6e6e6; color: black; border: 1px solid #adadad;");
                 QString podText ="P\n";
@@ -210,16 +208,7 @@ void MainWindow::refreshTable()
                 }
                 _gridButtons[i][j]->setText(podText);
             }
-            /*QVector<QVector<QPoint>> reservedPoints = _model->getReservedPoints();
-            for (int k = 0; k < reservedPoints.size(); k++)
-            {
-                for (int l = 0; l < reservedPoints[k].size(); l++ )
-                {
-                    _gridButtons[reservedPoints[k][l].x()][reservedPoints[k][l].y()]->setText(QString::number(k));
-                    _gridButtons[reservedPoints[k][l].x()][reservedPoints[k][l].y()]->setStyleSheet("background-color: black; color: white;");
-                }
-            }*/
-            if(_model->getRobot(i, j) != nullptr)
+            if(_model->getRobot(i, j) != nullptr) //robot
             {
                 switch (_model->getRobot(i, j)->getDirection())
                 {
@@ -241,26 +230,26 @@ void MainWindow::refreshTable()
     }
 }
 
-void MainWindow::editorButtonClicked()
+void MainWindow::editorButtonClicked() //editor megnyitasa
 {
     timer->stop();
     _editor = new Editor(_model);
     connect(_editor, SIGNAL(applyAndClose()), this, SLOT(editorApplyAndClose()));
 }
 
-void MainWindow::loadButtonClicked()
+void MainWindow::loadButtonClicked() //mentett tabla betoltese
 {
     QString filename = QFileDialog::getOpenFileName(this, tr("Load State"), "", tr("Waresim State (*.wss)"));
     _model->load(filename);
 }
 
-void MainWindow::saveButtonClicked()
+void MainWindow::saveButtonClicked() //szimulacio mentese
 {
     QString filename = QFileDialog::getSaveFileName(this, tr("Save State"), "", tr("Waresim State (*.wss)"));
     _model->save(filename);
 }
 
-void MainWindow::startButtonClicked()
+void MainWindow::startButtonClicked() //szimulacio kezdese, timer inditasa es megallitasa
 {
     editorButton->setDisabled(true);
     if(timer->isActive()) {
@@ -272,7 +261,7 @@ void MainWindow::startButtonClicked()
     }
 }
 
-void MainWindow::speedSliderChanged(int value)
+void MainWindow::speedSliderChanged(int value) //ido allitasa a csuszkan
 {
     if (timer->isActive())
     {
@@ -281,7 +270,7 @@ void MainWindow::speedSliderChanged(int value)
     }
 }
 
-void MainWindow::editorApplyAndClose()
+void MainWindow::editorApplyAndClose() //edioron keszult palya betoltese
 {
     _model->setSize(_editor->getSize());
     _size = _editor->getSize();
@@ -309,7 +298,7 @@ void MainWindow::editorApplyAndClose()
     refreshTable();
 }
 
-void MainWindow::onTick()
+void MainWindow::onTick() //timer tick
 {
     refreshTable();
     _steps++;
@@ -333,7 +322,8 @@ void MainWindow::onLoad()
     refreshTable();
 }
 
-void MainWindow::onFinished() {
+void MainWindow::onFinished()//szimulacio vege
+{
     editorButton->setDisabled(false);
     timer->stop();
     _allEnergyUsed = 0;
@@ -366,7 +356,7 @@ void MainWindow::onFinished() {
     _steps = 0;
 }
 
-void MainWindow:: newOrder()
+void MainWindow:: newOrder() // uj rendeles leadasa
 {
     timer->stop();
     startButton->setText("Start");
@@ -392,7 +382,6 @@ void MainWindow:: newOrder()
 void MainWindow::closeButtonClicked()
 {
     orderWindow->close();
-  //  timer->start();
 }
 
 void MainWindow::confirmButtonClicked()
@@ -407,5 +396,4 @@ void MainWindow::confirmButtonClicked()
         msgBox.exec();
     }
     orderWindow->close();
-    //timer->start();
 }
