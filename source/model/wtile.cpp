@@ -4,12 +4,14 @@ WTile::WTile()
 {
     this->dock = false;
     this->target = -1;
+    this->setReserved(false);
 }
 
 WTile::WTile(int field_type) {
     this->dock = false;
     this->target = -1;
     this->setType(field_type);
+    this->setReserved(false);
 }
 
 void WTile::setType(int field_type) {
@@ -29,6 +31,10 @@ void WTile::setType(int field_type) {
 void WTile::setTarget(int prodNum)
 {
     this->target = prodNum;
+}
+
+void WTile::setReserved(bool res) {
+    this->reserved = res;
 }
 
 QString WTile::getType() {
