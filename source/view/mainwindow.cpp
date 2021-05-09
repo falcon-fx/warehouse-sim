@@ -108,7 +108,7 @@ void MainWindow::setupWindow()
 
     QPushButton *loadButton = new QPushButton("Load");
     QPushButton *saveButton = new QPushButton("Save");
-    QPushButton *editorButton = new QPushButton("Open Editor");
+    editorButton = new QPushButton("Open Editor");
     startButton = new QPushButton("Start");
     speedSlider = new QSlider(Qt::Horizontal);
     speedSlider->setMinimum(0);
@@ -253,6 +253,7 @@ void MainWindow::saveButtonClicked()
 
 void MainWindow::startButtonClicked()
 {
+    editorButton->setDisabled(true);
     if(timer->isActive()) {
         timer->stop();
         startButton->setText("Start");
@@ -324,6 +325,7 @@ void MainWindow::onLoad()
 }
 
 void MainWindow::onFinished() {
+    editorButton->setDisabled(false);
     timer->stop();
     _allEnergyUsed = 0;
     _energyUsed.clear();
@@ -387,7 +389,7 @@ void MainWindow::closeButtonClicked()
 void MainWindow::confirmButtonClicked()
 {
     int ord =_s->text().toInt();
-    if(_model->getProducts().contains(ord))
+    if(_model->getProdSet().contains(ord))
         _model->createOrder(ord);
     else
     {

@@ -31,6 +31,7 @@ protected:
     QLabel* infoLabel;
     QLabel* noDataLabel;
     QPushButton* startButton;
+    QPushButton* editorButton;
     QSlider* speedSlider;
     QPushButton* _newOrderButton;
     QWidget *orderWindow;
