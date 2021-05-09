@@ -78,25 +78,28 @@ private:
      QPushButton* _newButton;
      QPushButton* _applyButton;
 
-     //podok mozagtasahoz
+
      QPushButton* selectedButton;
      bool firstClicked;
-     bool isSelected;
-     QVector<QPoint> selectedGridButtons;
-     QVector<QString> selectedProds;
 
      int _size;
      int status;//1-select 2-robot 3-pod 4-target 5-dock 6-delete
+     bool isSelected;
      bool _loadTable;
 
      //megfelelo palya letrehozasahoz szukseges feltetelek
      QSet<int> necTargets;
      QSet<int> prodNums;
 
-     QVector<QPoint> robots; // robtok helye
-     QVector<QPair<QPoint, QSet<int>>> pods; // podok helye es milyen termekek vannak rajta
-     QVector<QPair<QPoint, int>> targets; // targetek helye es milen termek van hozzarendelve
-     QVector<QPoint> docks; // dockok helye
+     QVector<QPoint> place;
+     QVector<QPoint> selectedGridButtons;
+     QVector<QString> selectedProds;
+
+
+     QVector<QPoint> robots;
+     QVector<QPair<QPoint, QSet<int>>> pods;
+     QVector<QPair<QPoint, int>> targets;
+     QVector<QPoint> docks;
 
      void setupEditor();
      void setupSizeWindow();

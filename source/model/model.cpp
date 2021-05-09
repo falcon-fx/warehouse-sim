@@ -223,12 +223,14 @@ void Model::tick()
         }
         executeTask(i);
     }*/
+    if (reservedPoints.size() > 0)
+        reservedPoints.pop_front();
     for(int i = 0; i < robotCount; i++) {
-        qDebug() << "robot #" << i << ", orders size:" << orders.size() << ", tasks[i].size:" << tasks[i].size() << ", has pod:" << robots[i]->hasPod() << ", prodnum:" << robots[i]->getProdNum();
+        //qDebug() << "robot #" << i << ", orders size:" << orders.size() << ", tasks[i].size:" << tasks[i].size() << ", has pod:" << robots[i]->hasPod() << ", prodnum:" << robots[i]->getProdNum();
         if(!orders.isEmpty() && tasks[i].isEmpty() && !robots[i]->hasPod() && robots[i]->getProdNum() == -1) {
             int order = orders.dequeue();
             robots[i]->setProdNum(order);
-            qDebug() << "robot #" << i << "gets product #" << order;
+            //qDebug() << "robot #" << i << "gets product #" << order;
         }
     }
     for(int i = 0; i < robotCount; i++) {
@@ -262,15 +264,16 @@ void Model::tick()
 void Model::gotoDock(Robot *robot, int robotID) {
     tasks[robotID].clear();
     QPoint closestDock = findClosestDock(robot->getPosition());
+    warehouse[closestDock.x()][closestDock.y()]->setReserved(true);
     int energyNeeded = 0;
     int path = 0;
     createPath(robot->getPosition(), closestDock, path, energyNeeded, tasks[robotID], WGT_CHARGE, robot);
-    qDebug() << "robot #" << robotID << "position:" << robot->getPosition() << ", closest dock:" << closestDock;
+    //qDebug() << "robot #" << robotID << "position:" << robot->getPosition() << ", closest dock:" << closestDock;
     if(energyNeeded > robot->getPower()) {
         //cry();
-        qDebug() << "robot #" << robotID << "is dead. rip";
+        //qDebug() << "robot #" << robotID << "is dead. rip";
     }
-    qDebug() << "robot #" << robotID << "goes to dock";
+    //qDebug() << "robot #" << robotID << "goes to dock";
 }
 
 void Model::gotoPod(Robot *robot, int robotID) {
@@ -279,13 +282,13 @@ void Model::gotoPod(Robot *robot, int robotID) {
     int energyNeeded = 0;
     int path = 0;
     createPath(robot->getPosition(), closestPod, path, energyNeeded, tasks[robotID], WGT_TO_POD, robot);
-    qDebug() << "robot #" << robotID << "position:" << robot->getPosition() << ", closest pod:" << closestPod;
+    //qDebug() << "robot #" << robotID << "position:" << robot->getPosition() << ", closest pod:" << closestPod;
     if(energyNeeded > robot->getPower()) {
         orders.push_front(robot->getProdNum());
         robot->setProdNum(-1);
         gotoDock(robot, robotID);
     }
-    qDebug() << "robot #" << robotID << "goes to pod";
+    //qDebug() << "robot #" << robotID << "goes to pod";
 }
 
 void Model::gotoTarget(Robot *robot, int robotID) {
@@ -294,7 +297,7 @@ void Model::gotoTarget(Robot *robot, int robotID) {
     int energyNeeded = 0;
     int path = 0;
     createPath(robot->getPosition(), closestTarget, path, energyNeeded, tasks[robotID], WGT_POD_TO_TARGET, robot);
-    qDebug() << "robot #" << robotID << "position:" << robot->getPosition() << ", closest target:" << closestTarget;
+    //qDebug() << "robot #" << robotID << "position:" << robot->getPosition() << ", closest target:" << closestTarget;
     if(energyNeeded*2 > robot->getPower()) {
         orders.push_front(robot->getProdNum());
         robot->setProdNum(-1);
@@ -303,7 +306,7 @@ void Model::gotoTarget(Robot *robot, int robotID) {
     } else {
         tasksDone++;
     }
-    qDebug() << "robot #" << robotID << "goes to target";
+    //qDebug() << "robot #" << robotID << "goes to target";
 }
 
 void Model::bringBackPod(Robot *robot, int robotID) {
@@ -313,8 +316,8 @@ void Model::bringBackPod(Robot *robot, int robotID) {
     QPoint origin = robot->getPod()->getOriginalPosition();
     createPath(robot->getPosition(), origin, path, energyNeeded, tasks[robotID], WGT_POD_TO_ORIGIN, robot);
 
-    qDebug() << "robot #" << robotID << "position:" << robot->getPosition() << ", origin:" << origin << "path:" << path;
-    qDebug() << "robot #" << robotID << "brings back pod";
+    //qDebug() << "robot #" << robotID << "position:" << robot->getPosition() << ", origin:" << origin << "path:" << path;
+    //qDebug() << "robot #" << robotID << "brings back pod";
 }
 
 void Model::executeTask(int id)
@@ -330,7 +333,6 @@ void Model::executeTask(int id)
                 //int tmpy = r->getPosition().y();
                 warehouse[r->getPosition().x()][r->getPosition().y()]->setReserved(false);
                 r->move();
-
                 //qDebug() << "robot id:" << id << "temp x:" << tmpx << "temp y:" << tmpy << "previous tile type:" << warehouse[tmpx][tmpy]->getType();
                 break;
             }
@@ -350,11 +352,11 @@ void Model::executeTask(int id)
                         break;
                     }
                 }
-                qDebug() << "pod picked up by robot #" << id;
+                //qDebug() << "pod picked up by robot #" << id;
                 break;
             case OP_DROP:
                 warehouse[r->getPod()->getPosition().x()][r->getPod()->getPosition().y()]->setType(2);
-                qDebug() << "pod dropped by robot #" << id;
+                //qDebug() << "pod dropped by robot #" << id;
                 r->dropPod();
                 break;
             case OP_DELIVER:
@@ -362,6 +364,7 @@ void Model::executeTask(int id)
                 break;
             case OP_CHARGE_STOP:
                 r->setPower(maxPower);
+                warehouse[r->getPosition().x()][r->getPosition().y()]->setReserved(false);
             case OP_CHARGE:
             case OP_WAIT:
                 break;
@@ -429,20 +432,21 @@ QPoint Model::findClosestDock(QPoint pos)
     QPoint closest;
     for (int i = 0; i < getDocks().size(); i++)
     {
-        if (true) //meg  kene nezni hogy van e a dockon robot
+        bool isFree = !warehouse[getDocks()[i].y()][getDocks()[i].x()]->isReserved();
+        for (int i = 0; i < robots.size() && isFree; i++)
+            isFree = robots[i]->getPosition() != getDocks()[i];
+
+        if (isFree && (distance == -1 || ((pos - getDocks()[i]).manhattanLength() < distance)))
         {
-            if (distance == -1 || ((pos - getDocks()[i]).manhattanLength() < distance))
-            {
-                closest.setX(getDocks()[i].y());
-                closest.setY(getDocks()[i].x());
-                distance = (pos - pods[i]->getPosition()).manhattanLength();
-            }
+            closest.setX(getDocks()[i].y());
+            closest.setY(getDocks()[i].x());
+            distance = (pos - getDocks()[i]).manhattanLength();
         }
     }
-    //qDebug() << closest;
+    qDebug() << closest;
     return closest;
-
 }
+
 void Model::save(QString filename)
 {
     /*
@@ -463,7 +467,7 @@ void Model::save(QString filename)
 
     if (!file.open(QFile::WriteOnly))
     {
-        qDebug() << "Failed to open file" << filename;
+        //qDebug() << "Failed to open file" << filename;
         return;
     }
 
@@ -519,7 +523,7 @@ void Model::load(QString filename)
 
     if (!file.open(QFile::ReadOnly))
     {
-        qDebug() << "Failed to open file" << filename;
+        //qDebug() << "Failed to open file" << filename;
         return;
     }
 
@@ -596,20 +600,24 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
     QQueue<Node*> q;
 
     Node* s = new Node(start, 0, nullptr);
-    qDebug() << "end:" << end.x() << end.y() << "type: " << warehouse[end.x()][end.y()]->getType();
+    //qDebug() << "end:" << end.x() << end.y() << "type: " << warehouse[end.x()][end.y()]->getType();
     q.enqueue(s);
+    int currentTime = 0;
     while (!q.empty()) {
         Node* curr = q.front();
         QPoint loc = curr->location;
+
+        if (reservedPoints.size() <= currentTime)
+            reservedPoints.resize(currentTime + 1);
 
         if (loc.x() == end.x() && loc.y() == end.y()) {
             //int robotpath = 0;
             QVector<QPoint> tmpPath;
             createPathVector(q.front(), tmpPath);
             for(int i = 0; i < tmpPath.size(); i++) {
-                qDebug() << "x:" << tmpPath[i].x() << "y:" << tmpPath[i].y();
+                //qDebug() << "x:" << tmpPath[i].x() << "y:" << tmpPath[i].y();
             }
-            qDebug() << "pathfinding: path vector" << tmpPath.size();
+            //qDebug() << "pathfinding: path vector" << tmpPath.size();
             tasks.append(generatePathQueue(tmpPath, weight, robot));
             for(int i = 0; i < tasks.size(); i++) {
                 //qDebug() << "path queue:" << tasks[i].op << ", weight:" << tasks[i].weight;
@@ -654,36 +662,62 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
         for (int i = 0; i < 4; i++) {
             int row = loc.x() + rowNum[i];
             int col = loc.y() + colNum[i];
-            if((isValid(row, col) && !warehouse[row][col]->isReserved() && (weight == WGT_TO_POD && //is valid and going to pod
+            if((isValid(row, col) && (weight == WGT_TO_POD && //is valid and going to pod
                 (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "pod" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, pod, target or dock squares
                 !visited[col][row])) {
+                if (reservedPoints[currentTime].contains(QPoint(row, col)))
+                {
+                    qDebug() << "CROSSED PATHS at" << row << col << currentTime;
+                    continue;
+                }
                 //qDebug() << warehouse[row][col]->getType() << row << col << "to pod";
                 visited[col][row] = true;
                 Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
+                //warehouse[row][col]->setReserved(true);
                 q.enqueue(Adjcell);
-            } else if((isValid(row, col) && !warehouse[row][col]->isReserved() && (weight == WGT_POD_TO_TARGET && //is valid and carrying a pod
-                (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, target or dock squares
+            } else if((isValid(row, col) && (weight == WGT_POD_TO_TARGET && //is valid and carrying a pod
+                (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "target"/* || warehouse[row][col]->getType() == "dock"*/)) && //can go on empty, target or dock squares
                 !visited[col][row])) {
+                if (reservedPoints[currentTime].contains(QPoint(row, col)))
+                {
+                    qDebug() << "CROSSED PATHS at" << row << col << currentTime;
+                    continue;
+                }
                 //qDebug() << warehouse[row][col]->getType() << row << col << "has pod";
                 visited[col][row] = true;
                 Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
+                //warehouse[row][col]->setReserved(true);
                 q.enqueue(Adjcell);
-            } else if((isValid(row, col) && !warehouse[row][col]->isReserved() && (weight == WGT_POD_TO_ORIGIN && //is valid and carrying a pod back to origin
-                (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, target or dock squares
+            } else if((isValid(row, col) && (weight == WGT_POD_TO_ORIGIN && //is valid and carrying a pod back to origin
+                (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "target"/* || warehouse[row][col]->getType() == "dock"*/)) && //can go on empty, target or dock squares
                 !visited[col][row])) {
+                if (reservedPoints[currentTime].contains(QPoint(row, col)))
+                {
+                    qDebug() << "CROSSED PATHS at" << row << col << currentTime;
+                    continue;
+                }
                 visited[col][row] = true;
                 Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
+                //warehouse[row][col]->setReserved(true);
                 q.enqueue(Adjcell);
-                qDebug() << "pod to origin" << warehouse[row][col]->getType() << row << col << "has pod";
-            } else if((isValid(row, col) && !warehouse[row][col]->isReserved() && (weight == WGT_CHARGE && //is valid and going to charge
+                //qDebug() << "pod to origin" << warehouse[row][col]->getType() << row << col << "has pod";
+            } else if((isValid(row, col) && (weight == WGT_CHARGE && //is valid and going to charge
                 (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "pod" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, pod, target or dock squares
                 !visited[col][row])) {
+                if (reservedPoints[currentTime].contains(QPoint(row, col)))
+                {
+                    qDebug() << "CROSSED PATHS at" << row << col << currentTime;
+                    continue;
+                }
                 //qDebug() << warehouse[row][col]->getType() << row << col << "to charge";
                 visited[col][row] = true;
                 Node* Adjcell = new Node({row, col},curr->distance + 1, curr);
+                //warehouse[row][col]->setReserved(true);
                 q.enqueue(Adjcell);
             }
         }
+
+        currentTime++;
     }
 }
 
@@ -693,7 +727,6 @@ void Model::createPathVector(Node *n, QVector<QPoint> &path) {
     }
     createPathVector(n->parent, path);
     path.append(n->location);
-    warehouse[n->location.x()][n->location.y()]->setReserved(true);
     //qDebug() << n->location.x() << ", " << n->location.y() << warehouse[n->location.x()][n->location.y()]->getType();
 }
 
@@ -703,8 +736,13 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
     task.weight = w;
     Robot::Direction dir = r->getDirection();
     //qDebug() << "path size: " << path.size();
+    int currentTime = 0;
+    QPoint currentPos = r->getPosition();
     for (int i = 1; i < path.size(); i++)
     {
+        if (reservedPoints.size() < currentTime)
+            reservedPoints.resize(currentTime + 1);
+        bool moves = false;
         if (path[i].x() < path[i - 1].x())
         {
             if (dir != Robot::Direction::NORTH)
@@ -715,17 +753,33 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
                     case Robot::Direction::WEST:
                         task.op = OP_TURN_RIGHT;
                         tasks.append(task);
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
                         //qDebug() << "west turn right";
                         break;
                     case Robot::Direction::SOUTH:
                         task.op = OP_TURN_RIGHT;
                         tasks.append(task);
                         tasks.append(task);
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
                         //qDebug() << "south turn right x2";
                         break;
                     case Robot::Direction::EAST:
                         task.op = OP_TURN_LEFT;
                         tasks.append(task);
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
                         //qDebug() << "east turn left";
                         break;
                     default:
@@ -733,6 +787,8 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
                 }
                 dir = Robot::Direction::NORTH;
             }
+            currentPos.rx()--;
+            moves = true;
         }
         else if (path[i].x() > path[i - 1].x())
         {
@@ -744,17 +800,33 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
                     case Robot::Direction::WEST:
                         task.op = OP_TURN_LEFT;
                         tasks.append(task);
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
                         //qDebug() << "west turn left";
                         break;
                     case Robot::Direction::NORTH:
                         task.op = OP_TURN_LEFT;
                         tasks.append(task);
                         tasks.append(task);
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
                         //qDebug() << "north turn left x2";
                         break;
                     case Robot::Direction::EAST:
                         task.op = OP_TURN_RIGHT;
                         tasks.append(task);
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
                         //qDebug() << "east turn right";
                         break;
                     default:
@@ -762,6 +834,8 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
                 }
                 dir = Robot::Direction::SOUTH;
             }
+            currentPos.rx()++;
+            moves = true;
         }
         else if (path[i].y() < path[i - 1].y())
         {
@@ -774,16 +848,32 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
                         task.op = OP_TURN_LEFT;
                         tasks.append(task);
                         tasks.append(task);
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
                         //qDebug() << "east turn left x2";
                         break;
                     case Robot::Direction::NORTH:
                         task.op = OP_TURN_LEFT;
                         tasks.append(task);
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
                         //qDebug() << "north turn left";
                         break;
                     case Robot::Direction::SOUTH:
                         task.op = OP_TURN_RIGHT;
                         tasks.append(task);
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
                         //qDebug() << "south turn right";
                         break;
                     default:
@@ -791,6 +881,8 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
                 }
                 dir = Robot::Direction::WEST;
             }
+            currentPos.ry()--;
+            moves = true;
         }
         else if (path[i].y() > path[i - 1].y())
         {
@@ -803,16 +895,32 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
                         task.op = OP_TURN_LEFT;
                         tasks.append(task);
                         tasks.append(task);
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
                         //qDebug() << "west turn left x2";
                         break;
                     case Robot::Direction::NORTH:
                         task.op = OP_TURN_RIGHT;
                         tasks.append(task);
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
                         //qDebug() << "north turn right";
                         break;
                     case Robot::Direction::SOUTH:
                         task.op = OP_TURN_LEFT;
                         tasks.append(task);
+                        if (reservedPoints.size() < currentTime)
+                            reservedPoints.resize(currentTime + 1);
+                        reservedPoints[currentTime].append(currentPos);
+                        currentTime++;
                         //qDebug() << "south turn left";
                         break;
                     default:
@@ -820,9 +928,15 @@ QQueue<Task> Model::generatePathQueue(QVector<QPoint> path, Weight w, Robot *r) 
                 }
                 dir = Robot::Direction::EAST;
             }
+            currentPos.ry()++;
+            moves = true;
         }
-        task.op = OP_MOVE;
+        task.op = moves ? OP_MOVE : OP_WAIT;
         tasks.append(task);
+        if (reservedPoints.size() < currentTime)
+            reservedPoints.resize(currentTime + 1);
+        reservedPoints[currentTime].append(currentPos);
+        currentTime++;
     }
     /*switch (w)
     {

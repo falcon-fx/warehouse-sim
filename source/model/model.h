@@ -69,9 +69,11 @@ public:
     int getTotalTasks() { return this->totalTasks; }
     int getTasksDone() { return this->tasksDone; }
     int getMaxPower() { return this->maxPower; }
-    void setMaxPower(int pwr){(size*10<pwr)?this->maxPower = pwr:this->maxPower=size*10;}
+    void setMaxPower(int pwr) { this->maxPower = pwr; /*(size*10<pwr)?this->maxPower = pwr:this->maxPower=size*10;*/}
     QSet<int> getProdSet() {this->prodTypes(); return this->prodSet; };
     void prodTypes();
+
+    QVector<QVector<QPoint>> getReservedPoints() { return this->reservedPoints; }
 
     int getSize();
 
@@ -102,6 +104,8 @@ private:
     int totalTasks;
     int tasksDone;
     QSet<int> prodSet;
+
+    QVector<QVector<QPoint>> reservedPoints;
 
     void executeTask(int id);
 

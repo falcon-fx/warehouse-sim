@@ -26,9 +26,9 @@ public:
     bool isEmptyTile();
     void setEmpty(bool empty);
     void setType(int field_type);
-    void setReserved(bool res);
-    bool isReserved() { return this->reserved; }
     QString getType();
+    void setReserved(bool reserved);
+    bool isReserved();
 protected:
     Type type;
     QPoint* location;
