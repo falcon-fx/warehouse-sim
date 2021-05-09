@@ -69,21 +69,15 @@ public:
     int getTotalTasks() { return this->totalTasks; }
     int getTasksDone() { return this->tasksDone; }
     int getMaxPower() { return this->maxPower; }
-    void setMaxPower(int pwr) { this->maxPower = pwr; /*(size*10<pwr)?this->maxPower = pwr:this->maxPower=size*10;*/}
+    void setMaxPower(int pwr){(size*10<pwr)?this->maxPower = pwr:this->maxPower=size*10;}
     QSet<int> getProdSet() {this->prodTypes(); return this->prodSet; };
     void prodTypes();
-
-    QVector<QVector<QPoint>> getReservedPoints() { return this->reservedPoints; }
 
     int getSize();
 
     void save(QString filename);
     void load(QString filename);
     void saveResults(QString filename, QList<int> energyUsed, int allEnergy, int allSteps);
-    void createPath(QPoint start, QPoint end, int &shortestPath, int &energyNeeded, QQueue<Task> &tasks, Weight weight, Robot* robot);
-    QPoint findClosestTarget(QPoint pos, int prodNum);
-    QPoint findClosestPod(QPoint pos, int prodNum);
-    QPoint findClosestDock(QPoint pos);
 
 public slots:
     void tick();
@@ -109,11 +103,13 @@ private:
     int tasksDone;
     QSet<int> prodSet;
 
-    QVector<QVector<QPoint>> reservedPoints;
-
     void executeTask(int id);
 
+    QPoint findClosestTarget(QPoint pos, int prodNum);
     bool isPodAvailable(int prodNum);
+    QPoint findClosestPod(QPoint pos, int prodNum);
+    QPoint findClosestDock(QPoint pos);
+    void createPath(QPoint start, QPoint end, int &shortestPath, int &energyNeeded, QQueue<Task> &tasks, Weight weight, Robot* robot);
     void createPathVector(Node* n, QVector<QPoint> &path);
     QQueue<Task> generatePathQueue(QVector<QPoint> path, Weight w, Robot* r);
     bool isValid(int row, int col);
