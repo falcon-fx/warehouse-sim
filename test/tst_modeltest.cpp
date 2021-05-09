@@ -21,7 +21,9 @@ private slots:
     void create_pods();
     void create_target();
     void resize_model();
-
+    void pathfind_to_pod();
+    void pathfind_to_target();
+    void pathfind_to_dock();
 };
 
 ModelTest::ModelTest()
@@ -101,6 +103,82 @@ void ModelTest::resize_model()
     QVERIFY(model->getDocks().count() == 0);
     QVERIFY(model->getRobots().count() == 0);
     QVERIFY(model->getPods().count() == 0);
+}
+
+void ModelTest::pathfind_to_pod()
+{
+    model = new Model(10,50);
+    QVERIFY(model->getSize() == 10);
+    model->createRobot(0, 5);
+    QList<Robot*> robots = model->getRobots();
+    QVERIFY(robots.count() == 1);
+    QCOMPARE(robots[0]->getPosition(), QPoint(5, 0));
+    model->createPod(2, 4, {1});
+    QList<Pod*> pods = model->getPods();
+    QVERIFY(pods.count() == 1);
+    QCOMPARE(pods[0]->getPosition(), QPoint(4, 2));
+    QVERIFY(pods[0]->hasProduct(1));
+    QPoint closest = model->findClosestPod(robots[0]->getPosition(), 1);
+    QCOMPARE(closest, QPoint(4,2));
+    int shortest = 0;
+    int energy = 0;
+    QQueue<Task> tasks;
+    Weight weight = Weight::WGT_TO_POD;
+    model->createPath(robots[0]->getPosition(), closest, shortest, energy, tasks, weight, robots[0]);
+    QVERIFY(tasks.size() == 5);
+    QVERIFY(shortest == 3);
+    QVERIFY(energy == 5);
+}
+
+void ModelTest::pathfind_to_target()
+{
+    model = new Model(10,50);
+    QVERIFY(model->getSize() == 10);
+    model->createRobot(2, 4);
+    QList<Robot*> robots = model->getRobots();
+    QVERIFY(robots.count() == 1);
+    QCOMPARE(robots[0]->getPosition(), QPoint(4, 2));
+    model->createTarget(2, 9, 1);
+    QList<QPair<QPoint, int>> targets = model->getTargets();
+    QVERIFY(targets.size() == 1);
+    QCOMPARE(targets[0].first, QPoint(2, 9));
+    QCOMPARE(targets[0].second, 1);
+    QPoint closest = model->findClosestTarget(robots[0]->getPosition(), 1);
+    QCOMPARE(closest, QPoint(9,2));
+    int shortest = 0;
+    int energy = 0;
+    QQueue<Task> tasks;
+    Weight weight = Weight::WGT_POD_TO_TARGET;
+    model->createPath(robots[0]->getPosition(), closest, shortest, energy, tasks, weight, robots[0]);
+    qDebug() << tasks.size() << shortest << energy;
+    QVERIFY(tasks.size() == 8);
+    QVERIFY(shortest == 5);
+    QVERIFY(energy == 7);
+}
+
+void ModelTest::pathfind_to_dock()
+{
+    model = new Model(10,50);
+    QVERIFY(model->getSize() == 10);
+    model->createRobot(2, 9);
+    QList<Robot*> robots = model->getRobots();
+    QVERIFY(robots.count() == 1);
+    QCOMPARE(robots[0]->getPosition(), QPoint(9, 2));
+    model->createDock(4, 5);
+    QList<QPoint> docks = model->getDocks();
+    QVERIFY(docks.count() == 1);
+    QCOMPARE(docks[0], QPoint(4, 5));
+    QPoint closest = model->findClosestDock(robots[0]->getPosition());
+    QCOMPARE(closest, QPoint(5,4));
+    int shortest = 0;
+    int energy = 0;
+    QQueue<Task> tasks;
+    Weight weight = Weight::WGT_CHARGE;
+    model->createPath(robots[0]->getPosition(), closest, shortest, energy, tasks, weight, robots[0]);
+    qDebug() << tasks.size() << shortest << energy;
+    QVERIFY(tasks.size() == 12);
+    QVERIFY(shortest == 6);
+    QVERIFY(energy == 7);
 }
 
 QTEST_APPLESS_MAIN(ModelTest)
