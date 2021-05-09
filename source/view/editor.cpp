@@ -15,7 +15,7 @@ void Editor::okButtonClicked()
     else
         _size = _s->text().toInt();
 
-    _model->setMaxPower(_rPower->text().toInt());
+    _model->setMaxPower(_rPower->text().toInt()); // robot energiajanak a beallitasa
     isSelected=false;
 
     sizeWindow->close();
@@ -23,7 +23,7 @@ void Editor::okButtonClicked()
     setupEditor();
 }
 
-void Editor::newTableButtonClicked()
+void Editor::newTableButtonClicked() // ha uj es ures editort akarunk megynitni
 {
     _loadTable=false;
     _s->setReadOnly(false);
@@ -31,7 +31,7 @@ void Editor::newTableButtonClicked()
     okButton->setDisabled(false);
 }
 
-void Editor::loadTableButtonClicked()
+void Editor::loadTableButtonClicked() //ha a meglevo palyat akarjuk az editorba megynitni
 {
     _loadTable=true;
     _size = _model->getSize();
@@ -46,9 +46,9 @@ void Editor::closeButtonClicked()
     sizeWindow->close();
 }
 
-void Editor::setupTable()
+void Editor::setupTable() //tabla felallitasa
 {
-    if (_gridLayout->rowCount() != 0 || _gridLayout->columnCount() != 0) {
+    if (_gridLayout->rowCount() != 0 || _gridLayout->columnCount() != 0) { //gombok torlese a gridbol
             while ( QLayoutItem* item = _gridLayout->takeAt( 0 ) )
                 {
                     Q_ASSERT( ! item->layout() );
@@ -63,7 +63,7 @@ void Editor::setupTable()
     {
         _gridLayout->addWidget(new QLabel("Size cannot be 0 or smaller"));
     }
-    else
+    else // gombracs elkeszitese
     {
         _gridButtons.clear();
         _gridButtons.resize(_size);
@@ -128,8 +128,9 @@ void Editor::setupEditor()
     _changeProdNumsLEdit = new QLineEdit();
     _changeProdNumsLEdit->setVisible(false);
 
-    setupTable();
+    setupTable(); //tabla elkeszitese
 
+    //gombok felhelyezese az editorra
     _editButtonsLayout->addWidget(_selectButton);
     _editButtonsLayout->addWidget(_robotButton);
     _editButtonsLayout->addWidget(_dockButton);
@@ -175,6 +176,7 @@ void Editor::setupEditor()
     connect(_newButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
     connect(_applyButton,SIGNAL(clicked()),this,SLOT(controlButtonsClicked()));
 
+    //tabla dolgainak kitisztitasa
     robots.clear();
     pods.clear();
     targets.clear();
@@ -183,13 +185,13 @@ void Editor::setupEditor()
     prodNums.clear();
     _prodNumCBox->clear();
 
-    if(_loadTable)
+    if(_loadTable) //ha meglevo palyat toltunk be
         loadExistingTable();
 
     editor->show();
 }
 
-void Editor::setupSizeWindow()
+void Editor::setupSizeWindow() // betoltoablak az editorhoz
 {
     sizeWindow = new QWidget;
     sizeWindow->setWindowTitle("New");
@@ -211,6 +213,7 @@ void Editor::setupSizeWindow()
     sizeLayout->addWidget(okButton,5,2);
     sizeLayout->addWidget(closeButton,5,3);
 
+    //csak akkor hamisak ha uj palyat akarunk
     _s->setReadOnly(true);
     _rPower->setReadOnly(true);
     okButton->setDisabled(true);
@@ -223,9 +226,8 @@ void Editor::setupSizeWindow()
     sizeWindow->show();
 }
 
-void Editor::loadExistingTable()
+void Editor::loadExistingTable() // mainwindow betoltese az editorba
 {
-    qDebug() << _model->getTargets().count();
     //targetek betoltese
     for(int i = 0; i < _model->getTargets().count();i++)
     {
@@ -261,6 +263,7 @@ void Editor::loadExistingTable()
         for (int j = 0; j <  _model->getPods()[i]->getProducts().count(); j++)
             prodNums = prodNums.unite(_model->getPods()[i]->getProducts());
 
+        //pod szovege
         QString podText ="P\n";
         foreach (const int &value, _model->getPods()[i]->getProducts())
         {
@@ -269,6 +272,7 @@ void Editor::loadExistingTable()
         _gridButtons[_model->getPods()[i]->getPosition().x()][_model->getPods()[i]->getPosition().y()]->setText(podText);
     }
 
+    //target legordulo valasztojanak a frissitese
     foreach (const int &value, prodNums)
         if (_prodNumCBox->findText(QString::number(value)) == -1)
             _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
@@ -284,9 +288,9 @@ void Editor::loadExistingTable()
 
 }
 
-void Editor::editButtonsClicked()
+void Editor::editButtonsClicked() //edit gombok
 {
-    if(!firstClicked)
+    if(!firstClicked)//ha megse akarjuk kijelolni a podokat
     {
         selectedButton->setStyleSheet("background-color: auto;");
     }
@@ -294,13 +298,10 @@ void Editor::editButtonsClicked()
     selectedButton->setStyleSheet("background-color: #ff8a8a;");
     firstClicked=false;
 
-    if(selectedButton->text() !="Undo" && selectedButton->text() !="Redo")
+    for (int i = 0; i < _size; i++)
     {
-        for (int i = 0; i < _size; i++)
-        {
-            for (int j = 0; j < _size; j++)
-                _gridButtons[i][j]->setEnabled(true);
-        }
+        for (int j = 0; j < _size; j++)
+           _gridButtons[i][j]->setEnabled(true);
     }
 
 
@@ -368,31 +369,31 @@ void Editor::controlButtonsClicked()
 {
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
 
-    if(btn->text() == "New")
+    if(btn->text() == "New") //uj ures palya kezdese,a betolto ablakot hozza fel
     {
         editor->close();
         setupSizeWindow();
     }
-    else if(btn->text() == "Apply and close")
+    else if(btn->text() == "Apply and close") //betolti a mainwindowba a kesz palyat, ha megfelelo
     {
-        if(isTheTableGood())
+        if(isTheTableGood())//ellenorizzuk, hogy megfelelo-e
         {
-            for (int i = 0; i < robots.count(); i++)
+            for (int i = 0; i < robots.count(); i++) //robotok
             {
                 robots[i].setX(robots[i].x() / _gridButtons[0][0]->size().width());
                 robots[i].setY(robots[i].y() / _gridButtons[0][0]->size().width());
             }
-            for (int i = 0; i < pods.count(); i++)
+            for (int i = 0; i < pods.count(); i++) //podok
             {
                 pods[i].first.setX(pods[i].first.x() / _gridButtons[0][0]->size().width());
                 pods[i].first.setY(pods[i].first.y() / _gridButtons[0][0]->size().width());
             }
-            for (int i = 0; i < targets.count(); i++)
+            for (int i = 0; i < targets.count(); i++) //targetek
             {
                 targets[i].first.setX(targets[i].first.x() / _gridButtons[0][0]->size().width());
                 targets[i].first.setY(targets[i].first.y() / _gridButtons[0][0]->size().width());
             }
-            for (int i = 0; i < docks.count(); i++)
+            for (int i = 0; i < docks.count(); i++) //dockok
             {
                 docks[i].setX(docks[i].x() / _gridButtons[0][0]->size().width());
                 docks[i].setY(docks[i].y() / _gridButtons[0][0]->size().width());
@@ -400,7 +401,7 @@ void Editor::controlButtonsClicked()
             emit applyAndClose();
             editor->close();
         }
-        else{
+        else{ // ha meg nem jo a palya
             QMessageBox msgBox;
             msgBox.setText("The simulation has to have at least one robot, one dock, one product and one target to every product");
             msgBox.exec();
@@ -408,7 +409,7 @@ void Editor::controlButtonsClicked()
     }
 }
 
-void Editor::gridButtonClicked()
+void Editor::gridButtonClicked() // entitasok lerakasa a gombracsra
 {
     if(!_loadTable && firstClicked)
         _model->setSize(_size);
@@ -417,10 +418,10 @@ void Editor::gridButtonClicked()
 
     QPoint p = btn->pos() - _gridButtons[0][0]->pos();
 
-    if(IsEmptyTile(p))
+    if(IsEmptyTile(p)) //ures-e a kivalasztott mezo
     {
         QSet<int> prods;
-        if (!_prodNumsLEdit->text().isEmpty())
+        if (!_prodNumsLEdit->text().isEmpty()) //termekek elmentese
         {
             QStringList numbers = _prodNumsLEdit->text().split(",");
             for (int i = 0; i < numbers.count(); i++)
@@ -429,7 +430,7 @@ void Editor::gridButtonClicked()
                 prodNums.insert(numbers[i].toInt());
             }
         }
-        QString podText ="P\n";
+        QString podText ="P\n"; //podok felirata
         foreach (const int &value, prods)
         {
             podText += QString::number(value) + " ";
@@ -444,24 +445,6 @@ void Editor::gridButtonClicked()
         case 2://robot
             btn->setStyleSheet("QPushButton { background-color: rgb(255, 192, 0); }");
             robots.append(p);
-            for (int i = 0; i < pods.count(); i++)
-            {
-                if (pods[i].first == p)
-                {
-                    pods.remove(i);
-                    break;
-                }
-            }
-            for (int i = 0; i < targets.count(); i++)
-            {
-                if (targets[i].first == p)
-                {
-                    targets.remove(i);
-                    break;
-                }
-            }
-            docks.removeOne(p);
-
             break;
         case 3://pod
             btn->setStyleSheet("QPushButton { background-color: rgb(230, 230, 230); }");
@@ -470,17 +453,8 @@ void Editor::gridButtonClicked()
                 if (_prodNumCBox->findText(QString::number(value)) == -1)
                     _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
              _prodNumCBox->model()->sort(0, Qt::AscendingOrder);
-            robots.removeOne(p);
             pods.append(pod_pair);
-            for (int i = 0; i < targets.count(); i++)
-            {
-                if (targets[i].first == p)
-                {
-                    targets.remove(i);
-                    break;
-                }
-            }
-            docks.removeOne(p);
+
             break;
         case 4://target
             if (_prodNumCBox->count() == 0)
@@ -488,37 +462,10 @@ void Editor::gridButtonClicked()
             btn->setStyleSheet("QPushButton { background-color: rgb(146, 208, 80); }");
             btn->setText(QString::number(prodNum));
             necTargets.insert(prodNum);
-            robots.removeOne(p);
-            for (int i = 0; i < pods.count(); i++)
-            {
-                if (pods[i].first == p)
-                {
-                    pods.remove(i);
-                    break;
-                }
-            }
             targets.append(target_pair);
-            docks.removeOne(p);
             break;
         case 5://dock
             btn->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213); }");
-            robots.removeOne(p);
-            for (int i = 0; i < pods.count(); i++)
-            {
-                if (pods[i].first == p)
-                {
-                    pods.remove(i);
-                    break;
-                }
-            }
-            for (int i = 0; i < targets.count(); i++)
-            {
-                if (targets[i].first == p)
-                {
-                    targets.remove(i);
-                    break;
-                }
-            }
             docks.append(p);
             break;
         }
@@ -536,7 +483,7 @@ void Editor::gridButtonClicked()
                 if(selectedGridButtons[i] == p) contains = true;
 
 
-            if(!contains)
+            if(!contains) // ha meg nincs kivalasztva a kattintott mezo hozzaadjuk a kivalasztottakhoz
             {
                 if(_size>7)
                     selectedGridButtons.append(QPoint((btn->pos().x()-11) ,(btn->pos().y()-11)));
@@ -599,7 +546,7 @@ void Editor::selectMoveButtonClicked()
         dirX = 40;
         dirY = 0;
     }
-    for(int i=0; i < selectedGridButtons.count();i++)
+    for(int i=0; i < selectedGridButtons.count();i++) // podok mozgatasa
     {
         int number=0;
         while(pods[number].first != selectedGridButtons[i] && number < pods.size()-1) // megkeressuk a podsban hanyadik a kivalasztott elem
@@ -610,19 +557,21 @@ void Editor::selectMoveButtonClicked()
             QPoint newPlace =QPoint(selectedGridButtons[i].x()+dirX,selectedGridButtons[i].y()+dirY);
             if(IsEmptyTile(newPlace))
             {
-                _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton { background-color: white; }"); // valamiert fel vannak cserelodve a koordinatak ahhh
+                //mezo atszinezese
+                _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton { background-color: white; }");
                 _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText("");
                 selectedGridButtons[i] = QPoint(selectedGridButtons[i].x()+dirX,selectedGridButtons[i].y()+dirY);
                 _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setStyleSheet("QPushButton {border:3px solid red; background-color: #e6e6e6; }");
                 _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText(selectedProds[i]);
 
-                QSet<int> prods;
                 //pod helyenek frissitese
                 QStringList prodnum = selectedProds[i].split(" ");
                 prodnum[0].remove(0,2);
                 if(prodnum.size()!=1)
                     prodnum.removeLast();
 
+                //termekek frissitese
+                QSet<int> prods;
                 if(prodnum[0]!="")
                     for (int j = 0; j < prodnum.count(); j++)
                         prods.insert(prodnum[j].toInt());
@@ -634,7 +583,7 @@ void Editor::selectMoveButtonClicked()
     }
 }
 
-void Editor::changeProd()
+void Editor::changeProd() // mas termekek elhelyezese a podokon
 {
     for(int i=0; i < selectedGridButtons.count();i++)
     {
@@ -644,7 +593,7 @@ void Editor::changeProd()
 
         QPoint newPlace = QPoint(selectedGridButtons[i].x(),selectedGridButtons[i].y());
         QSet<int> prods;
-        if (!_changeProdNumsLEdit->text().isEmpty())
+        if (!_changeProdNumsLEdit->text().isEmpty()) // uj termek hozzaadasa
         {
             QStringList numbers = _changeProdNumsLEdit->text().split(",");
             for (int i = 0; i < numbers.count(); i++)
@@ -653,7 +602,7 @@ void Editor::changeProd()
                 prodNums.insert(numbers[i].toInt());
             }
         }
-        QString podText ="P\n";
+        QString podText ="P\n"; //pod felirata
         foreach (const int &value, prods)
         {
             podText += QString::number(value) + " ";
@@ -664,7 +613,7 @@ void Editor::changeProd()
         QPair<QPoint, QSet<int>> pod_pair(newPlace, prods);
         pods.replace(number,pod_pair);
 
-        foreach (const int &value, prodNums)
+        foreach (const int &value, prodNums) // target legordulo kivalasztojanak frissitese
             if (_prodNumCBox->findText(QString::number(value)) == -1)
                 _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
          _prodNumCBox->model()->sort(0, Qt::AscendingOrder);
@@ -673,7 +622,7 @@ void Editor::changeProd()
 }
 
 
-bool Editor::IsEmptyTile(QPoint point)
+bool Editor::IsEmptyTile(QPoint point) //ures-e a mezo
 {
     //check robots
 
@@ -705,7 +654,7 @@ bool Editor::IsEmptyTile(QPoint point)
     return true;
 }
 
-bool Editor::isTheTableGood()
+bool Editor::isTheTableGood() // megfelelo e a szimulacio (leg. 1 robot, 1 dock es minden termekhez leg. 1 target)
 {
     if(robots.count()>=1 && docks.count()>=1 && necTargets == prodNums && prodNums.count() >= 1)
     {
