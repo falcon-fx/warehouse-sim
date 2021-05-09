@@ -1,3 +1,3 @@
 # Gitegylet
 ## Warehouse Simulator
-Ezen az ágon folyik jelenleg a WarehouseSim fejlesztése.
+Ezen az ágon készülnek a részletes unit testek.
