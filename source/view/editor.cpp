@@ -258,6 +258,7 @@ void Editor::loadExistingTable()
         _gridButtons[_model->getDocks()[i].y()][_model->getDocks()[i].x()]->setStyleSheet("QPushButton { background-color: rgb(91, 155, 213);  }");
     }
 
+
     //podok betoltese
     for(int i = 0; i < _model->getPods().count();i++)
     {
@@ -278,6 +279,11 @@ void Editor::loadExistingTable()
         }
         _gridButtons[_model->getPods()[i]->getPosition().x()][_model->getPods()[i]->getPosition().y()]->setText(podText);
     }
+
+    foreach (const int &value, prodNums)
+        if (_prodNumCBox->findText(QString::number(value)) == -1)
+            _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
+    _prodNumCBox->model()->sort(0, Qt::AscendingOrder);
 
     //robotok betoltese
     for(int i = 0; i < _model->getRobots().count();i++){
@@ -472,6 +478,7 @@ void Editor::gridButtonClicked()
             foreach (const int &value, prodNums)
                 if (_prodNumCBox->findText(QString::number(value)) == -1)
                     _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
+             _prodNumCBox->model()->sort(0, Qt::AscendingOrder);
             robots.removeOne(p);
             pods.append(pod_pair);
             for (int i = 0; i < targets.count(); i++)
@@ -638,6 +645,7 @@ void Editor::selectMoveButtonClicked()
 
 void Editor::changeProd()
 {
+    qDebug() << "hello?";
     for(int i=0; i < selectedGridButtons.count();i++)
     {
         int number=0;
@@ -665,6 +673,11 @@ void Editor::changeProd()
         _gridButtons[selectedGridButtons[i].y()/40][selectedGridButtons[i].x()/40]->setText(podText);
         QPair<QPoint, QSet<int>> pod_pair(newPlace, prods);
         pods.replace(number,pod_pair);
+
+        foreach (const int &value, prodNums)
+            if (_prodNumCBox->findText(QString::number(value)) == -1)
+                _prodNumCBox->insertItem(_prodNumCBox->count(), QString::number(value));
+         _prodNumCBox->model()->sort(0, Qt::AscendingOrder);
 
     }
 
