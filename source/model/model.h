@@ -75,6 +75,10 @@ public:
     void save(QString filename);
     void load(QString filename);
     void saveResults(QString filename, QList<int> energyUsed, int allEnergy, int allSteps);
+    void createPath(QPoint start, QPoint end, int &shortestPath, int &energyNeeded, QQueue<Task> &tasks, Weight weight, Robot* robot);
+    QPoint findClosestTarget(QPoint pos, int prodNum);
+    QPoint findClosestPod(QPoint pos, int prodNum);
+    QPoint findClosestDock(QPoint pos);
 public slots:
     void tick();
 signals:
@@ -102,11 +106,7 @@ private:
 
     void executeTask(int id);
 
-    QPoint findClosestTarget(QPoint pos, int prodNum);
     bool isPodAvailable(int prodNum);
-    QPoint findClosestPod(QPoint pos, int prodNum);
-    QPoint findClosestDock(QPoint pos);
-    void createPath(QPoint start, QPoint end, int &shortestPath, int &energyNeeded, QQueue<Task> &tasks, Weight weight, Robot* robot);
     void createPathVector(Node* n, QVector<QPoint> &path);
     QQueue<Task> generatePathQueue(QVector<QPoint> path, Weight w, Robot* r);
     bool isValid(int row, int col);
