@@ -830,7 +830,10 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
             int row = loc.x() + rowNum[i];
             int col = loc.y() + colNum[i];
             if ((isValid(row, col) && (weight == WGT_TO_POD && //is valid and going to pod
-                (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "pod" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, pod, target or dock squares
+                (warehouse[row][col]->getType() == "empty"
+              || warehouse[row][col]->getType() == "pod"
+              || warehouse[row][col]->getType() == "target"
+              || warehouse[row][col]->getType() == "dock")) && //can go on empty, pod, target or dock squares
                 !visited[col][row]))
             {
                 if (reservedPoints[currentTime].contains(QPoint(row, col)))
@@ -840,7 +843,8 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
                 q.enqueue(adjcell);
             }
             else if ((isValid(row, col) && (weight == WGT_POD_TO_TARGET && //is valid and carrying a pod
-                (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "target")) && //can go on empty, target or dock squares
+                (warehouse[row][col]->getType() == "empty"
+              || warehouse[row][col]->getType() == "target")) && //can go on empty, target or dock squares
                 !visited[col][row]))
             {
                 if (reservedPoints[currentTime].contains(QPoint(row, col)))
@@ -850,7 +854,8 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
                 q.enqueue(adjcell);
             }
             else if ((isValid(row, col) && (weight == WGT_POD_TO_ORIGIN && //is valid and carrying a pod back to origin
-                (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "target")) && //can go on empty, target or dock squares
+                (warehouse[row][col]->getType() == "empty"
+              || warehouse[row][col]->getType() == "target")) && //can go on empty, target or dock squares
                 !visited[col][row]))
             {
                 if (reservedPoints[currentTime].contains(QPoint(row, col)))
@@ -860,7 +865,10 @@ void Model::createPath(QPoint start, QPoint end, int &shortestPath, int &energyN
                 q.enqueue(adjcell);
             }
             else if ((isValid(row, col) && (weight == WGT_CHARGE && //is valid and going to charge
-                (warehouse[row][col]->getType() == "empty" || warehouse[row][col]->getType() == "pod" || warehouse[row][col]->getType() == "target" || warehouse[row][col]->getType() == "dock")) && //can go on empty, pod, target or dock squares
+                (warehouse[row][col]->getType() == "empty"
+              || warehouse[row][col]->getType() == "pod"
+              || warehouse[row][col]->getType() == "target"
+              || warehouse[row][col]->getType() == "dock")) && //can go on empty, pod, target or dock squares
                 !visited[col][row]))
             {
                 if (reservedPoints[currentTime].contains(QPoint(row, col)))
