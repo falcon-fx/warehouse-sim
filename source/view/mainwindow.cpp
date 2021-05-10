@@ -307,11 +307,9 @@ void MainWindow::onTick() // Timer tick
     for(int i = 0; i < _model->getRobots().size(); i++) {
         Robot* r = _model->getRobots()[i];
         info += "\nRobot " + QString::number(i+1) + "\nPower: " + QString::number((int)((float)r->getPower()/(float)_model->getMaxPower()*100)) +
-                "% position: x:" + QString::number(r->getPosition().x()) + ", y:" + QString::number(r->getPosition().y()) +
-                "\nProduct number: " + QString::number(r->getProdNum()) + " Has pod: " + (r->hasPod() ? "true" : "false") + "\n";
-        if(r->hasPod()) {
-            info +=  "Pod's original position: x:" + QString::number(r->getPod()->getOriginalPosition().x()) + ", y:" + QString::number(r->getPod()->getOriginalPosition().y()) + "\n";
-        }
+                "% Position: " + QString::number(r->getPosition().x()) + ", " + QString::number(r->getPosition().y());
+        if (r->getProdNum() != -1)
+            info += "\nProduct number: " + QString::number(r->getProdNum()) + "\n";
     }
     infoLabel->setText(info);
 }
