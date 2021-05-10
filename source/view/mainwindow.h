@@ -25,7 +25,7 @@ protected:
     QVBoxLayout* _infoLayout;
     QGridLayout* _buttonLayout;
     QVBoxLayout *_rightsideLayout;
-    QGridLayout* _gridLayout;
+    QGridLayout* gridLayout;
     QHBoxLayout* buttonContainer;
     QVector<QVector<QPushButton*>> _gridButtons;
 
@@ -37,7 +37,7 @@ protected:
     QSlider* speedSlider;
     QPushButton* _newOrderButton;
     QWidget *orderWindow;
-    QLineEdit* _s;
+    QLineEdit* sizeLEdit;
 private:
     Model* _model;
     Editor* _editor;

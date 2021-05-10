@@ -66,19 +66,15 @@ public:
     void createDock(int x, int y);
     void createOrder(int prodNum);
     QQueue<int> getOrders();
-    int getTotalTasks() { return this->totalTasks; }
-    int getTasksDone() { return this->tasksDone; }
-    int getMaxPower() { return this->maxPower; }
-    void setMaxPower(int pwr){(size*10<pwr)?this->maxPower = pwr:this->maxPower=size*10;}
-    QSet<int> getProdSet() {this->prodTypes(); return this->prodSet; };
-    void prodTypes();
-
+    int getTotalTasks();
+    int getTasksDone();
+    int getMaxPower();
+    void setMaxPower(int pwr);
+    QSet<int> getProdSet();
     int getSize();
-
     void save(QString filename);
     void load(QString filename);
     void saveResults(QString filename, QList<int> energyUsed, int allEnergy, int allSteps);
-
 public slots:
     void tick();
 signals:
@@ -86,7 +82,6 @@ signals:
     void onLoad();
     void onFinished();
 private:
-
     int size;
     QVector<QVector<WTile*>> warehouse;
     void makeWarehouse();
@@ -102,6 +97,8 @@ private:
     int totalTasks;
     int tasksDone;
     QSet<int> prodSet;
+
+    QVector<QVector<QPoint>> reservedPoints;
 
     void executeTask(int id);
 

@@ -1,5 +1,14 @@
 #include "robot.h"
 
+/*!
+ * \brief Robot::Robot
+ * Create a new robot with the specified ID and
+ * maximum power at the x and y coordinates.
+ * \param id The ID
+ * \param maxP The maximum power
+ * \param x The x coordinate
+ * \param y The y coordinate
+ */
 Robot::Robot(int id, int maxP, int x, int y)
 {
     this->id = id;
@@ -13,74 +22,104 @@ Robot::Robot(int id, int maxP, int x, int y)
     this->setProdNum(-1);
 }
 
+/*!
+ * \brief Robot::getID
+ * Get the ID of the robot.
+ * \return
+ */
 int Robot::getID()
 {
     return this->id;
 }
 
+/*!
+ * \brief Robot::getPower
+ * Get the available power of the robot.
+ * \return
+ */
 int Robot::getPower()
 {
     return this->power;
 }
 
+/*!
+ * \brief Robot::setPower
+ * Set the power of the robot to the specified
+ * amount.
+ * \param p The power amount
+ */
 void Robot::setPower(int p)
 {
     this->power = p;
 }
 
+/*!
+ * \brief Robot::lowerPower
+ * Lower the power of the robot and increase the
+ * used power counter.
+ */
 void Robot::lowerPower()
 {
     this->power--;
     this->usedPower++;
 }
 
+/*!
+ * \brief Robot::getUsedPower
+ * Get the power used by the robot.
+ * \return
+ */
 int Robot::getUsedPower()
 {
     return this->usedPower;
 }
 
+/*!
+ * \brief Robot::setUsedPower
+ * Set the used power of the robot.
+ * \param up The power used
+ */
 void Robot::setUsedPower(int up)
 {
     this->usedPower = up;
 }
 
+/*!
+ * \brief Robot::getDirection
+ * Get the facing direction of the robot.
+ * \return
+ */
 Robot::Direction Robot::getDirection()
 {
     return this->direction;
 }
 
+/*!
+ * \brief Robot::getPosition
+ * Get the position of the robot.
+ * \return
+ */
 QPoint Robot::getPosition()
 {
     return this->position;
 }
 
-QPoint Robot::getNextPosition()
-{
-    QPoint next = this->position;
-    switch (direction)
-    {
-        case NORTH:
-            next.ry()--;
-            break;
-        case EAST:
-            next.rx()++;
-            break;
-        case SOUTH:
-            next.ry()++;
-            break;
-        case WEST:
-            next.rx()--;
-            break;
-    }
-    return next;
-}
-
+/*!
+ * \brief Robot::setPosition
+ * Set the position of the robot.
+ * \param pos The position
+ */
 void Robot::setPosition(QPoint pos)
 {
     this->position.setX(pos.x());
     this->position.setY(pos.y());
 }
 
+
+/*!
+ * \brief Robot::move
+ * Move the robot.
+ */
 void Robot::move()
 {
     lowerPower();
@@ -105,6 +144,10 @@ void Robot::move()
     }
 }
 
+/*!
+ * \brief Robot::turnLeft
+ * Turn the robot left.
+ */
 void Robot::turnLeft()
 {
     lowerPower();
@@ -125,6 +168,10 @@ void Robot::turnLeft()
     }
 }
 
+/*!
+ * \brief Robot::turnRight
+ * Turn the robot right.
+ */
 void Robot::turnRight()
 {
     lowerPower();
@@ -145,11 +192,21 @@ void Robot::turnRight()
     }
 }
 
+/*!
+ * \brief Robot::getPod
+ * Get the pod of the robot.
+ * \return
+ */
 Pod* Robot::getPod()
 {
     return this->pod;
 }
 
+/*!
+ * \brief Robot::liftPod
+ * Lift a pod in the warehouse.
+ * \param pod The pod
+ */
 void Robot::liftPod(Pod* pod)
 {
     lowerPower();
@@ -157,6 +214,11 @@ void Robot::liftPod(Pod* pod)
     this->pod = pod;
 }
 
+/*!
+ * \brief Robot::dropPod
+ * Lift a pod in the warehouse.
+ * \param pod The pod
+ */
 void Robot::dropPod()
 {
     lowerPower();
@@ -164,6 +226,11 @@ void Robot::dropPod()
     this->pod = nullptr;
 }
 
+/*!
+ * \brief Robot::hasPod
+ * Check if the robot has a pod.
+ * \return
+ */
 bool Robot::hasPod()
 {
     return this->pod != nullptr;

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QPoint>
+
 enum Type {
     EMPTY = 0,
     DOCK = 1,
