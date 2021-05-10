@@ -24,7 +24,6 @@ public:
     void setUsedPower(int up);
     Direction getDirection();
     QPoint getPosition();
-    QPoint getNextPosition();
     void setPosition(QPoint pos);
     int getProdNum() { return this->prodNum; }
     void setProdNum(int prod) { this->prodNum = prod; }

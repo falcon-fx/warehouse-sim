@@ -24,82 +24,78 @@ class Editor : public QObject
     Q_OBJECT
 public:
     Editor(Model* model);
-    int getSize() { return  this->_size; }
+    int getSize() { return  this->size; }
     QVector<QPoint> getRobots() { return this->robots; }
     QVector<QPair<QPoint, QSet<int>>> getPods() { return this->pods; }
     QVector<QPair<QPoint, int>> getTargets() { return this->targets; }
     QVector<QPoint> getDocks() { return this->docks; }
 private:
-     Model* _model;
+     Model* model;
      QWidget *editor;
-     QWidget *sizeWindow;
 
-     //sizeWindow
+     // The "New simulation" window
+     QWidget *sizeWindow;
      QPushButton* okButton;
      QPushButton* closeButton;
-     QLineEdit* _s;
-     QLineEdit* _rPower;
+     QLineEdit* sizeLEdit;
+     QLineEdit* maxPowerLEdit;
 
-     //layouts:
-     QVBoxLayout* _mainLayout;
-     QGridLayout* _gridLayout;
-     QVBoxLayout* _bottomLayout;
-     QHBoxLayout* _editButtonsLayout;
-     QGridLayout* _infoLayout;
-     QHBoxLayout* _infoButtonsLayout;
+     // Layouts
+     QVBoxLayout* mainLayout;
+     QGridLayout* gridLayout;
+     QVBoxLayout* bottomLayout;
+     QHBoxLayout* editButtonsLayout;
+     QGridLayout* infoLayout;
+     QHBoxLayout* infoButtonsLayout;
      QHBoxLayout* buttonContainer;
-     QHBoxLayout* _selectArrowLayout;
-     QHBoxLayout* _selectNewProdLayout;
+     QHBoxLayout* selectArrowLayout;
+     QHBoxLayout* selectNewProdLayout;
 
+     // Buttons
+     QVector<QVector<QPushButton*>> gridButtons;
+     QPushButton* selectButton;
+     QPushButton* robotButton;
+     QPushButton* podButton;
+     QPushButton* targetButton;
+     QPushButton* dockButton;
+     QPushButton* deleteButton;
+     QPushButton* undoButton;
+     QPushButton* redoButton;
+     QPushButton* selectUp;
+     QPushButton* selectDown;
+     QPushButton* selectLeft;
+     QPushButton* selectRight;
+     QPushButton* changeProdOkButton;
+     QPushButton* newTableButton;
+     QPushButton* loadTableButton;
 
-     //buttons:
-     QVector<QVector<QPushButton*>> _gridButtons;
-     QPushButton* _selectButton;
-     QPushButton* _robotButton;
-     QPushButton* _podButton;
-     QPushButton* _targetButton;
-     QPushButton* _dockButton;
-     QPushButton* _deleteButton;
-     QPushButton* _undoButton;
-     QPushButton* _redoButton;
-     QPushButton* _selectUp;
-     QPushButton* _selectDown;
-     QPushButton* _selectLeft;
-     QPushButton* _selectRight;
-     QPushButton* _changeProdOkButton;
-     QPushButton* _newTableButton;
-     QPushButton* _loadTableButton;
+     // Inputs
+     QLineEdit* prodNumsLEdit;
+     QComboBox* prodNumCBox;
+     QLineEdit* changeProdNumsLEdit;
 
-     //inputs:
-     QLineEdit* _prodNumsLEdit;
-     QComboBox* _prodNumCBox;
-     QLineEdit* _changeProdNumsLEdit;
+     QPushButton* newButton;
+     QPushButton* applyButton;
 
-     QPushButton* _newButton;
-     QPushButton* _applyButton;
-
-
+     // A podok mozgatásához
      QPushButton* selectedButton;
      bool firstClicked;
-
-     int _size;
-     int status;//1-select 2-robot 3-pod 4-target 5-dock 6-delete
      bool isSelected;
-     bool _loadTable;
-
-     //megfelelo palya letrehozasahoz szukseges feltetelek
-     QSet<int> necTargets;
-     QSet<int> prodNums;
-
-     QVector<QPoint> place;
      QVector<QPoint> selectedGridButtons;
      QVector<QString> selectedProds;
 
+     int size;
+     int status;//1-select 2-robot 3-pod 4-target 5-dock 6-delete
+     bool loadTable;
 
-     QVector<QPoint> robots;
-     QVector<QPair<QPoint, QSet<int>>> pods;
-     QVector<QPair<QPoint, int>> targets;
-     QVector<QPoint> docks;
+     // Conditions for making a correct warehouse
+     QSet<int> necTargets;
+     QSet<int> prodNums;
+
+     QVector<QPoint> robots; // Robots' positions
+     QVector<QPair<QPoint, QSet<int>>> pods; // Pods' positions and products
+     QVector<QPair<QPoint, int>> targets; // Targets' positions and assigned products
+     QVector<QPoint> docks; // Docks' positions
 
      void setupEditor();
      void setupSizeWindow();
@@ -130,4 +126,4 @@ signals:
      void applyAndClose();
 };
 
-#endif // EDITOR_H
+#endif // EDITORH

@@ -18,15 +18,17 @@ public:
     ~MainWindow();
 protected:
     QWidget *window;
+    //layoutok
     QHBoxLayout* _mainLayout;
     QVBoxLayout* _leftsideLayout;
     QVBoxLayout* _titleLayout;
     QVBoxLayout* _infoLayout;
     QGridLayout* _buttonLayout;
     QVBoxLayout *_rightsideLayout;
-    QGridLayout* _gridLayout;
-    QVector<QVector<QPushButton*>> _gridButtons;
+    QGridLayout* gridLayout;
     QHBoxLayout* buttonContainer;
+    QVector<QVector<QPushButton*>> _gridButtons;
+
     QTimer* timer;
     QLabel* infoLabel;
     QLabel* noDataLabel;
@@ -35,7 +37,7 @@ protected:
     QSlider* speedSlider;
     QPushButton* _newOrderButton;
     QWidget *orderWindow;
-    QLineEdit* _s;
+    QLineEdit* sizeLEdit;
 private:
     Model* _model;
     Editor* _editor;
