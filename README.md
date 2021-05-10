@@ -1,3 +1,5 @@
 # Gitegylet
-## Warehouse Simulator
-Ez a Warehouse Simulator fő ága
+## WareSim
+Ez a WareSim fő ága.
+
+A dokumentáció megtalálható a wikiben.
